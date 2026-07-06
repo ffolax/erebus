@@ -55,39 +55,33 @@ function UI:Init(Context)
 	title.TextColor3 = Color3.fromRGB(245,245,245)
 	title.Parent = topbar
 
-	local function CreateWindowButton(text)
+	local function CreateWindowButton(ImageId)
 
-		local button = Instance.new("TextButton")
+		local button = Instance.new("ImageButton")
 		button.Size = UDim2.fromOffset(28,28)
 		button.BackgroundTransparency = 1
-		button.Text = text
-		button.Font = Enum.Font.GothamBold
-		button.TextSize = 16
-		button.TextColor3 = Color3.fromRGB(220,220,220)
+		button.Image = ImageId
+		button.ScaleType = Enum.ScaleType.Fit
+		button.Parent = topbar
 	
 		button.MouseEnter:Connect(function()
-	
-			TweenService:Create(button,TweenInfo.new(.15),{
-				TextColor3 = Color3.fromRGB(255,255,255)
+			TweenService:Create(button, TweenInfo.new(.15), {
+				ImageColor3 = Color3.new(1,1,1)
 			}):Play()
-	
 		end)
 	
 		button.MouseLeave:Connect(function()
-	
-			TweenService:Create(button,TweenInfo.new(.15),{
-				TextColor3 = Color3.fromRGB(220,220,220)
+			TweenService:Create(button, TweenInfo.new(.15), {
+				ImageColor3 = Color3.fromRGB(210,210,210)
 			}):Play()
-	
 		end)
 	
 		return button
-	
 	end
 	
-	local Exit = CreateWindowButton("✕")
-	local Maximize = CreateWindowButton("□")
-	local Minimize = CreateWindowButton("─")
+	local Minimize = CreateWindowButton("rbxassetid://123456789")
+	local Maximize = CreateWindowButton("rbxassetid://987654321")
+	local Close = CreateWindowButton("rbxassetid://555555555")
 	
 	Exit.Parent = topbar
 	Maximize.Parent = topbar
