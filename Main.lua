@@ -76,6 +76,8 @@ UI:RegisterTab("Misc", function(content)
 	-- utilities, settings, etc
 end)
 
+--[[
 Load("Modules/Tabs.lua")(Context, UI)
 Load("Modules/Config.lua")(Context, UI)
 Load("Modules/Utilities.lua")(Context, UI)
+]]
