@@ -6,6 +6,8 @@ local RunService = game:GetService("RunService")
 
 local UI = {}
 
+getgenv().erebus = getgenv().erebus or {}
+
 local Theme = {
 	BG = Color3.fromRGB(14, 14, 18),
 	Panel = Color3.fromRGB(20, 20, 28),
@@ -25,6 +27,12 @@ function UI:Init(Context, Icons)
 	self.Context = Context
 	self.Icons = Icons
 	self.Theme = Theme
+
+	if getgenv().erebus.Instance then
+	    getgenv().erebus.Instance:Destroy()
+	end
+	
+	getgenv().erebus.Instance = UI
 
 	-- ScreenGui
 	local screen = Instance.new("ScreenGui")
@@ -328,7 +336,15 @@ function UI:Init(Context, Icons)
 	
 	local SMOOTHNESS = 14
 
-	RunService.RenderStepped:Connect(function(dt)
+	local topbarConn
+
+	topbarConn = RunService.RenderStepped:Connect(function(dt)
+
+		if not screen.Parent then
+			topbarConn:Disconnect()
+			return
+		end
+			
 		local alpha = 1 - math.exp(-SMOOTHNESS * dt)
 	
 		main.Position = LerpUDim2(main.Position, GoalPosition, alpha)
