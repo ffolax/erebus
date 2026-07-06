@@ -46,6 +46,94 @@ function UI:Init(Context, Icons)
 	ResizeHandle.ImageColor3 = Color3.fromRGB(170,170,170)
 	ResizeHandle.ScaleType = Enum.ScaleType.Fit
 
+	ResizeHandle.MouseEnter:Connect(function()
+
+	    TweenService:Create(
+	        ResizeHandle,
+	        TweenInfo.new(.15),
+	        {
+	            ImageColor3 = Color3.fromRGB(255,255,255),
+	            Size = UDim2.fromOffset(20,20)
+	        }
+	    ):Play()
+	
+	end)
+	
+	ResizeHandle.MouseLeave:Connect(function()
+	
+	    TweenService:Create(
+	        ResizeHandle,
+	        TweenInfo.new(.15),
+	        {
+	            ImageColor3 = Color3.fromRGB(170,170,170),
+	            Size = UDim2.fromOffset(18,18)
+	        }
+	    ):Play()
+	
+	end)
+
+	local UserInputService = game:GetService("UserInputService")
+
+	local Dragging = false
+	
+	local DragStart
+	local StartPosition
+	
+	topbar.InputBegan:Connect(function(input)
+	
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+	
+			Dragging = true
+			DragStart = input.Position
+			StartPosition = main.Position
+	
+		end
+	
+	end)
+	
+	UserInputService.InputEnded:Connect(function(input)
+	
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+	
+			Dragging = false
+	
+		end
+	
+	end)
+	
+	UserInputService.InputChanged:Connect(function(input)
+	
+		if not Dragging then
+			return
+		end
+	
+		if input.UserInputType ~= Enum.UserInputType.MouseMovement then
+			return
+		end
+	
+		local delta = input.Position - DragStart
+	
+		local newPos = UDim2.new(
+			StartPosition.X.Scale,
+			StartPosition.X.Offset + delta.X,
+			StartPosition.Y.Scale,
+			StartPosition.Y.Offset + delta.Y
+		)
+	
+		TweenService:Create(
+			main,
+			TweenInfo.new(
+				0.05,
+				Enum.EasingStyle.Quad,
+				Enum.EasingDirection.Out
+			),
+			{
+				Position = newPos
+			}
+		):Play()
+	
+	end)
+
 	----------------------------------------------------
 	-- TOPBAR
 	----------------------------------------------------
