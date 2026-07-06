@@ -57,33 +57,76 @@ function UI:Init(Context, Icons)
 	title.TextColor3 = Color3.fromRGB(245,245,245)
 	title.Parent = topbar
 
-	local function CreateWindowButton(ImageId)
+	local function CreateWindowButton(Image, HoverColor)
 
-		local button = Instance.new("ImageButton")
-		button.Size = UDim2.fromOffset(28,28)
-		button.BackgroundTransparency = 1
-		button.Image = ImageId
-		button.ScaleType = Enum.ScaleType.Fit
-		button.Parent = topbar
+		local Button = Instance.new("ImageButton")
 	
-		button.MouseEnter:Connect(function()
-			TweenService:Create(button, TweenInfo.new(.15), {
-				ImageColor3 = Color3.new(1,1,1)
-			}):Play()
+		Button.BackgroundTransparency = 1
+		Button.Size = UDim2.fromOffset(26,26)
+	
+		Button.Image = Image
+		Button.ImageColor3 = Color3.fromRGB(185,185,185)
+	
+		Button.MouseEnter:Connect(function()
+	
+			TweenService:Create(
+				Button,
+				TweenInfo.new(.15),
+				{
+					ImageColor3 = HoverColor
+				}
+			):Play()
+
+			TweenService:Create(
+				Button,
+				TweenInfo.new(.15, Enum.EasingStyle.Quad),
+				{
+					Size = UDim2.fromOffset(28,28),
+					ImageColor3 = HoverColor
+				}
+			):Play()
+	
 		end)
 	
-		button.MouseLeave:Connect(function()
-			TweenService:Create(button, TweenInfo.new(.15), {
-				ImageColor3 = Color3.fromRGB(210,210,210)
-			}):Play()
+		Button.MouseLeave:Connect(function()
+	
+			TweenService:Create(
+				Button,
+				TweenInfo.new(.15),
+				{
+					ImageColor3 = Color3.fromRGB(185,185,185)
+				}
+			):Play()
+
+			TweenService:Create(
+				Button,
+				TweenInfo.new(.15, Enum.EasingStyle.Quad),
+				{
+					Size = UDim2.fromOffset(26,26),
+					ImageColor3 = Color3.fromRGB(185,185,185)
+				}
+			):Play()
+	
 		end)
 	
-		return button
+		return Button
+	
 	end
 	
-	local Minimize = CreateWindowButton("rbxassetid://123456789")
-	local Maximize = CreateWindowButton("rbxassetid://987654321")
-	local Close = CreateWindowButton("rbxassetid://555555555")
+	local Exit = CreateWindowButton(
+		self.Icons.Window.Close,
+		Color3.fromRGB(255,80,80)
+	)
+	
+	local Maximize = CreateWindowButton(
+		self.Icons.Window.Maximize,
+		Color3.fromRGB(255,205,70)
+	)
+	
+	local Minimize = CreateWindowButton(
+		self.Icons.Window.Minimize,
+		Color3.fromRGB(70,220,110)
+	)
 	
 	Exit.Parent = topbar
 	Maximize.Parent = topbar
