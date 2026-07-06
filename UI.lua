@@ -136,3 +136,5 @@ function UI:ClearContent()
         end
     end
 end
+
+return UI
