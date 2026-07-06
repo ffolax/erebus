@@ -571,7 +571,7 @@ function UI:Init(Context, Icons)
 	
 	end)
 
-	print("[UI] Modern UI Initialized")
+	print("[EREBUS] UI Initialized")
 end
 
 ----------------------------------------------------
