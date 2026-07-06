@@ -1,4 +1,6 @@
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 local UI = {}
 
@@ -32,7 +34,7 @@ function UI:Init(Context)
 	local topbar = Instance.new("Frame")
 	topbar.Name = "Topbar"
 	topbar.Size = UDim2.new(1, 0, 0, 36)
-	topbar.BackgroundColor3 = Color3.fromRGB(24, 24, 28)
+	topbar.BackgroundColor3 = Color3.fromRGB(28,30,36)
 	topbar.BorderSizePixel = 0
 	topbar.Parent = main
 
@@ -42,15 +44,182 @@ function UI:Init(Context)
 
 	local title = Instance.new("TextLabel")
 	title.Name = "Title"
-	title.Size = UDim2.new(1, -20, 1, 0)
-	title.Position = UDim2.new(0, 10, 0, 0)
+	title.AnchorPoint = Vector2.new(0,0.5)
+	title.Position = UDim2.new(0,12,0.5,0)
+	title.Size = UDim2.new(1,-120,1,0)
 	title.BackgroundTransparency = 1
-	title.Text = "Modern Hub"
-	title.Font = Enum.Font.GothamSemibold
-	title.TextSize = 14
-	title.TextColor3 = Color3.fromRGB(255,255,255)
+	title.Text = "EREBUS"
+	title.Font = Enum.Font.GothamBold
+	title.TextSize = 15
 	title.TextXAlignment = Enum.TextXAlignment.Left
+	title.TextColor3 = Color3.fromRGB(245,245,245)
 	title.Parent = topbar
+
+	local function CreateWindowButton(text)
+
+		local button = Instance.new("TextButton")
+		button.Size = UDim2.fromOffset(28,28)
+		button.BackgroundTransparency = 1
+		button.Text = text
+		button.Font = Enum.Font.GothamBold
+		button.TextSize = 16
+		button.TextColor3 = Color3.fromRGB(220,220,220)
+	
+		button.MouseEnter:Connect(function()
+	
+			TweenService:Create(button,TweenInfo.new(.15),{
+				TextColor3 = Color3.fromRGB(255,255,255)
+			}):Play()
+	
+		end)
+	
+		button.MouseLeave:Connect(function()
+	
+			TweenService:Create(button,TweenInfo.new(.15),{
+				TextColor3 = Color3.fromRGB(220,220,220)
+			}):Play()
+	
+		end)
+	
+		return button
+	
+	end
+	
+	local Exit = CreateWindowButton("✕")
+	local Maximize = CreateWindowButton("□")
+	local Minimize = CreateWindowButton("─")
+	
+	Exit.Parent = topbar
+	Maximize.Parent = topbar
+	Minimize.Parent = topbar
+	
+	Exit.AnchorPoint = Vector2.new(1,.5)
+	Exit.Position = UDim2.new(1,-8,.5,0)
+	
+	Maximize.AnchorPoint = Vector2.new(1,.5)
+	Maximize.Position = UDim2.new(1,-38,.5,0)
+	
+	Minimize.AnchorPoint = Vector2.new(1,.5)
+	Minimize.Position = UDim2.new(1,-68,.5,0)
+
+	Exit.MouseButton1Click:Connect(function()
+
+		screen:Destroy()
+
+	end)
+
+	local Minimized = false
+	local SavedSize = main.Size
+	
+	Minimize.MouseButton1Click:Connect(function()
+	
+		Minimized = not Minimized
+	
+		if Minimized then
+	
+			TweenService:Create(main,TweenInfo.new(.25),{
+				Size = UDim2.new(
+					SavedSize.X.Scale,
+					SavedSize.X.Offset,
+					0,
+					36
+				)
+			}):Play()
+	
+		else
+	
+			TweenService:Create(main,TweenInfo.new(.25),{
+				Size = SavedSize
+			}):Play()
+	
+		end
+	
+	end)
+
+	local Maximized = false
+	local OldPosition = main.Position
+	local OldSize = main.Size
+	
+	Maximize.MouseButton1Click:Connect(function()
+	
+		Maximized = not Maximized
+	
+		if Maximized then
+	
+			OldPosition = main.Position
+			OldSize = main.Size
+	
+			TweenService:Create(main,TweenInfo.new(.3),{
+	
+				Position = UDim2.new(0.05,0,0.05,0),
+				Size = UDim2.new(.9,0,.9,0)
+	
+			}):Play()
+	
+		else
+	
+			TweenService:Create(main,TweenInfo.new(.3),{
+	
+				Position = OldPosition,
+				Size = OldSize
+	
+			}):Play()
+	
+		end
+	
+	end)
+
+	local Dragging = false
+
+	local DragStart
+	local StartPos
+	
+	local GoalPosition = main.Position
+	
+	topbar.InputBegan:Connect(function(input)
+	
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+	
+			Dragging = true
+			DragStart = input.Position
+			StartPos = GoalPosition
+	
+		end
+	
+	end)
+	
+	topbar.InputEnded:Connect(function(input)
+	
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+	
+			Dragging = false
+	
+		end
+	
+	end)
+	
+	UserInputService.InputChanged:Connect(function(input)
+	
+		if Dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+	
+			local Delta = input.Position - DragStart
+	
+			GoalPosition = UDim2.new(
+				StartPos.X.Scale,
+				StartPos.X.Offset + Delta.X,
+				StartPos.Y.Scale,
+				StartPos.Y.Offset + Delta.Y
+			)
+	
+		end
+	
+	end)
+	
+	RunService.RenderStepped:Connect(function()
+	
+		main.Position = main.Position:Lerp(GoalPosition,.22)
+	
+	end)
 
 	----------------------------------------------------
 	-- SIDEBAR
@@ -60,7 +229,7 @@ function UI:Init(Context)
 	sidebar.Name = "Sidebar"
 	sidebar.Size = UDim2.new(0, 170, 1, -36)
 	sidebar.Position = UDim2.new(0,0,0,36)
-	sidebar.BackgroundColor3 = Color3.fromRGB(22,22,26)
+	sidebar.BackgroundColor3 = Color3.fromRGB(23,25,31)
 	sidebar.BorderSizePixel = 0
 	sidebar.Parent = main
 
