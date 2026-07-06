@@ -22,13 +22,29 @@ function UI:Init(Context, Icons)
 	main.Size = UDim2.new(0, 650, 0, 420)
 	main.Position = UDim2.new(0.5, -325, 0.5, -210)
 	main.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
+	main.BackgroundTransparency = 0.05
 	main.BorderSizePixel = 0
 	main.ClipsDescendants = true
 	main.Parent = screen
 
+	local Stroke = Instance.new("UIStroke")
+	Stroke.Thickness = 1
+	Stroke.Transparency = 0.6
+	Stroke.Color = Color3.fromRGB(255,255,255)
+	Stroke.Parent = main
+
 	local mainCorner = Instance.new("UICorner")
 	mainCorner.CornerRadius = UDim.new(0, 10)
 	mainCorner.Parent = main
+
+	local Acrylic = Instance.new("Frame")
+	Acrylic.Name = "Acrylic"
+	Acrylic.Size = UDim2.new(1,0,1,0)
+	Acrylic.BackgroundColor3 = Color3.fromRGB(255,255,255)
+	Acrylic.BackgroundTransparency = 0.97
+	Acrylic.BorderSizePixel = 0
+	Acrylic.ZIndex = 0
+	Acrylic.Parent = main
 	
 	----------------------------------------------------
 	-- TOPBAR
@@ -37,7 +53,8 @@ function UI:Init(Context, Icons)
 	local topbar = Instance.new("Frame")
 	topbar.Name = "Topbar"
 	topbar.Size = UDim2.new(1, 0, 0, 36)
-	topbar.BackgroundColor3 = Color3.fromRGB(28,30,36)
+	topbar.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+	topbar.BackgroundTransparency = 0.15
 	topbar.BorderSizePixel = 0
 	topbar.Parent = main
 	topbar.ZIndex = 2
@@ -45,6 +62,14 @@ function UI:Init(Context, Icons)
 	local topCorner = Instance.new("UICorner")
 	topCorner.CornerRadius = UDim.new(0, 10)
 	topCorner.Parent = topbar
+
+	local TopGrad = Instance.new("UIGradient")
+	TopGrad.Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(35,35,45)),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(20,20,25))
+	})
+	TopGrad.Rotation = 90
+	TopGrad.Parent = topbar
 
 	local title = Instance.new("TextLabel")
 	title.Name = "Title"
