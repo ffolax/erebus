@@ -7,7 +7,7 @@ Context.State = {
 }
 
 function Context:Init()
-    print("[Context] Initialized")
+    print("[EREBUS] Initialized")
 end
 
 function Context:RegisterTab(name, data)
