@@ -4,24 +4,25 @@ local RunService = game:GetService("RunService")
 
 local UI = {}
 
+local Theme = {
+	BG = Color3.fromRGB(14, 14, 18),
+	Panel = Color3.fromRGB(20, 20, 28),
+	Topbar = Color3.fromRGB(24, 24, 35),
+	Sidebar = Color3.fromRGB(18, 18, 26),
+
+	Accent = Color3.fromRGB(160, 90, 255), -- main purple
+	AccentDark = Color3.fromRGB(120, 60, 220),
+	AccentGlow = Color3.fromRGB(190, 120, 255),
+
+	Text = Color3.fromRGB(235, 235, 245),
+	SubText = Color3.fromRGB(170, 170, 185)
+}
+
 function UI:Init(Context, Icons)
 
 	self.Context = Context
 	self.Icons = Icons
-
-	local Theme = {
-		BG = Color3.fromRGB(14, 14, 18),
-		Panel = Color3.fromRGB(20, 20, 28),
-		Topbar = Color3.fromRGB(24, 24, 35),
-		Sidebar = Color3.fromRGB(18, 18, 26),
-	
-		Accent = Color3.fromRGB(160, 90, 255), -- main purple
-		AccentDark = Color3.fromRGB(120, 60, 220),
-		AccentGlow = Color3.fromRGB(190, 120, 255),
-	
-		Text = Color3.fromRGB(235, 235, 245),
-		SubText = Color3.fromRGB(170, 170, 185)
-	}
+	self.Theme = Theme
 
 	-- ScreenGui
 	local screen = Instance.new("ScreenGui")
@@ -576,11 +577,16 @@ end
 -- ACTIVE TAB
 ----------------------------------------------------
 
-local function AddGlow(obj)
+local function AddGlow(self, obj)
+	if obj:FindFirstChild("GlowStroke") then
+		obj.GlowStroke:Destroy()
+	end
+
 	local stroke = Instance.new("UIStroke")
+	stroke.Name = "GlowStroke"
 	stroke.Thickness = 1
 	stroke.Transparency = 0.6
-	stroke.Color = Theme.Accent
+	stroke.Color = self.Theme.Accent
 	stroke.Parent = obj
 
 	return stroke
@@ -598,7 +604,7 @@ function UI:SetActiveTab(button)
 			}
 		):Play()
 
-		AddGlow(button)
+		AddGlow(self, button)
 
 	end
 
@@ -611,8 +617,6 @@ function UI:SetActiveTab(button)
 			BackgroundColor3 = Theme.AccentDark
 		}
 	):Play()
-
-	AddGlow(button)
 
 end
 
