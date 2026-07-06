@@ -9,6 +9,20 @@ function UI:Init(Context, Icons)
 	self.Context = Context
 	self.Icons = Icons
 
+	local Theme = {
+		BG = Color3.fromRGB(14, 14, 18),
+		Panel = Color3.fromRGB(20, 20, 28),
+		Topbar = Color3.fromRGB(24, 24, 35),
+		Sidebar = Color3.fromRGB(18, 18, 26),
+	
+		Accent = Color3.fromRGB(160, 90, 255), -- main purple
+		AccentDark = Color3.fromRGB(120, 60, 220),
+		AccentGlow = Color3.fromRGB(190, 120, 255),
+	
+		Text = Color3.fromRGB(235, 235, 245),
+		SubText = Color3.fromRGB(170, 170, 185)
+	}
+
 	-- ScreenGui
 	local screen = Instance.new("ScreenGui")
 	screen.Name = "erebusUi"
@@ -21,30 +35,20 @@ function UI:Init(Context, Icons)
 	main.Name = "Main"
 	main.Size = UDim2.new(0, 650, 0, 420)
 	main.Position = UDim2.new(0.5, -325, 0.5, -210)
-	main.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
-	main.BackgroundTransparency = 0.05
+	main.BackgroundColor3 = Theme.BG
 	main.BorderSizePixel = 0
 	main.ClipsDescendants = true
 	main.Parent = screen
 
 	local Stroke = Instance.new("UIStroke")
 	Stroke.Thickness = 1
-	Stroke.Transparency = 0.6
-	Stroke.Color = Color3.fromRGB(255,255,255)
+	Stroke.Transparency = 0.65
+	Stroke.Color = Theme.AccentDark
 	Stroke.Parent = main
 
 	local mainCorner = Instance.new("UICorner")
 	mainCorner.CornerRadius = UDim.new(0, 10)
 	mainCorner.Parent = main
-
-	local Acrylic = Instance.new("Frame")
-	Acrylic.Name = "Acrylic"
-	Acrylic.Size = UDim2.new(1,0,1,0)
-	Acrylic.BackgroundColor3 = Color3.fromRGB(255,255,255)
-	Acrylic.BackgroundTransparency = 0.97
-	Acrylic.BorderSizePixel = 0
-	Acrylic.ZIndex = 0
-	Acrylic.Parent = main
 	
 	----------------------------------------------------
 	-- TOPBAR
@@ -53,7 +57,7 @@ function UI:Init(Context, Icons)
 	local topbar = Instance.new("Frame")
 	topbar.Name = "Topbar"
 	topbar.Size = UDim2.new(1, 0, 0, 36)
-	topbar.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+	topbar.BackgroundColor3 = Theme.Topbar
 	topbar.BackgroundTransparency = 0.15
 	topbar.BorderSizePixel = 0
 	topbar.Parent = main
@@ -63,13 +67,13 @@ function UI:Init(Context, Icons)
 	topCorner.CornerRadius = UDim.new(0, 10)
 	topCorner.Parent = topbar
 
-	local TopGrad = Instance.new("UIGradient")
-	TopGrad.Color = ColorSequence.new({
-		ColorSequenceKeypoint.new(0, Color3.fromRGB(35,35,45)),
-		ColorSequenceKeypoint.new(1, Color3.fromRGB(20,20,25))
+	local grad = Instance.new("UIGradient")
+	grad.Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, Theme.Topbar),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(30, 25, 45))
 	})
-	TopGrad.Rotation = 90
-	TopGrad.Parent = topbar
+	grad.Rotation = 90
+	grad.Parent = topbar
 
 	local title = Instance.new("TextLabel")
 	title.Name = "Title"
@@ -313,7 +317,7 @@ function UI:Init(Context, Icons)
 	sidebar.Name = "Sidebar"
 	sidebar.Size = UDim2.new(0,170,1,-25)
 	sidebar.Position = UDim2.new(0,0,0,25)
-	sidebar.BackgroundColor3 = Color3.fromRGB(23,25,31)
+	sidebar.BackgroundColor3 = Theme.Sidebar
 	sidebar.BorderSizePixel = 0
 	sidebar.Parent = main
 
@@ -334,6 +338,13 @@ function UI:Init(Context, Icons)
 	list.HorizontalAlignment = Enum.HorizontalAlignment.Center
 	list.SortOrder = Enum.SortOrder.LayoutOrder
 	list.Parent = tabHolder
+
+	local Divider = Instance.new("Frame")
+	Divider.Size = UDim2.new(0,1,1,0)
+	Divider.Position = UDim2.new(1,0,0,0)
+	Divider.BackgroundColor3 = Theme.AccentDark
+	Divider.BorderSizePixel = 0
+	Divider.Parent = sidebar
 
 	----------------------------------------------------
 	-- CONTENT
@@ -497,7 +508,7 @@ function UI:CreateTab(name, callback)
 	local button = Instance.new("TextButton")
 	button.Name = name
 	button.Size = UDim2.new(1,0,0,38)
-	button.BackgroundColor3 = Color3.fromRGB(30,30,35)
+	button.BackgroundColor3 = Color3.fromRGB(25,25,35)
 	button.BorderSizePixel = 0
 	button.Text = name
 	button.TextColor3 = Color3.fromRGB(200,200,200)
@@ -517,7 +528,7 @@ function UI:CreateTab(name, callback)
 				button,
 				TweenInfo.new(.15),
 				{
-					BackgroundColor3 = Color3.fromRGB(45,45,55)
+					BackgroundColor3 = Color3.fromRGB(40,35,60)
 				}
 			):Play()
 
@@ -533,7 +544,7 @@ function UI:CreateTab(name, callback)
 				button,
 				TweenInfo.new(.15),
 				{
-					BackgroundColor3 = Color3.fromRGB(30,30,35)
+					BackgroundColor3 = Color3.fromRGB(25,25,35)
 				}
 			):Play()
 
@@ -572,7 +583,7 @@ function UI:SetActiveTab(button)
 			self.ActiveTab,
 			TweenInfo.new(.15),
 			{
-				BackgroundColor3 = Color3.fromRGB(30,30,35)
+				BackgroundColor3 = Color3.fromRGB(25,25,35)
 			}
 		):Play()
 
@@ -584,7 +595,7 @@ function UI:SetActiveTab(button)
 		button,
 		TweenInfo.new(.15),
 		{
-			BackgroundColor3 = Color3.fromRGB(70,70,90)
+			BackgroundColor3 = Theme.AccentDark
 		}
 	):Play()
 
