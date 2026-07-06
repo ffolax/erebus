@@ -4,8 +4,10 @@ local RunService = game:GetService("RunService")
 
 local UI = {}
 
-function UI:Init(Context)
+function UI:Init(Context, Icons)
+
 	self.Context = Context
+	self.Icons = Icons
 
 	-- ScreenGui
 	local screen = Instance.new("ScreenGui")
