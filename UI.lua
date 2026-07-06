@@ -512,6 +512,37 @@ function UI:Init(Context, Icons)
 	self.Tabs = {}
 	self.ActiveTab = nil
 
+	task.spawn(function()
+
+		TweenService:Create(intro, TweenInfo.new(0.4), {
+			TextTransparency = 0
+		}):Play()
+	
+		task.wait(0.8)
+	
+		TweenService:Create(intro, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+			Position = UDim2.new(0, 20, 0, 18),
+			TextSize = 18,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			AnchorPoint = Vector2.new(0, 0.5)
+		}):Play()
+	
+		task.wait(0.6)
+	
+		main.Visible = true
+	
+		task.wait(0.2)
+	
+		TweenService:Create(intro, TweenInfo.new(0.25), {
+			TextTransparency = 1
+		}):Play()
+	
+		task.wait(0.3)
+	
+		intro:Destroy()
+	
+	end)
+
 	print("[UI] Modern UI Initialized")
 end
 
@@ -582,46 +613,6 @@ function UI:CreateTab(name, callback)
 	end)
 
 	self.Tabs[name] = button
-
-	task.spawn(function()
-	
-		-- fade in title
-		TweenService:Create(intro, TweenInfo.new(0.4), {
-			TextTransparency = 0
-		}):Play()
-	
-		task.wait(0.8)
-	
-		-- move title to topbar position
-		TweenService:Create(intro, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
-			Position = UDim2.new(0, 70, 0, 18),
-			TextSize = 16,
-			TextXAlignment = Enum.TextXAlignment.Left,
-			AnchorPoint = Vector2.new(0, 0.5)
-		}):Play()
-	
-		task.wait(0.55)
-	
-		-- reveal UI
-		main.Visible = true
-		main.BackgroundTransparency = 1
-	
-		TweenService:Create(main, TweenInfo.new(0.35), {
-			BackgroundTransparency = 0
-		}):Play()
-	
-		-- fade out intro label
-		task.wait(0.2)
-	
-		TweenService:Create(intro, TweenInfo.new(0.25), {
-			TextTransparency = 1
-		}):Play()
-	
-		task.wait(0.3)
-	
-		intro:Destroy()
-	
-	end)
 
 	return button
 
