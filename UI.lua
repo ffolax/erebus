@@ -31,8 +31,22 @@ function UI:Init(Context, Icons)
 	screen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	screen.Parent = game.CoreGui
 
+	local intro = Instance.new("TextLabel")
+	intro.Name = "Intro"
+	intro.Parent = screen
+	intro.AnchorPoint = Vector2.new(0.5, 0.5)
+	intro.Position = UDim2.new(0.5, 0, 0.5, 0)
+	intro.Size = UDim2.new(0, 300, 0, 80)
+	intro.BackgroundTransparency = 1
+	intro.Text = "EREBUS"
+	intro.Font = Enum.Font.GothamBlack
+	intro.TextSize = 28
+	intro.TextColor3 = Theme.Accent
+	intro.TextTransparency = 1
+
 	-- Main Window
 	local main = Instance.new("Frame")
+	main.Visible = false
 	main.Name = "Main"
 	main.Size = UDim2.new(0, 650, 0, 420)
 	main.Position = UDim2.new(0.5, -325, 0.5, -210)
@@ -568,6 +582,46 @@ function UI:CreateTab(name, callback)
 	end)
 
 	self.Tabs[name] = button
+
+	task.spawn(function()
+	
+		-- fade in title
+		TweenService:Create(intro, TweenInfo.new(0.4), {
+			TextTransparency = 0
+		}):Play()
+	
+		task.wait(0.8)
+	
+		-- move title to topbar position
+		TweenService:Create(intro, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+			Position = UDim2.new(0, 70, 0, 18),
+			TextSize = 16,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			AnchorPoint = Vector2.new(0, 0.5)
+		}):Play()
+	
+		task.wait(0.55)
+	
+		-- reveal UI
+		main.Visible = true
+		main.BackgroundTransparency = 1
+	
+		TweenService:Create(main, TweenInfo.new(0.35), {
+			BackgroundTransparency = 0
+		}):Play()
+	
+		-- fade out intro label
+		task.wait(0.2)
+	
+		TweenService:Create(intro, TweenInfo.new(0.25), {
+			TextTransparency = 1
+		}):Play()
+	
+		task.wait(0.3)
+	
+		intro:Destroy()
+	
+	end)
 
 	return button
 
