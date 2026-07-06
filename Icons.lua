@@ -4,7 +4,7 @@ local Icons = {
 
 		Close = "rbxassetid://81815853030648",
 		Minimize = "rbxassetid://137886184910708",
-		Maximize = "rbxassetid://120769735278144",
+		Maximize = "rbxassetid://128205294691906",
 
 	},
 
@@ -93,9 +93,10 @@ local Icons = {
 		Keybind = "",
 		Search = "",
 		Plus = "",
-		Minus = "",
+		Minus = "rbxassetid://137886184910708",
 		Check = "",
-		X = "",
+		X = "rbxassetid://81815853030648",
+		Resize = "rbxassetid://116489695745926"
 
 	},
 
