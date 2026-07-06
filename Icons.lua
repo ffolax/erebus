@@ -2,9 +2,9 @@ local Icons = {
 
 	Window = {
 
-		Close = "",
-		Minimize = "",
-		Maximize = "",
+		Close = "rbxassetid://81815853030648",
+		Minimize = "rbxassetid://137886184910708",
+		Maximize = "rbxassetid://120769735278144",
 
 	},
 
