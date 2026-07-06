@@ -595,6 +595,8 @@ function UI:CreateTab(name, callback)
 	corner.CornerRadius = UDim.new(0,6)
 	corner.Parent = button
 
+	AddGlow(self, button)
+
 	button.MouseEnter:Connect(function()
 
 		if self.ActiveTab ~= button then
@@ -650,7 +652,7 @@ end
 -- ACTIVE TAB
 ----------------------------------------------------
 
-local function AddGlow(self, obj)
+function AddGlow(self, obj)
 	if obj:FindFirstChild("GlowStroke") then
 		obj.GlowStroke:Destroy()
 	end
