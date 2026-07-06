@@ -13,7 +13,7 @@ local function Load(url)
     return result
 end
 
-local BASE = "https://raw.githubusercontent.com/USER/REPO/main/"
+local BASE = "https://raw.githubusercontent.com/ffolax/erebus/main/"
 
 local Context = Load(BASE .. "Context.lua")
 assert(Context, "Failed to load Context")
