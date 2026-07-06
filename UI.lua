@@ -30,6 +30,23 @@ function UI:Init(Context, Icons)
 	mainCorner.Parent = main
 
 	----------------------------------------------------
+	-- RESIZEHANDLE
+	----------------------------------------------------
+
+	local ResizeHandle = Instance.new("ImageButton")
+	ResizeHandle.Name = "ResizeHandle"
+	ResizeHandle.Parent = main
+	
+	ResizeHandle.AnchorPoint = Vector2.new(1,1)
+	ResizeHandle.Position = UDim2.new(1,-6,1,-6)
+	ResizeHandle.Size = UDim2.fromOffset(18,18)
+	
+	ResizeHandle.BackgroundTransparency = 1
+	ResizeHandle.Image = self.Icons.Controls.Resize
+	ResizeHandle.ImageColor3 = Color3.fromRGB(170,170,170)
+	ResizeHandle.ScaleType = Enum.ScaleType.Fit
+
+	----------------------------------------------------
 	-- TOPBAR
 	----------------------------------------------------
 
