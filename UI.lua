@@ -29,12 +29,199 @@ function UI:Init(Context, Icons)
 	local mainCorner = Instance.new("UICorner")
 	mainCorner.CornerRadius = UDim.new(0, 10)
 	mainCorner.Parent = main
-
+	
 	----------------------------------------------------
-	-- RESIZE HANDLE
+	-- TOPBAR
 	----------------------------------------------------
 
+	local topbar = Instance.new("Frame")
+	topbar.Name = "Topbar"
+	topbar.Size = UDim2.new(1, 0, 0, 36)
+	topbar.BackgroundColor3 = Color3.fromRGB(28,30,36)
+	topbar.BorderSizePixel = 0
+	topbar.Parent = main
+
+	local topCorner = Instance.new("UICorner")
+	topCorner.CornerRadius = UDim.new(0, 10)
+	topCorner.Parent = topbar
+
+	local title = Instance.new("TextLabel")
+	title.Name = "Title"
+	title.AnchorPoint = Vector2.new(0,0.5)
+	title.Position = UDim2.new(0,12,0.5,0)
+	title.Size = UDim2.new(1,-120,1,0)
+	title.BackgroundTransparency = 1
+	title.Text = "EREBUS"
+	title.Font = Enum.Font.GothamBold
+	title.TextSize = 15
+	title.TextXAlignment = Enum.TextXAlignment.Left
+	title.TextColor3 = Color3.fromRGB(245,245,245)
+	title.Parent = topbar
+
+	local ResizeHandle
+
+	local function CreateWindowButton(Image, HoverColor)
+
+		local Button = Instance.new("ImageButton")
+	
+		Button.BackgroundTransparency = 1
+		Button.Size = UDim2.fromOffset(26,26)
+	
+		Button.Image = Image
+		Button.ImageColor3 = Color3.fromRGB(185,185,185)
+	
+		Button.MouseEnter:Connect(function()
+	
+			TweenService:Create(
+				Button,
+				TweenInfo.new(.15),
+				{
+					ImageColor3 = HoverColor
+				}
+			):Play()
+
+			TweenService:Create(
+				Button,
+				TweenInfo.new(.15, Enum.EasingStyle.Quad),
+				{
+					Size = UDim2.fromOffset(28,28),
+					ImageColor3 = HoverColor
+				}
+			):Play()
+	
+		end)
+	
+		Button.MouseLeave:Connect(function()
+	
+			TweenService:Create(
+				Button,
+				TweenInfo.new(.15),
+				{
+					ImageColor3 = Color3.fromRGB(185,185,185)
+				}
+			):Play()
+
+			TweenService:Create(
+				Button,
+				TweenInfo.new(.15, Enum.EasingStyle.Quad),
+				{
+					Size = UDim2.fromOffset(26,26),
+					ImageColor3 = Color3.fromRGB(185,185,185)
+				}
+			):Play()
+	
+		end)
+	
+		return Button
+	
+	end
+	
+	local Exit = CreateWindowButton(
+		self.Icons.Window.Close,
+		Color3.fromRGB(255,80,80)
+	)
+	
+	local Maximize = CreateWindowButton(
+		self.Icons.Window.Maximize,
+		Color3.fromRGB(255,205,70)
+	)
+	
+	local Minimize = CreateWindowButton(
+		self.Icons.Window.Minimize,
+		Color3.fromRGB(70,220,110)
+	)
+	
+	Exit.Parent = topbar
+	Maximize.Parent = topbar
+	Minimize.Parent = topbar
+	
+	Exit.AnchorPoint = Vector2.new(1,.5)
+	Exit.Position = UDim2.new(1,-8,.5,0)
+	
+	Maximize.AnchorPoint = Vector2.new(1,.5)
+	Maximize.Position = UDim2.new(1,-38,.5,0)
+	
+	Minimize.AnchorPoint = Vector2.new(1,.5)
+	Minimize.Position = UDim2.new(1,-68,.5,0)
+
+	Exit.MouseButton1Click:Connect(function()
+
+		screen:Destroy()
+
+	end)
+
+	local GoalPosition = main.Position
+	local GoalSize = main.Size
+	
+	local Minimized = false
+	local SavedSize = GoalSize
+	
+	Minimize.MouseButton1Click:Connect(function()
+	
+		if not Minimized then
+			SavedSize = GoalSize
+		end
+	
+		Minimized = not Minimized
+
+		if ResizeHandle then
+
+			if Minimized then
+			    ResizeHandle.Visible = false
+			else
+			    ResizeHandle.Visible = true
+			end
+
+		end
+	
+		if Minimized then
+	
+			GoalSize = UDim2.new(
+				SavedSize.X.Scale,
+				SavedSize.X.Offset,
+				0,
+				36
+			)
+	
+		else
+	
+			GoalSize = SavedSize
+	
+		end
+	
+	end)
+
+	local Maximized = false
+	local OldPosition = GoalPosition
+	local OldSize = GoalSize
+	
+	Maximize.MouseButton1Click:Connect(function()
+	
+		Maximized = not Maximized
+	
+		if Maximized then
+	
+			OldPosition = GoalPosition
+			OldSize = GoalSize
+	
+			GoalPosition = UDim2.new(0.05,0,0.05,0)
+			GoalSize = UDim2.new(0.9,0,0.9,0)
+	
+		else
+	
+			GoalPosition = OldPosition
+			GoalSize = OldSize
+	
+		end
+	
+	end)
+
+	local Dragging = false
 	local Resizing = false
+	
+	local DragStart
+	local StartPos
+	
 	local ResizeStart
 	local StartSize
 	
@@ -44,7 +231,100 @@ function UI:Init(Context, Icons)
 	local MAX_WIDTH = 1200
 	local MAX_HEIGHT = 800
 	
-	local ResizeHandle = Instance.new("ImageButton")
+	topbar.InputBegan:Connect(function(input)
+	
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+	
+			Dragging = true
+			DragStart = input.Position
+			StartPos = GoalPosition
+	
+		end
+	
+	end)
+	
+	topbar.InputEnded:Connect(function(input)
+	
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+	
+			Dragging = false
+	
+		end
+	
+	end)
+	
+	UserInputService.InputChanged:Connect(function(input)
+	
+		if Dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+	
+			local Delta = input.Position - DragStart
+	
+			GoalPosition = UDim2.new(
+				StartPos.X.Scale,
+				StartPos.X.Offset + Delta.X,
+				StartPos.Y.Scale,
+				StartPos.Y.Offset + Delta.Y
+			)
+	
+		end
+	
+	end)
+	
+	RunService.RenderStepped:Connect(function(dt)
+
+		local alpha = math.clamp(dt * 18, 0, 1)
+	
+		main.Position = main.Position:Lerp(GoalPosition, alpha)
+		main.Size = main.Size:Lerp(GoalSize, alpha)
+	
+	end)
+
+	----------------------------------------------------
+	-- SIDEBAR
+	----------------------------------------------------
+
+	local sidebar = Instance.new("Frame")
+	sidebar.Name = "Sidebar"
+	sidebar.Size = UDim2.new(0, 170, 1, -36)
+	sidebar.Position = UDim2.new(0,0,0,36)
+	sidebar.BackgroundColor3 = Color3.fromRGB(23,25,31)
+	sidebar.BorderSizePixel = 0
+	sidebar.Parent = main
+
+	local sideCorner = Instance.new("UICorner")
+	sideCorner.CornerRadius = UDim.new(0,10)
+	sideCorner.Parent = sidebar
+
+	local tabHolder = Instance.new("Frame")
+	tabHolder.Name = "TabHolder"
+	tabHolder.BackgroundTransparency = 1
+	tabHolder.Size = UDim2.new(1,-10,1,-10)
+	tabHolder.Position = UDim2.new(0,5,0,5)
+	tabHolder.Parent = sidebar
+
+	local list = Instance.new("UIListLayout")
+	list.Padding = UDim.new(0,5)
+	list.FillDirection = Enum.FillDirection.Vertical
+	list.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	list.SortOrder = Enum.SortOrder.LayoutOrder
+	list.Parent = tabHolder
+
+	----------------------------------------------------
+	-- CONTENT
+	----------------------------------------------------
+
+	local content = Instance.new("Frame")
+	content.Name = "Content"
+	content.Size = UDim2.new(1,-170,1,-36)
+	content.Position = UDim2.new(0,170,0,36)
+	content.BackgroundTransparency = 1
+	content.Parent = main
+
+	----------------------------------------------------
+	-- RESIZE HANDLE
+	----------------------------------------------------
+	
+	ResizeHandle = Instance.new("ImageButton")
 	ResizeHandle.Name = "ResizeHandle"
 	ResizeHandle.Parent = main
 	
@@ -164,282 +444,6 @@ function UI:Init(Context, Icons)
 		):Play()
 	
 	end)
-	
-	----------------------------------------------------
-	-- TOPBAR
-	----------------------------------------------------
-
-	local topbar = Instance.new("Frame")
-	topbar.Name = "Topbar"
-	topbar.Size = UDim2.new(1, 0, 0, 36)
-	topbar.BackgroundColor3 = Color3.fromRGB(28,30,36)
-	topbar.BorderSizePixel = 0
-	topbar.Parent = main
-
-	local topCorner = Instance.new("UICorner")
-	topCorner.CornerRadius = UDim.new(0, 10)
-	topCorner.Parent = topbar
-
-	local title = Instance.new("TextLabel")
-	title.Name = "Title"
-	title.AnchorPoint = Vector2.new(0,0.5)
-	title.Position = UDim2.new(0,12,0.5,0)
-	title.Size = UDim2.new(1,-120,1,0)
-	title.BackgroundTransparency = 1
-	title.Text = "EREBUS"
-	title.Font = Enum.Font.GothamBold
-	title.TextSize = 15
-	title.TextXAlignment = Enum.TextXAlignment.Left
-	title.TextColor3 = Color3.fromRGB(245,245,245)
-	title.Parent = topbar
-
-	local function CreateWindowButton(Image, HoverColor)
-
-		local Button = Instance.new("ImageButton")
-	
-		Button.BackgroundTransparency = 1
-		Button.Size = UDim2.fromOffset(26,26)
-	
-		Button.Image = Image
-		Button.ImageColor3 = Color3.fromRGB(185,185,185)
-	
-		Button.MouseEnter:Connect(function()
-	
-			TweenService:Create(
-				Button,
-				TweenInfo.new(.15),
-				{
-					ImageColor3 = HoverColor
-				}
-			):Play()
-
-			TweenService:Create(
-				Button,
-				TweenInfo.new(.15, Enum.EasingStyle.Quad),
-				{
-					Size = UDim2.fromOffset(28,28),
-					ImageColor3 = HoverColor
-				}
-			):Play()
-	
-		end)
-	
-		Button.MouseLeave:Connect(function()
-	
-			TweenService:Create(
-				Button,
-				TweenInfo.new(.15),
-				{
-					ImageColor3 = Color3.fromRGB(185,185,185)
-				}
-			):Play()
-
-			TweenService:Create(
-				Button,
-				TweenInfo.new(.15, Enum.EasingStyle.Quad),
-				{
-					Size = UDim2.fromOffset(26,26),
-					ImageColor3 = Color3.fromRGB(185,185,185)
-				}
-			):Play()
-	
-		end)
-	
-		return Button
-	
-	end
-	
-	local Exit = CreateWindowButton(
-		self.Icons.Window.Close,
-		Color3.fromRGB(255,80,80)
-	)
-	
-	local Maximize = CreateWindowButton(
-		self.Icons.Window.Maximize,
-		Color3.fromRGB(255,205,70)
-	)
-	
-	local Minimize = CreateWindowButton(
-		self.Icons.Window.Minimize,
-		Color3.fromRGB(70,220,110)
-	)
-	
-	Exit.Parent = topbar
-	Maximize.Parent = topbar
-	Minimize.Parent = topbar
-	
-	Exit.AnchorPoint = Vector2.new(1,.5)
-	Exit.Position = UDim2.new(1,-8,.5,0)
-	
-	Maximize.AnchorPoint = Vector2.new(1,.5)
-	Maximize.Position = UDim2.new(1,-38,.5,0)
-	
-	Minimize.AnchorPoint = Vector2.new(1,.5)
-	Minimize.Position = UDim2.new(1,-68,.5,0)
-
-	Exit.MouseButton1Click:Connect(function()
-
-		screen:Destroy()
-
-	end)
-
-	local GoalPosition = main.Position
-	local GoalSize = main.Size
-	
-	local Minimized = false
-	local SavedSize = GoalSize
-	
-	Minimize.MouseButton1Click:Connect(function()
-	
-		if not Minimized then
-			SavedSize = GoalSize
-		end
-	
-		Minimized = not Minimized
-
-		sidebar.Visible = not Minimized
-		content.Visible = not Minimized
-		ResizeHandle.Visible = not Minimized
-	
-		if Minimized then
-
-			ResizeHandle.Visible = false
-	
-			GoalSize = UDim2.new(
-				SavedSize.X.Scale,
-				SavedSize.X.Offset,
-				0,
-				36
-			)
-	
-		else
-
-			ResizeHandle.Visible = false
-	
-			GoalSize = SavedSize
-	
-		end
-	
-	end)
-
-	local Maximized = false
-	local OldPosition = GoalPosition
-	local OldSize = GoalSize
-	
-	Maximize.MouseButton1Click:Connect(function()
-	
-		Maximized = not Maximized
-	
-		if Maximized then
-	
-			OldPosition = GoalPosition
-			OldSize = GoalSize
-	
-			GoalPosition = UDim2.new(0.05,0,0.05,0)
-			GoalSize = UDim2.new(0.9,0,0.9,0)
-	
-		else
-	
-			GoalPosition = OldPosition
-			GoalSize = OldSize
-	
-		end
-	
-	end)
-
-	local Dragging = false
-	
-	local DragStart
-	local StartPos
-	
-	topbar.InputBegan:Connect(function(input)
-	
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-	
-			Dragging = true
-			DragStart = input.Position
-			StartPos = GoalPosition
-	
-		end
-	
-	end)
-	
-	topbar.InputEnded:Connect(function(input)
-	
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-	
-			Dragging = false
-	
-		end
-	
-	end)
-	
-	UserInputService.InputChanged:Connect(function(input)
-	
-		if Dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-	
-			local Delta = input.Position - DragStart
-	
-			GoalPosition = UDim2.new(
-				StartPos.X.Scale,
-				StartPos.X.Offset + Delta.X,
-				StartPos.Y.Scale,
-				StartPos.Y.Offset + Delta.Y
-			)
-	
-		end
-	
-	end)
-	
-	RunService.RenderStepped:Connect(function(dt)
-
-		local alpha = math.clamp(dt * 18, 0, 1)
-	
-		main.Position = main.Position:Lerp(GoalPosition, alpha)
-		main.Size = main.Size:Lerp(GoalSize, alpha)
-	
-	end)
-
-	----------------------------------------------------
-	-- SIDEBAR
-	----------------------------------------------------
-
-	local sidebar = Instance.new("Frame")
-	sidebar.Name = "Sidebar"
-	sidebar.Size = UDim2.new(0, 170, 1, -36)
-	sidebar.Position = UDim2.new(0,0,0,36)
-	sidebar.BackgroundColor3 = Color3.fromRGB(23,25,31)
-	sidebar.BorderSizePixel = 0
-	sidebar.Parent = main
-
-	local sideCorner = Instance.new("UICorner")
-	sideCorner.CornerRadius = UDim.new(0,10)
-	sideCorner.Parent = sidebar
-
-	local tabHolder = Instance.new("Frame")
-	tabHolder.Name = "TabHolder"
-	tabHolder.BackgroundTransparency = 1
-	tabHolder.Size = UDim2.new(1,-10,1,-10)
-	tabHolder.Position = UDim2.new(0,5,0,5)
-	tabHolder.Parent = sidebar
-
-	local list = Instance.new("UIListLayout")
-	list.Padding = UDim.new(0,5)
-	list.FillDirection = Enum.FillDirection.Vertical
-	list.HorizontalAlignment = Enum.HorizontalAlignment.Center
-	list.SortOrder = Enum.SortOrder.LayoutOrder
-	list.Parent = tabHolder
-
-	----------------------------------------------------
-	-- CONTENT
-	----------------------------------------------------
-
-	local content = Instance.new("Frame")
-	content.Name = "Content"
-	content.Size = UDim2.new(1,-170,1,-36)
-	content.Position = UDim2.new(0,170,0,36)
-	content.BackgroundTransparency = 1
-	content.Parent = main
 
 	----------------------------------------------------
 	-- STORE REFERENCES
