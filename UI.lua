@@ -40,6 +40,7 @@ function UI:Init(Context, Icons)
 	topbar.BackgroundColor3 = Color3.fromRGB(28,30,36)
 	topbar.BorderSizePixel = 0
 	topbar.Parent = main
+	topbar.ZIndex = 2
 
 	local topCorner = Instance.new("UICorner")
 	topCorner.CornerRadius = UDim.new(0, 10)
@@ -285,8 +286,8 @@ function UI:Init(Context, Icons)
 
 	local sidebar = Instance.new("Frame")
 	sidebar.Name = "Sidebar"
-	sidebar.Size = UDim2.new(0,170,1,-34)
-	sidebar.Position = UDim2.new(0,0,0,34)
+	sidebar.Size = UDim2.new(0,170,1,-38)
+	sidebar.Position = UDim2.new(0,0,0,30)
 	sidebar.BackgroundColor3 = Color3.fromRGB(23,25,31)
 	sidebar.BorderSizePixel = 0
 	sidebar.Parent = main
@@ -294,13 +295,6 @@ function UI:Init(Context, Icons)
 	local sideCorner = Instance.new("UICorner")
 	sideCorner.CornerRadius = UDim.new(0,10)
 	sideCorner.Parent = sidebar
-
-	local TopCover = Instance.new("Frame")
-	TopCover.Size = UDim2.new(1,0,0,10)
-	TopCover.Position = UDim2.new(0,0,0,0)
-	TopCover.BackgroundColor3 = sidebar.BackgroundColor3
-	TopCover.BorderSizePixel = 0
-	TopCover.Parent = sidebar
 
 	local tabHolder = Instance.new("Frame")
 	tabHolder.Name = "TabHolder"
