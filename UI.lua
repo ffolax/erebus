@@ -11,7 +11,7 @@ function UI:Init(Context, Icons)
 
 	-- ScreenGui
 	local screen = Instance.new("ScreenGui")
-	screen.Name = "ModernHub"
+	screen.Name = "erebusUi"
 	screen.ResetOnSpawn = false
 	screen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	screen.Parent = game.CoreGui
