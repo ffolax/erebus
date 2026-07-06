@@ -295,6 +295,13 @@ function UI:Init(Context, Icons)
 	sideCorner.CornerRadius = UDim.new(0,10)
 	sideCorner.Parent = sidebar
 
+	local TopCover = Instance.new("Frame")
+	TopCover.Size = UDim2.new(1,0,0,10)
+	TopCover.Position = UDim2.new(0,0,0,0)
+	TopCover.BackgroundColor3 = sidebar.BackgroundColor3
+	TopCover.BorderSizePixel = 0
+	TopCover.Parent = sidebar
+
 	local tabHolder = Instance.new("Frame")
 	tabHolder.Name = "TabHolder"
 	tabHolder.BackgroundTransparency = 1
