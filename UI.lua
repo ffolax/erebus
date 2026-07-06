@@ -148,17 +148,17 @@ function UI:Init(Context, Icons)
 	
 	local Exit = CreateWindowButton(
 		self.Icons.Window.Close,
-		Color3.fromRGB(255,80,80)
+		Color3.fromRGB(255, 80, 90)
 	)
 	
 	local Maximize = CreateWindowButton(
 		self.Icons.Window.Maximize,
-		Color3.fromRGB(255,205,70)
+		Color3.fromRGB(190, 120, 255)
 	)
 	
 	local Minimize = CreateWindowButton(
 		self.Icons.Window.Minimize,
-		Color3.fromRGB(70,220,110)
+		Color3.fromRGB(140, 100, 255)
 	)
 	
 	Exit.Parent = topbar
@@ -383,7 +383,7 @@ function UI:Init(Context, Icons)
 		    {
 		        Rotation = 90,
 		        Size = UDim2.fromOffset(22,22),
-		        ImageColor3 = Color3.fromRGB(255,255,255)
+		    	ImageColor3 = Theme.AccentGlow
 		    }
 		):Play()
 	
@@ -399,7 +399,7 @@ function UI:Init(Context, Icons)
 			ResizeHandle,
 			TweenInfo.new(.15, Enum.EasingStyle.Quad),
 			{
-				ImageColor3 = Color3.fromRGB(170,170,170),
+				ImageColor3 = Theme.Accent,
 				Size = UDim2.fromOffset(18,18),
 				Rotation = 0
 			}
@@ -575,6 +575,16 @@ end
 -- ACTIVE TAB
 ----------------------------------------------------
 
+local function AddGlow(obj)
+	local stroke = Instance.new("UIStroke")
+	stroke.Thickness = 1
+	stroke.Transparency = 0.6
+	stroke.Color = Theme.Accent
+	stroke.Parent = obj
+
+	return stroke
+end
+
 function UI:SetActiveTab(button)
 
 	if self.ActiveTab then
@@ -598,6 +608,8 @@ function UI:SetActiveTab(button)
 			BackgroundColor3 = Theme.AccentDark
 		}
 	):Play()
+
+	AddGlow(button)
 
 end
 
