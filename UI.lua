@@ -285,8 +285,8 @@ function UI:Init(Context, Icons)
 
 	local sidebar = Instance.new("Frame")
 	sidebar.Name = "Sidebar"
-	sidebar.Size = UDim2.new(0, 170, 1, -36)
-	sidebar.Position = UDim2.new(0,0,0,36)
+	sidebar.Size = UDim2.new(0,170,1,-34)
+	sidebar.Position = UDim2.new(0,0,0,34)
 	sidebar.BackgroundColor3 = Color3.fromRGB(23,25,31)
 	sidebar.BorderSizePixel = 0
 	sidebar.Parent = main
