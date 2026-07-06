@@ -286,8 +286,8 @@ function UI:Init(Context, Icons)
 
 	local sidebar = Instance.new("Frame")
 	sidebar.Name = "Sidebar"
-	sidebar.Size = UDim2.new(0,170,1,-38)
-	sidebar.Position = UDim2.new(0,0,0,30)
+	sidebar.Size = UDim2.new(0,170,1,-25)
+	sidebar.Position = UDim2.new(0,0,0,25)
 	sidebar.BackgroundColor3 = Color3.fromRGB(23,25,31)
 	sidebar.BorderSizePixel = 0
 	sidebar.Parent = main
@@ -300,7 +300,7 @@ function UI:Init(Context, Icons)
 	tabHolder.Name = "TabHolder"
 	tabHolder.BackgroundTransparency = 1
 	tabHolder.Size = UDim2.new(1,-10,1,-10)
-	tabHolder.Position = UDim2.new(0,5,0,5)
+	tabHolder.Position = UDim2.new(0,5,0,15)
 	tabHolder.Parent = sidebar
 
 	local list = Instance.new("UIListLayout")
