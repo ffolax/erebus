@@ -28,112 +28,7 @@ function UI:Init(Context, Icons)
 	local mainCorner = Instance.new("UICorner")
 	mainCorner.CornerRadius = UDim.new(0, 10)
 	mainCorner.Parent = main
-
-	----------------------------------------------------
-	-- RESIZEHANDLE
-	----------------------------------------------------
-
-	local ResizeHandle = Instance.new("ImageButton")
-	ResizeHandle.Name = "ResizeHandle"
-	ResizeHandle.Parent = main
 	
-	ResizeHandle.AnchorPoint = Vector2.new(1,1)
-	ResizeHandle.Position = UDim2.new(1,-6,1,-6)
-	ResizeHandle.Size = UDim2.fromOffset(18,18)
-	
-	ResizeHandle.BackgroundTransparency = 1
-	ResizeHandle.Image = self.Icons.Controls.Resize
-	ResizeHandle.ImageColor3 = Color3.fromRGB(170,170,170)
-	ResizeHandle.ScaleType = Enum.ScaleType.Fit
-
-	ResizeHandle.MouseEnter:Connect(function()
-
-	    TweenService:Create(
-	        ResizeHandle,
-	        TweenInfo.new(.15),
-	        {
-	            ImageColor3 = Color3.fromRGB(255,255,255),
-	            Size = UDim2.fromOffset(20,20)
-	        }
-	    ):Play()
-	
-	end)
-	
-	ResizeHandle.MouseLeave:Connect(function()
-	
-	    TweenService:Create(
-	        ResizeHandle,
-	        TweenInfo.new(.15),
-	        {
-	            ImageColor3 = Color3.fromRGB(170,170,170),
-	            Size = UDim2.fromOffset(18,18)
-	        }
-	    ):Play()
-	
-	end)
-
-	local UserInputService = game:GetService("UserInputService")
-
-	local Dragging = false
-	
-	local DragStart
-	local StartPosition
-	
-	topbar.InputBegan:Connect(function(input)
-	
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-	
-			Dragging = true
-			DragStart = input.Position
-			StartPosition = main.Position
-	
-		end
-	
-	end)
-	
-	UserInputService.InputEnded:Connect(function(input)
-	
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-	
-			Dragging = false
-	
-		end
-	
-	end)
-	
-	UserInputService.InputChanged:Connect(function(input)
-	
-		if not Dragging then
-			return
-		end
-	
-		if input.UserInputType ~= Enum.UserInputType.MouseMovement then
-			return
-		end
-	
-		local delta = input.Position - DragStart
-	
-		local newPos = UDim2.new(
-			StartPosition.X.Scale,
-			StartPosition.X.Offset + delta.X,
-			StartPosition.Y.Scale,
-			StartPosition.Y.Offset + delta.Y
-		)
-	
-		TweenService:Create(
-			main,
-			TweenInfo.new(
-				0.05,
-				Enum.EasingStyle.Quad,
-				Enum.EasingDirection.Out
-			),
-			{
-				Position = newPos
-			}
-		):Play()
-	
-	end)
-
 	----------------------------------------------------
 	-- TOPBAR
 	----------------------------------------------------
@@ -252,37 +147,40 @@ function UI:Init(Context, Icons)
 
 	end)
 
+	local GoalPosition = main.Position
+	local GoalSize = main.Size
+	
 	local Minimized = false
-	local SavedSize = main.Size
+	local SavedSize = GoalSize
 	
 	Minimize.MouseButton1Click:Connect(function()
+	
+		if not Minimized then
+			SavedSize = GoalSize
+		end
 	
 		Minimized = not Minimized
 	
 		if Minimized then
 	
-			TweenService:Create(main,TweenInfo.new(.25),{
-				Size = UDim2.new(
-					SavedSize.X.Scale,
-					SavedSize.X.Offset,
-					0,
-					36
-				)
-			}):Play()
+			GoalSize = UDim2.new(
+				SavedSize.X.Scale,
+				SavedSize.X.Offset,
+				0,
+				36
+			)
 	
 		else
 	
-			TweenService:Create(main,TweenInfo.new(.25),{
-				Size = SavedSize
-			}):Play()
+			GoalSize = SavedSize
 	
 		end
 	
 	end)
 
 	local Maximized = false
-	local OldPosition = main.Position
-	local OldSize = main.Size
+	local OldPosition = GoalPosition
+	local OldSize = GoalSize
 	
 	Maximize.MouseButton1Click:Connect(function()
 	
@@ -290,35 +188,35 @@ function UI:Init(Context, Icons)
 	
 		if Maximized then
 	
-			OldPosition = main.Position
-			OldSize = main.Size
+			OldPosition = GoalPosition
+			OldSize = GoalSize
 	
-			TweenService:Create(main,TweenInfo.new(.3),{
-	
-				Position = UDim2.new(0.05,0,0.05,0),
-				Size = UDim2.new(.9,0,.9,0)
-	
-			}):Play()
+			GoalPosition = UDim2.new(0.05,0,0.05,0)
+			GoalSize = UDim2.new(0.9,0,0.9,0)
 	
 		else
 	
-			TweenService:Create(main,TweenInfo.new(.3),{
-	
-				Position = OldPosition,
-				Size = OldSize
-	
-			}):Play()
+			GoalPosition = OldPosition
+			GoalSize = OldSize
 	
 		end
 	
 	end)
 
 	local Dragging = false
-
+	local Resizing = false
+	
 	local DragStart
 	local StartPos
 	
-	local GoalPosition = main.Position
+	local ResizeStart
+	local StartSize
+	
+	local MIN_WIDTH = 550
+	local MIN_HEIGHT = 350
+	
+	local MAX_WIDTH = 1200
+	local MAX_HEIGHT = 800
 	
 	topbar.InputBegan:Connect(function(input)
 	
@@ -359,9 +257,12 @@ function UI:Init(Context, Icons)
 	
 	end)
 	
-	RunService.RenderStepped:Connect(function()
+	RunService.RenderStepped:Connect(function(dt)
+
+		local alpha = math.clamp(dt * 18, 0, 1)
 	
-		main.Position = main.Position:Lerp(GoalPosition,.22)
+		main.Position = main.Position:Lerp(GoalPosition, alpha)
+		main.Size = main.Size:Lerp(GoalSize, alpha)
 	
 	end)
 
@@ -405,6 +306,131 @@ function UI:Init(Context, Icons)
 	content.Position = UDim2.new(0,170,0,36)
 	content.BackgroundTransparency = 1
 	content.Parent = main
+
+	----------------------------------------------------
+	-- RESIZE HANDLE
+	----------------------------------------------------
+	
+	local ResizeHandle = Instance.new("ImageButton")
+	ResizeHandle.Name = "ResizeHandle"
+	ResizeHandle.Parent = main
+	
+	ResizeHandle.AnchorPoint = Vector2.new(1,1)
+	ResizeHandle.Position = UDim2.new(1,-6,1,-6)
+	ResizeHandle.Size = UDim2.fromOffset(18,18)
+	
+	ResizeHandle.BackgroundTransparency = 1
+	ResizeHandle.Image = self.Icons.Controls.Resize
+	ResizeHandle.ImageColor3 = Color3.fromRGB(170,170,170)
+	ResizeHandle.ScaleType = Enum.ScaleType.Fit
+	ResizeHandle.ZIndex = 10
+
+	ResizeHandle.MouseEnter:Connect(function()
+	
+		TweenService:Create(
+		    ResizeHandle,
+		    TweenInfo.new(.15, Enum.EasingStyle.Quad),
+		    {
+		        Rotation = 90,
+		        Size = UDim2.fromOffset(22,22),
+		        ImageColor3 = Color3.fromRGB(255,255,255)
+		    }
+		):Play()
+	
+	end)
+	
+	ResizeHandle.MouseLeave:Connect(function()
+	
+		if Resizing then
+			return
+		end
+	
+		TweenService:Create(
+			ResizeHandle,
+			TweenInfo.new(.15, Enum.EasingStyle.Quad),
+			{
+				ImageColor3 = Color3.fromRGB(170,170,170),
+				Size = UDim2.fromOffset(18,18),
+				Rotation = 0
+			}
+		):Play()
+	
+	end)
+
+	ResizeHandle.InputBegan:Connect(function(input)
+
+		if input.UserInputType ~= Enum.UserInputType.MouseButton1 then
+			return
+		end
+	
+		Resizing = true
+	
+		ResizeStart = input.Position
+		StartSize = GoalSize
+	
+		TweenService:Create(
+			ResizeHandle,
+			TweenInfo.new(.15),
+			{
+				Rotation = 90,
+				Size = UDim2.fromOffset(22,22),
+				ImageColor3 = Color3.fromRGB(255,255,255)
+			}
+		):Play()
+	
+	end)
+	
+	UserInputService.InputChanged:Connect(function(input)
+	
+		if not Resizing then
+			return
+		end
+	
+		if input.UserInputType ~= Enum.UserInputType.MouseMovement then
+			return
+		end
+	
+		local delta = input.Position - ResizeStart
+	
+		local width = math.clamp(
+			StartSize.X.Offset + delta.X,
+			MIN_WIDTH,
+			MAX_WIDTH
+		)
+	
+		local height = math.clamp(
+			StartSize.Y.Offset + delta.Y,
+			MIN_HEIGHT,
+			MAX_HEIGHT
+		)
+	
+		GoalSize = UDim2.fromOffset(width, height)
+	
+	end)
+	
+	UserInputService.InputEnded:Connect(function(input)
+	
+		if input.UserInputType ~= Enum.UserInputType.MouseButton1 then
+			return
+		end
+	
+		if not Resizing then
+			return
+		end
+	
+		Resizing = false
+	
+		TweenService:Create(
+			ResizeHandle,
+			TweenInfo.new(.15),
+			{
+				Rotation = 0,
+				Size = UDim2.fromOffset(18,18),
+				ImageColor3 = Color3.fromRGB(170,170,170)
+			}
+		):Play()
+	
+	end)
 
 	----------------------------------------------------
 	-- STORE REFERENCES
