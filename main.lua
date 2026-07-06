@@ -1,4 +1,4 @@
-local uiScript = "https://raw.githubusercontent.com/yourusername/yourrepo/main/ui.lua"
+local uiScript = "https://raw.githubusercontent.com/ffolax/erebus/main/ui.lua"
 local success, result = pcall(loadstring(http.request(uiScript)))
 
 if success then
