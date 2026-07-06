@@ -23,6 +23,7 @@ function UI:Init(Context, Icons)
 	main.Position = UDim2.new(0.5, -325, 0.5, -210)
 	main.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
 	main.BorderSizePixel = 0
+	main.ClipsDescendants = true
 	main.Parent = screen
 
 	local mainCorner = Instance.new("UICorner")
