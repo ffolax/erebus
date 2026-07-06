@@ -523,7 +523,6 @@ function UI:Init(Context, Icons)
 		TweenService:Create(intro, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
 			Position = UDim2.new(0, 20, 0, 18),
 			TextSize = 18,
-			TextXAlignment = Enum.TextXAlignment.Left,
 			AnchorPoint = Vector2.new(0, 0.5)
 		}):Play()
 	
