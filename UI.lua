@@ -344,6 +344,7 @@ function UI:Init(Context, Icons)
 	Divider.Position = UDim2.new(1,0,0,0)
 	Divider.BackgroundColor3 = Theme.AccentDark
 	Divider.BorderSizePixel = 0
+	Divider.BackgroundTransparency = 0.65
 	Divider.Parent = sidebar
 
 	----------------------------------------------------
@@ -593,7 +594,7 @@ function UI:SetActiveTab(button)
 			self.ActiveTab,
 			TweenInfo.new(.15),
 			{
-				BackgroundColor3 = Theme.AccentDark
+				BackgroundColor3 = Color3.fromRGB(25,25,35)
 			}
 		):Play()
 
@@ -607,9 +608,11 @@ function UI:SetActiveTab(button)
 		button,
 		TweenInfo.new(.15),
 		{
-			BackgroundColor3 = Color3.fromRGB(25,25,35)
+			BackgroundColor3 = Theme.AccentDark
 		}
 	):Play()
+
+	AddGlow(button)
 
 end
 
