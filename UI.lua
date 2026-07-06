@@ -6,8 +6,6 @@ local RunService = game:GetService("RunService")
 
 local UI = {}
 
-self.Connections = {}
-
 getgenv().erebus = getgenv().erebus or {}
 
 local Theme = {
@@ -64,6 +62,7 @@ function UI:Init(Context, Icons)
 	self.Context = Context
 	self.Icons = Icons
 	self.Theme = Theme
+	self.Connections = {}
 
 	-- ScreenGui
 	local screen = Instance.new("ScreenGui")
