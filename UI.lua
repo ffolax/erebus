@@ -6,6 +6,8 @@ local RunService = game:GetService("RunService")
 
 local UI = {}
 
+self.Connections = {}
+
 getgenv().erebus = getgenv().erebus or {}
 
 local Theme = {
@@ -22,17 +24,46 @@ local Theme = {
 	SubText = Color3.fromRGB(170, 170, 185)
 }
 
+function UI:Destroy()
+
+    -- Disconnect all connections
+    if self.Connections then
+        for _, connection in ipairs(self.Connections) do
+            if connection.Connected then
+                connection:Disconnect()
+            end
+        end
+    end
+
+    -- Destroy the GUI
+    if self.Screen then
+        self.Screen:Destroy()
+    end
+
+end
+
+function UI:Connect(signal, callback)
+
+	local connection = signal:Connect(callback)
+	table.insert(self.Connections, connection)
+
+	return connection
+
+end
+
+getgenv().Erebus = getgenv().Erebus or {}
+
+if getgenv().Erebus.Instance then
+    getgenv().Erebus.Instance:Destroy()
+end
+
+getgenv().Erebus.Instance = UI
+
 function UI:Init(Context, Icons)
 
 	self.Context = Context
 	self.Icons = Icons
 	self.Theme = Theme
-
-	if getgenv().erebus.Instance then
-	    getgenv().erebus.Instance:Destroy()
-	end
-	
-	getgenv().erebus.Instance = UI
 
 	-- ScreenGui
 	local screen = Instance.new("ScreenGui")
@@ -125,7 +156,7 @@ function UI:Init(Context, Icons)
 		Button.Image = Image
 		Button.ImageColor3 = Color3.fromRGB(185,185,185)
 	
-		Button.MouseEnter:Connect(function()
+		self:Connect(Button.MouseEnter,function()
 	
 			TweenService:Create(
 				Button,
@@ -146,7 +177,7 @@ function UI:Init(Context, Icons)
 	
 		end)
 	
-		Button.MouseLeave:Connect(function()
+		self:Connect(Button.MouseLeave,function()
 	
 			TweenService:Create(
 				Button,
@@ -199,7 +230,7 @@ function UI:Init(Context, Icons)
 	Minimize.AnchorPoint = Vector2.new(1,.5)
 	Minimize.Position = UDim2.new(1,-68,.5,0)
 
-	Exit.MouseButton1Click:Connect(function()
+	self:Connect(Exit.MouseButton1Click,function()
 
 		screen:Destroy()
 
@@ -211,7 +242,7 @@ function UI:Init(Context, Icons)
 	local Minimized = false
 	local SavedSize = GoalSize
 	
-	Minimize.MouseButton1Click:Connect(function()
+	self:Connect(Minimize.MouseButton1Click,function()
 	
 		if not Minimized then
 			SavedSize = GoalSize
@@ -250,7 +281,7 @@ function UI:Init(Context, Icons)
 	local OldPosition = GoalPosition
 	local OldSize = GoalSize
 	
-	Maximize.MouseButton1Click:Connect(function()
+	self:Connect(Maximize.MouseButton1Click,function()
 	
 		Maximized = not Maximized
 	
@@ -286,7 +317,7 @@ function UI:Init(Context, Icons)
 	local MAX_WIDTH = 1200
 	local MAX_HEIGHT = 800
 	
-	topbar.InputBegan:Connect(function(input)
+	self:Connect(topbar.InputBegan,function(input)
 	
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 	
@@ -298,7 +329,7 @@ function UI:Init(Context, Icons)
 	
 	end)
 	
-	topbar.InputEnded:Connect(function(input)
+	self:Connect(topbar.InputEnded,function(input)
 	
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 	
@@ -308,7 +339,7 @@ function UI:Init(Context, Icons)
 	
 	end)
 	
-	UserInputService.InputChanged:Connect(function(input)
+	self:Connect(UserInputService.InputChanged, function(input)
 	
 		if Dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
 	
@@ -336,19 +367,13 @@ function UI:Init(Context, Icons)
 	
 	local SMOOTHNESS = 14
 
-	local topbarConn
+	self:Connect(RunService.RenderStepped, function(dt)
 
-	topbarConn = RunService.RenderStepped:Connect(function(dt)
-
-		if not screen.Parent then
-			topbarConn:Disconnect()
-			return
-		end
-			
 		local alpha = 1 - math.exp(-SMOOTHNESS * dt)
 	
 		main.Position = LerpUDim2(main.Position, GoalPosition, alpha)
 		main.Size = LerpUDim2(main.Size, GoalSize, alpha)
+	
 	end)
 
 	----------------------------------------------------
@@ -418,7 +443,7 @@ function UI:Init(Context, Icons)
 	ResizeHandle.ScaleType = Enum.ScaleType.Fit
 	ResizeHandle.ZIndex = 10
 
-	ResizeHandle.MouseEnter:Connect(function()
+	self:Connect(ResizeHandle.MouseEnter,function()
 	
 		TweenService:Create(
 		    ResizeHandle,
@@ -432,7 +457,7 @@ function UI:Init(Context, Icons)
 	
 	end)
 	
-	ResizeHandle.MouseLeave:Connect(function()
+	self:Connect(ResizeHandle.MouseLeave,function()
 	
 		if Resizing then
 			return
@@ -450,7 +475,7 @@ function UI:Init(Context, Icons)
 	
 	end)
 
-	ResizeHandle.InputBegan:Connect(function(input)
+	self:Connect(ResizeHandle.InputBegan,function(input)
 
 		if input.UserInputType ~= Enum.UserInputType.MouseButton1 then
 			return
@@ -473,7 +498,7 @@ function UI:Init(Context, Icons)
 	
 	end)
 	
-	UserInputService.InputChanged:Connect(function(input)
+	self:Connect(UserInputService.InputChanged,function(input)
 	
 		if not Resizing then
 			return
@@ -492,7 +517,7 @@ function UI:Init(Context, Icons)
 	
 	end)
 	
-	UserInputService.InputEnded:Connect(function(input)
+	self:Connect(UserInputService.InputEnded,function(input)
 	
 		if input.UserInputType ~= Enum.UserInputType.MouseButton1 then
 			return
@@ -613,7 +638,7 @@ function UI:CreateTab(name, callback)
 
 	AddGlow(self, button)
 
-	button.MouseEnter:Connect(function()
+	self:Connect(button.MouseEnter,function()
 
 		if self.ActiveTab ~= button then
 
@@ -629,7 +654,7 @@ function UI:CreateTab(name, callback)
 
 	end)
 
-	button.MouseLeave:Connect(function()
+	self:Connect(button.MouseLeave,function()
 
 		if self.ActiveTab ~= button then
 
@@ -645,7 +670,7 @@ function UI:CreateTab(name, callback)
 
 	end)
 
-	button.MouseButton1Click:Connect(function()
+	self:Connect(button.MouseButton1Click,function()
 
 		self:SetActiveTab(button)
 
