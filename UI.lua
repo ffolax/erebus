@@ -29,6 +29,141 @@ function UI:Init(Context, Icons)
 	local mainCorner = Instance.new("UICorner")
 	mainCorner.CornerRadius = UDim.new(0, 10)
 	mainCorner.Parent = main
+
+	----------------------------------------------------
+	-- RESIZE HANDLE
+	----------------------------------------------------
+
+	local Resizing = false
+	local ResizeStart
+	local StartSize
+	
+	local MIN_WIDTH = 550
+	local MIN_HEIGHT = 350
+	
+	local MAX_WIDTH = 1200
+	local MAX_HEIGHT = 800
+	
+	local ResizeHandle = Instance.new("ImageButton")
+	ResizeHandle.Name = "ResizeHandle"
+	ResizeHandle.Parent = main
+	
+	ResizeHandle.AnchorPoint = Vector2.new(1,1)
+	ResizeHandle.Position = UDim2.new(1,-6,1,-6)
+	ResizeHandle.Size = UDim2.fromOffset(18,18)
+	
+	ResizeHandle.BackgroundTransparency = 1
+	ResizeHandle.Image = self.Icons.Controls.Resize
+	ResizeHandle.ImageColor3 = Color3.fromRGB(170,170,170)
+	ResizeHandle.ScaleType = Enum.ScaleType.Fit
+	ResizeHandle.ZIndex = 10
+
+	ResizeHandle.MouseEnter:Connect(function()
+	
+		TweenService:Create(
+		    ResizeHandle,
+		    TweenInfo.new(.15, Enum.EasingStyle.Quad),
+		    {
+		        Rotation = 90,
+		        Size = UDim2.fromOffset(22,22),
+		        ImageColor3 = Color3.fromRGB(255,255,255)
+		    }
+		):Play()
+	
+	end)
+	
+	ResizeHandle.MouseLeave:Connect(function()
+	
+		if Resizing then
+			return
+		end
+	
+		TweenService:Create(
+			ResizeHandle,
+			TweenInfo.new(.15, Enum.EasingStyle.Quad),
+			{
+				ImageColor3 = Color3.fromRGB(170,170,170),
+				Size = UDim2.fromOffset(18,18),
+				Rotation = 0
+			}
+		):Play()
+	
+	end)
+
+	ResizeHandle.InputBegan:Connect(function(input)
+
+		if input.UserInputType ~= Enum.UserInputType.MouseButton1 then
+			return
+		end
+	
+		Resizing = true
+	
+		ResizeStart = input.Position
+		StartSize = GoalSize
+	
+		TweenService:Create(
+			ResizeHandle,
+			TweenInfo.new(.15),
+			{
+				Rotation = 90,
+				Size = UDim2.fromOffset(22,22),
+				ImageColor3 = Color3.fromRGB(255,255,255)
+			}
+		):Play()
+	
+	end)
+	
+	UserInputService.InputChanged:Connect(function(input)
+	
+		if not Resizing then
+			return
+		end
+	
+		if input.UserInputType ~= Enum.UserInputType.MouseMovement then
+			return
+		end
+	
+		local delta = input.Position - ResizeStart
+	
+		local width = math.clamp(
+			StartSize.X.Offset + delta.X,
+			MIN_WIDTH,
+			MAX_WIDTH
+		)
+	
+		local height = math.clamp(
+			StartSize.Y.Offset + delta.Y,
+			MIN_HEIGHT,
+			MAX_HEIGHT
+		)
+	
+		GoalSize = UDim2.fromOffset(width, height)
+	
+	end)
+	
+	UserInputService.InputEnded:Connect(function(input)
+	
+		if input.UserInputType ~= Enum.UserInputType.MouseButton1 then
+			return
+		end
+	
+		if not Resizing then
+			return
+		end
+	
+		Resizing = false
+	
+		TweenService:Create(
+			ResizeHandle,
+			TweenInfo.new(.15),
+			{
+				Rotation = 0,
+				Size = UDim2.fromOffset(18,18),
+				ImageColor3 = Color3.fromRGB(170,170,170)
+			}
+		):Play()
+	
+	end)
 	
 	----------------------------------------------------
 	-- TOPBAR
@@ -161,8 +296,14 @@ function UI:Init(Context, Icons)
 		end
 	
 		Minimized = not Minimized
+
+		sidebar.Visible = not Minimized
+		content.Visible = not Minimized
+		ResizeHandle.Visible = not Minimized
 	
 		if Minimized then
+
+			ResizeHandle.Visible = false
 	
 			GoalSize = UDim2.new(
 				SavedSize.X.Scale,
@@ -172,6 +313,8 @@ function UI:Init(Context, Icons)
 			)
 	
 		else
+
+			ResizeHandle.Visible = false
 	
 			GoalSize = SavedSize
 	
@@ -205,19 +348,9 @@ function UI:Init(Context, Icons)
 	end)
 
 	local Dragging = false
-	local Resizing = false
 	
 	local DragStart
 	local StartPos
-	
-	local ResizeStart
-	local StartSize
-	
-	local MIN_WIDTH = 550
-	local MIN_HEIGHT = 350
-	
-	local MAX_WIDTH = 1200
-	local MAX_HEIGHT = 800
 	
 	topbar.InputBegan:Connect(function(input)
 	
@@ -307,131 +440,6 @@ function UI:Init(Context, Icons)
 	content.Position = UDim2.new(0,170,0,36)
 	content.BackgroundTransparency = 1
 	content.Parent = main
-
-	----------------------------------------------------
-	-- RESIZE HANDLE
-	----------------------------------------------------
-	
-	local ResizeHandle = Instance.new("ImageButton")
-	ResizeHandle.Name = "ResizeHandle"
-	ResizeHandle.Parent = main
-	
-	ResizeHandle.AnchorPoint = Vector2.new(1,1)
-	ResizeHandle.Position = UDim2.new(1,-6,1,-6)
-	ResizeHandle.Size = UDim2.fromOffset(18,18)
-	
-	ResizeHandle.BackgroundTransparency = 1
-	ResizeHandle.Image = self.Icons.Controls.Resize
-	ResizeHandle.ImageColor3 = Color3.fromRGB(170,170,170)
-	ResizeHandle.ScaleType = Enum.ScaleType.Fit
-	ResizeHandle.ZIndex = 10
-
-	ResizeHandle.MouseEnter:Connect(function()
-	
-		TweenService:Create(
-		    ResizeHandle,
-		    TweenInfo.new(.15, Enum.EasingStyle.Quad),
-		    {
-		        Rotation = 90,
-		        Size = UDim2.fromOffset(22,22),
-		        ImageColor3 = Color3.fromRGB(255,255,255)
-		    }
-		):Play()
-	
-	end)
-	
-	ResizeHandle.MouseLeave:Connect(function()
-	
-		if Resizing then
-			return
-		end
-	
-		TweenService:Create(
-			ResizeHandle,
-			TweenInfo.new(.15, Enum.EasingStyle.Quad),
-			{
-				ImageColor3 = Color3.fromRGB(170,170,170),
-				Size = UDim2.fromOffset(18,18),
-				Rotation = 0
-			}
-		):Play()
-	
-	end)
-
-	ResizeHandle.InputBegan:Connect(function(input)
-
-		if input.UserInputType ~= Enum.UserInputType.MouseButton1 then
-			return
-		end
-	
-		Resizing = true
-	
-		ResizeStart = input.Position
-		StartSize = GoalSize
-	
-		TweenService:Create(
-			ResizeHandle,
-			TweenInfo.new(.15),
-			{
-				Rotation = 90,
-				Size = UDim2.fromOffset(22,22),
-				ImageColor3 = Color3.fromRGB(255,255,255)
-			}
-		):Play()
-	
-	end)
-	
-	UserInputService.InputChanged:Connect(function(input)
-	
-		if not Resizing then
-			return
-		end
-	
-		if input.UserInputType ~= Enum.UserInputType.MouseMovement then
-			return
-		end
-	
-		local delta = input.Position - ResizeStart
-	
-		local width = math.clamp(
-			StartSize.X.Offset + delta.X,
-			MIN_WIDTH,
-			MAX_WIDTH
-		)
-	
-		local height = math.clamp(
-			StartSize.Y.Offset + delta.Y,
-			MIN_HEIGHT,
-			MAX_HEIGHT
-		)
-	
-		GoalSize = UDim2.fromOffset(width, height)
-	
-	end)
-	
-	UserInputService.InputEnded:Connect(function(input)
-	
-		if input.UserInputType ~= Enum.UserInputType.MouseButton1 then
-			return
-		end
-	
-		if not Resizing then
-			return
-		end
-	
-		Resizing = false
-	
-		TweenService:Create(
-			ResizeHandle,
-			TweenInfo.new(.15),
-			{
-				Rotation = 0,
-				Size = UDim2.fromOffset(18,18),
-				ImageColor3 = Color3.fromRGB(170,170,170)
-			}
-		):Play()
-	
-	end)
 
 	----------------------------------------------------
 	-- STORE REFERENCES
