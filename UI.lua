@@ -593,9 +593,11 @@ function UI:SetActiveTab(button)
 			self.ActiveTab,
 			TweenInfo.new(.15),
 			{
-				BackgroundColor3 = Color3.fromRGB(25,25,35)
+				BackgroundColor3 = Theme.AccentDark
 			}
 		):Play()
+
+		AddGlow(button)
 
 	end
 
@@ -605,11 +607,9 @@ function UI:SetActiveTab(button)
 		button,
 		TweenInfo.new(.15),
 		{
-			BackgroundColor3 = Theme.AccentDark
+			BackgroundColor3 = Color3.fromRGB(25,25,35)
 		}
 	):Play()
-
-	AddGlow(button)
 
 end
 
