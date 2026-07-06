@@ -1,8 +1,8 @@
 return function()
     -- Create main UI container
     local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "DarkUI"
-    screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    screenGui.Name = "ErebusUI"
+    screenGui.Parent = game.CoreGui
     
     -- Dark theme colors
     local colors = {
