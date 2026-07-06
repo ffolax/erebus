@@ -1,26 +1,29 @@
 return function(Context, UI)
 
-    local Tabs = {}
+    UI:CreateTab("Main", function(content)
 
-    Tabs.Main = {
-        OnOpen = function()
-            print("Main tab opened")
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(1, 0, 0, 40)
+        label.BackgroundTransparency = 1
+        label.Text = "Welcome to Main Tab"
+        label.TextColor3 = Color3.fromRGB(255,255,255)
+        label.Font = Enum.Font.Gotham
+        label.TextSize = 16
+        label.Parent = content
 
-            UI:CreateButton("Test Button", function()
-                print("Clicked!")
-            end)
-        end
-    }
+    end)
 
-    Tabs.Settings = {
-        OnOpen = function()
-            print("Settings tab opened")
-        end
-    }
+    UI:CreateTab("Settings", function(content)
 
-    for name, data in pairs(Tabs) do
-        Context:RegisterTab(name, data)
-    end
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(1, 0, 0, 40)
+        label.BackgroundTransparency = 1
+        label.Text = "Settings Tab"
+        label.TextColor3 = Color3.fromRGB(255,255,255)
+        label.Font = Enum.Font.Gotham
+        label.TextSize = 16
+        label.Parent = content
 
-    Context:SetActiveTab("Main")
+    end)
+
 end
