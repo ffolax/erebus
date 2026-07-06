@@ -6,8 +6,6 @@ local RunService = game:GetService("RunService")
 
 local UI = {}
 
-getgenv().erebus = getgenv().erebus or {}
-
 local Theme = {
 	BG = Color3.fromRGB(14, 14, 18),
 	Panel = Color3.fromRGB(20, 20, 28),
@@ -49,15 +47,15 @@ function UI:Connect(signal, callback)
 
 end
 
-getgenv().Erebus = getgenv().Erebus or {}
-
-if getgenv().Erebus.Instance then
-    getgenv().Erebus.Instance:Destroy()
-end
-
-getgenv().Erebus.Instance = UI
-
 function UI:Init(Context, Icons)
+
+	getgenv().Erebus = getgenv().Erebus or {}
+
+	if getgenv().Erebus.Instance then
+	    getgenv().Erebus.Instance:Destroy()
+	end
+	
+	getgenv().Erebus.Instance = self
 
 	self.Context = Context
 	self.Icons = Icons
