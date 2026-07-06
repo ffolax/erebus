@@ -315,13 +315,22 @@ function UI:Init(Context, Icons)
 	
 	end)
 	
-	RunService.RenderStepped:Connect(function(dt)
+	local function LerpUDim2(a, b, t)
+		return UDim2.new(
+			a.X.Scale + (b.X.Scale - a.X.Scale) * t,
+			a.X.Offset + (b.X.Offset - a.X.Offset) * t,
+			a.Y.Scale + (b.Y.Scale - a.Y.Scale) * t,
+			a.Y.Offset + (b.Y.Offset - a.Y.Offset) * t
+		)
+	end
+	
+	local SMOOTHNESS = 14
 
-		local alpha = math.clamp(dt * 18, 0, 1)
+	RunService.RenderStepped:Connect(function(dt)
+		local alpha = 1 - math.exp(-SMOOTHNESS * dt)
 	
-		main.Position = main.Position:Lerp(GoalPosition, alpha)
-		main.Size = main.Size:Lerp(GoalSize, alpha)
-	
+		main.Position = LerpUDim2(main.Position, GoalPosition, alpha)
+		main.Size = LerpUDim2(main.Size, GoalSize, alpha)
 	end)
 
 	----------------------------------------------------
@@ -432,7 +441,7 @@ function UI:Init(Context, Icons)
 		Resizing = true
 	
 		ResizeStart = input.Position
-		StartSize = GoalSize
+		StartSize = main.AbsoluteSize
 	
 		TweenService:Create(
 			ResizeHandle,
@@ -458,17 +467,8 @@ function UI:Init(Context, Icons)
 	
 		local delta = input.Position - ResizeStart
 	
-		local width = math.clamp(
-			StartSize.X.Offset + delta.X,
-			MIN_WIDTH,
-			MAX_WIDTH
-		)
-	
-		local height = math.clamp(
-			StartSize.Y.Offset + delta.Y,
-			MIN_HEIGHT,
-			MAX_HEIGHT
-		)
+		local width = math.clamp(StartSize.X + delta.X, MIN_WIDTH, MAX_WIDTH)
+		local height = math.clamp(StartSize.Y + delta.Y, MIN_HEIGHT, MAX_HEIGHT)
 	
 		GoalSize = UDim2.fromOffset(width, height)
 	
