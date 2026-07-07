@@ -1,60 +1,25 @@
-local Home = {}
+return function(Context, contentFrame)
 
-function Home.Load(UI)
+    local Container = Context:CreateContainer(250)
 
-    UI:RegisterTab("Home", {
+    Context:AddTitle("Welcome to Erebus")
 
-        OnOpen = function()
+    Context:AddButton({
+        Text = "Test Button",
+        Container = Container,
 
-            print("Opened Home Tab")
-
-        end,
-
-        Build = function()
-
-            local Container = UI:CreateContainer(250)
-
-
-            UI:AddTitle("Welcome to Erebus")
-
-
-            UI:AddButton({
-                Text = "Test Button",
-                Container = Container,
-
-                Callback = function()
-                    print("Button clicked!")
-                end
-            })
-
-
-            UI:AddToggle({
-                Text = "Example Toggle",
-                Container = Container,
-
-                Default = false,
-
-                Callback = function(State)
-                    print("Toggle:", State)
-                end
-            })
-
-
-            UI:AddSlider({
-                Text = "Example Slider",
-                Container = Container,
-
-                Default = 50,
-
-                Callback = function(Value)
-                    print("Slider:", Value)
-                end
-            })
-
+        Callback = function()
+            print("Clicked!")
         end
+    })
 
+    Context:AddToggle({
+        Text = "Example Toggle",
+        Container = Container,
+
+        Callback = function(state)
+            print("Toggle:", state)
+        end
     })
 
 end
-
-return Home
