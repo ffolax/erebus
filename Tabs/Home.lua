@@ -49,7 +49,7 @@ return function(Context)
         if Robberies and Robberies:FindFirstChild("Club Robbery") then
 
             local Club = Robberies["Club Robbery"]:FindFirstChild("Club")
-            if not Club then return end
+            if not Club then return "???" end
             local Door = Club.Door
 
             if Door then
