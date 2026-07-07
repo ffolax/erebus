@@ -111,4 +111,102 @@ return function(Context)
         }
     })
 
+    Context:AddButton({
+        Text = "Rejoin",
+
+        Callback = function()
+
+            local TeleportService = game:GetService("TeleportService")
+            local LocalPlayer = game:GetService("Players").LocalPlayer
+
+            TeleportService:TeleportToPlaceInstance(
+                game.PlaceId,
+                game.JobId,
+                LocalPlayer
+            )
+
+        end
+    })
+
+    Context:AddButton({
+        Text = "Server Hop",
+
+        Callback = function()
+
+            local HttpService = game:GetService("HttpService")
+            local TeleportService = game:GetService("TeleportService")
+            local Players = game:GetService("Players")
+
+            local PlaceId = game.PlaceId
+            local CurrentJobId = game.JobId
+
+            local Cursor = ""
+            local ValidServers = {}
+
+            local MAX_PAGES = 20
+            local PagesSearched = 0
+
+            while true do
+
+                PagesSearched += 1
+
+                if PagesSearched >= MAX_PAGES then
+                    break
+                end
+
+                local Url = ("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=100"):format(PlaceId)
+
+                if Cursor ~= "" then
+                    Url ..= "&cursor=" .. HttpService:UrlEncode(Cursor)
+                end
+
+                local Success, Response = pcall(function()
+                    return game:HttpGet(Url)
+                end)
+
+                if not Success then
+                    warn("[EREBUS] Failed to fetch server list.")
+                    return
+                end
+
+                local Data = HttpService:JSONDecode(Response)
+
+                for _, Server in ipairs(Data.data) do
+
+                    if Server.id ~= CurrentJobId
+                    and Server.playing < Server.maxPlayers
+                    and Server.playing > 0 then
+
+                        table.insert(ValidServers, Server.id)
+
+                    end
+
+                end
+
+                if not Data.nextPageCursor or Data.nextPageCursor == "" then
+                    break
+                end
+
+                Cursor = Data.nextPageCursor
+
+                task.wait(0.1)
+
+            end
+
+            if #ValidServers == 0 then
+                warn("[EREBUS] No available servers found.")
+                return
+            end
+
+            local RandomServer = ValidServers[math.random(1, #ValidServers)]
+
+            TeleportService:TeleportToPlaceInstance(
+                PlaceId,
+                RandomServer,
+                Players.LocalPlayer
+            )
+
+        end
+    })
+
 end

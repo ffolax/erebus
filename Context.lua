@@ -209,4 +209,70 @@ function Context:AddSlider(options)
 
 end
 
+function Context:AddViewport(options)
+
+    local Container = options.Container or self:CreateContainer(250)
+
+    local Viewport = Instance.new("ViewportFrame")
+    Viewport.Size = UDim2.new(1, -10, 1, -35)
+    Viewport.Position = UDim2.new(0, 5, 0, 5)
+    Viewport.BackgroundColor3 = Color3.fromRGB(18,18,24)
+    Viewport.BorderSizePixel = 0
+    Viewport.Parent = Container
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0,8)
+    Corner.Parent = Viewport
+
+    local NameLabel = Instance.new("TextLabel")
+    NameLabel.Size = UDim2.new(1, -10, 0, 22)
+    NameLabel.Position = UDim2.new(0, 8, 1, -26)
+    NameLabel.BackgroundTransparency = 1
+    NameLabel.Font = Enum.Font.GothamBold
+    NameLabel.TextSize = 15
+    NameLabel.TextXAlignment = Enum.TextXAlignment.Left
+    NameLabel.TextColor3 = Color3.fromRGB(235,235,245)
+    NameLabel.Text = "No Vehicle"
+    NameLabel.Parent = Container
+
+    if not options.Model then
+        return Viewport
+    end
+
+    local Config = options.Model:GetAttribute("Config")
+
+    if Config then
+        NameLabel.Text = tostring(Config)
+    else
+        NameLabel.Text = options.Model.Name
+    end
+
+    local Model = options.Model:Clone()
+    Model.Parent = Viewport
+
+    local Camera = Instance.new("Camera")
+    Camera.Parent = Viewport
+    Viewport.CurrentCamera = Camera
+
+    if not Model.PrimaryPart then
+        Model.PrimaryPart = Model:FindFirstChildWhichIsA("BasePart", true)
+    end
+
+    if Model.PrimaryPart then
+
+        Model:PivotTo(CFrame.new())
+
+        local Size = Model:GetExtentsSize()
+        local Radius = math.max(Size.X, Size.Y, Size.Z)
+
+        Camera.CFrame =
+            CFrame.new(0, Radius * 0.6, Radius * 2.2)
+            * CFrame.Angles(math.rad(-15), math.rad(180), 0)
+
+    end
+
+    return Viewport
+
+end
+
 return Context
