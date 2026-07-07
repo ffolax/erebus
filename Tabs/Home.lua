@@ -81,7 +81,7 @@ return function(Context)
         if Robberies and Robberies:FindFirstChild("Jeweler Safe Robbery") then
 
             local Jeweler = Robberies["Jeweler Safe Robbery"]:FindFirstChild("Jeweler")
-            if not Jeweler then return end
+            if not Jeweler then return "???" end
             local Door = Jeweler.Door
 
             if Door then
@@ -174,6 +174,11 @@ return function(Context)
             local PlaceId = game.PlaceId
             local CurrentJobId = game.JobId
 
+            local Request =
+                request
+                or http_request
+                or (syn and syn.request)
+
             local Cursor = ""
             local ValidServers = {}
 
@@ -184,7 +189,7 @@ return function(Context)
 
                 PagesSearched += 1
 
-                if PagesSearched >= MAX_PAGES then
+                if PagesSearched > MAX_PAGES then
                     break
                 end
 
@@ -194,22 +199,58 @@ return function(Context)
                     Url ..= "&cursor=" .. HttpService:UrlEncode(Cursor)
                 end
 
-                local Success, Response = pcall(function()
-                    return game:HttpGet(Url)
+                local Success, Response
+
+                if Request then
+
+                    Success, Response = pcall(function()
+                        return Request({
+                            Url = Url,
+                            Method = "GET"
+                        })
+                    end)
+
+                    if not Success then
+                        warn("[EREBUS] Request failed.")
+                        return
+                    end
+
+                    Response = Response.Body
+
+                else
+
+                    Success, Response = pcall(function()
+                        return game:HttpGet(Url)
+                    end)
+
+                    if not Success then
+                        warn("[EREBUS] HttpGet failed.")
+                        return
+                    end
+
+                end
+
+                local SuccessDecode, Data = pcall(function()
+                    return HttpService:JSONDecode(Response)
                 end)
 
-                if not Success then
-                    warn("[EREBUS] Failed to fetch server list.")
+                if not SuccessDecode then
+                    warn("[EREBUS] Failed to decode response.")
+                    print(Response)
                     return
                 end
 
-                local Data = HttpService:JSONDecode(Response)
+                if not Data.data then
+                    warn("[EREBUS] API returned an unexpected response:")
+                    print(Data)
+                    return
+                end
 
                 for _, Server in ipairs(Data.data) do
 
                     if Server.id ~= CurrentJobId
-                    and Server.playing < Server.maxPlayers
-                    and Server.playing > 0 then
+                    and Server.playing > 0
+                    and Server.playing < Server.maxPlayers then
 
                         table.insert(ValidServers, Server.id)
 
@@ -223,20 +264,20 @@ return function(Context)
 
                 Cursor = Data.nextPageCursor
 
-                task.wait(0.1)
+                task.wait(0.05)
 
             end
 
             if #ValidServers == 0 then
-                warn("[EREBUS] No available servers found.")
+                warn("[EREBUS] No servers found.")
                 return
             end
 
-            local RandomServer = ValidServers[math.random(1, #ValidServers)]
+            local ServerId = ValidServers[math.random(#ValidServers)]
 
             TeleportService:TeleportToPlaceInstance(
                 PlaceId,
-                RandomServer,
+                ServerId,
                 Players.LocalPlayer
             )
 
