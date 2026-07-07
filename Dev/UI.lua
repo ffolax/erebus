@@ -418,6 +418,7 @@ function UI:Init(Context, Icons)
 
 	local content = Instance.new("ScrollingFrame")
 	content.Size = UDim2.new(1,-170,1,-36)
+	content.Position = UDim2.new(0,170,0,36)
 	content.BackgroundTransparency = 1
 	content.BorderSizePixel = 0
 
