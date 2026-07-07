@@ -34,3 +34,14 @@ UI:Init(
 	Icons
 )
 
+local Home = loadstring(game:HttpGet(BASE .. "Tabs/Home.lua"))()
+local Player = loadstring(game:HttpGet(BASE .. "Tabs/Player.lua"))()
+local Vehicle = loadstring(game:HttpGet(BASE .. "Tabs/Vehicle.lua"))()
+local Visuals = loadstring(game:HttpGet(BASE .. "Tabs/Visuals.lua"))()
+local Misc = loadstring(game:HttpGet(BASE .. "Tabs/Misc.lua"))()
+
+UI:RegisterTab("Home", Home)
+UI:RegisterTab("Player", Player)
+UI:RegisterTab("Vehicle", Vehicle)
+UI:RegisterTab("Visuals", Visuals)
+UI:RegisterTab("Misc", Misc)
