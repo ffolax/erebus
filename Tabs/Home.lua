@@ -105,7 +105,7 @@ return function(Context)
                 return GetBankRobbed()
             end},
 
-            {"Club: ", function()
+            {"Club", function()
                 return GetClubRobbed()
             end},
         }
