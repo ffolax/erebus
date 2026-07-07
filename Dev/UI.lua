@@ -591,10 +591,10 @@ function UI:Init(Context, Icons)
 
 		intro.AnchorPoint = Vector2.new(0.5, 0.5)
 	
-		task.wait(0.8)
+		task.wait(0.4)
 
 		TweenService:Create(intro, TweenInfo.new(3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
-			TextSize = 40,
+			TextSize = 150,
 		}):Play()
 	
 		task.wait(3.5)
