@@ -422,6 +422,12 @@ function UI:Init(Context, Icons)
 	content.BackgroundTransparency = 1
 	content.Parent = main
 
+	local list = Instance.new("UIListLayout")
+	list.Padding = UDim.new(0,8)
+	list.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	list.SortOrder = Enum.SortOrder.LayoutOrder
+	list.Parent = content
+
 	----------------------------------------------------
 	-- RESIZE HANDLE
 	----------------------------------------------------
@@ -591,13 +597,13 @@ function UI:Init(Context, Icons)
 
 		intro.AnchorPoint = Vector2.new(0.5, 0.5)
 	
-		task.wait(0.4)
+		task.wait(0.3)
 
-		TweenService:Create(intro, TweenInfo.new(3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
-			Size = UDim2.fromScale(1,0.3),
+		TweenService:Create(intro, TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+			Size = UDim2.fromScale(1,0.05),
 		}):Play()
 	
-		task.wait(3.5)
+		task.wait(4.5)
 	
 		main.Visible = true
 	
@@ -750,6 +756,20 @@ function UI:ClearContent()
 		end
 
 	end
+
+end
+
+function UI:OpenTab(name)
+
+    self:ClearContent()
+
+    self.Context:SetParent(self.Content)
+
+    local callback = self.TabCallbacks[name]
+
+    if callback then
+        callback(self.Context)
+    end
 
 end
 
