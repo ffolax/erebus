@@ -81,7 +81,7 @@ function Context:AddStatistics(options)
     Title.Position = UDim2.new(0,5,0,5)
     Title.BackgroundTransparency = 1
     Title.Font = Enum.Font.GothamBold
-    Title.Color3 = Color3.fromRGB(255,255,255)
+    Title.TextColor3 = Color3.fromRGB(255,255,255)
     Title.TextSize = 16
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Text = options.Title or "Statistics"
