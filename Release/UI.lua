@@ -591,10 +591,11 @@ function UI:Init(Context, Icons)
 	
 		task.wait(0.8)
 	
+		intro.AnchorPoint = Vector2.new(0, 0.5)
+
 		TweenService:Create(intro, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
-			Position = UDim2.new(0,title.AbsolutePosition.X,0,title.AbsolutePosition.Y),
+			Position = UDim2.fromOffset(title.AbsolutePosition.X, title.AbsolutePosition.Y + title.AbsoluteSize.Y / 2),
 			TextSize = 18,
-			AnchorPoint = Vector2.new(0, 0.5)
 		}):Play()
 	
 		task.wait(0.6)
