@@ -74,6 +74,36 @@ return function(Context)
 
     end
 
+    local function GetJewelerRobbed()
+
+        local Robberies = game.workspace:FindFirstChild("Robberies")
+
+        if Robberies and Robberies:FindFirstChild("Jeweler Safe Robbery") then
+
+            local Jeweler = Robberies["Jeweler Safe Robbery"]:FindFirstChild("Jeweler")
+            if not Jeweler then return end
+            local Door = Jeweler.Door
+
+            if Door then
+
+                local DoorPivot = Door:GetPivot()
+
+                if DoorPivot.RightVector == Vector3.new(0,0,-1) then
+
+                    return "GREEN"
+
+                else
+
+                    return "RED"
+
+                end
+
+            end
+
+        end
+
+    end
+
     local Container = Context:CreateContainer(250)
 
     Context:AddStatistics({

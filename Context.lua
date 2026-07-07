@@ -155,6 +155,7 @@ function Context:AddButton(options)
     Button.BackgroundColor3 = Color3.fromRGB(120, 60, 220)
     Button.TextColor3 = Color3.fromRGB(255,255,255)
     Button.TextScaled = true
+    Button.Font = Enum.Font.GothamBold
 
     local Corner = Instance.new("UICorner")
     Corner.CornerRadius = UDim.new(0,8)
@@ -293,7 +294,7 @@ function Context:AddViewport(options)
 
     LoadVehicle(options.Model())
 
-    RunService.RenderStepped:Connect(function(dt)
+    RunService.Heartbeat:Connect(function(dt)
 
         local Vehicle = options.Model()
 
