@@ -592,7 +592,7 @@ function UI:Init(Context, Icons)
 		task.wait(0.8)
 	
 		TweenService:Create(intro, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
-			Position = title.AbsolutePosition,
+			Position = UDim2.new(0,title.AbsolutePosition.X,0,title.AbsolutePosition.Y),
 			TextSize = 18,
 			AnchorPoint = Vector2.new(0, 0.5)
 		}):Play()
