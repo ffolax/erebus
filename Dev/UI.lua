@@ -417,8 +417,8 @@ function UI:Init(Context, Icons)
 	----------------------------------------------------
 
 	local content = Instance.new("ScrollingFrame")
-	content.Size = UDim2.new(1,-170,1,-36)
-	content.Position = UDim2.new(0,170,0,36)
+	content.Size = UDim2.new(1,-170,1,-46)
+	content.Position = UDim2.new(0,170,0,46)
 	content.BackgroundTransparency = 1
 	content.BorderSizePixel = 0
 
@@ -433,6 +433,7 @@ function UI:Init(Context, Icons)
 
 	Layout.Padding = UDim.new(0,10)
 	Layout.SortOrder = Enum.SortOrder.LayoutOrder
+	Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 	Layout.Parent = content
 

@@ -60,6 +60,7 @@ function Context:AddTitle(options)
 
     local Label = Instance.new("TextLabel")
     Label.Size = UDim2.fromScale(0.95,1)
+    Label.Position = UDim2.fromScale(0.05,0)
     Label.BackgroundTransparency = 1
     Label.Text = options.Text
     Label.Font = Enum.Font.GothamBold
@@ -77,6 +78,10 @@ function Context:AddButton(options)
     local Button = Instance.new("TextButton")
     Button.Size = UDim2.new(1,-10,1,-10)
     Button.Position = UDim2.new(0,5,0,5)
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0,8)
+    Corner.Parent = Button
 
     Button.Text = options.Text
     Button.Parent = Container
