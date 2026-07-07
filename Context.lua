@@ -147,9 +147,12 @@ function Context:AddButton(options)
 
     local Container = options.Container or self:CreateContainer(42)
 
+    Container.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+
     local Button = Instance.new("TextButton")
     Button.Size = UDim2.new(1,-10,1,-10)
     Button.Position = UDim2.new(0,5,0,5)
+    Button.BackgroundColor3 = Color3.fromRGB(120, 60, 220)
 
     local Corner = Instance.new("UICorner")
     Corner.CornerRadius = UDim.new(0,8)
@@ -214,6 +217,8 @@ function Context:AddViewport(options)
     local RunService = game:GetService("RunService")
 
     local Container = options.Container or self:CreateContainer(250)
+    
+    Container.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
     local Viewport = Instance.new("ViewportFrame")
     Viewport.Size = UDim2.new(1, -10, 1, -35)
@@ -278,7 +283,7 @@ function Context:AddViewport(options)
         local Radius = math.max(Size.X, Size.Y, Size.Z)
 
         Camera.CFrame = CFrame.lookAt(
-            Vector3.new(Radius * 0.75, Radius * 0.45, Radius * 0.75),
+            Vector3.new(Radius * 0.5, Radius * 0.45, Radius * 0.5),
             Vector3.zero
         )
 
