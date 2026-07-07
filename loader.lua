@@ -1,4 +1,5 @@
-local p = game:GetService("Players")
+local ps = game:GetService("Players")
+local p = ps.LocalPlayer
 
 if p.UserId == 11232890519 then
 
