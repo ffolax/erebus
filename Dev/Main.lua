@@ -47,3 +47,8 @@ UI:RegisterTab("Visuals", Visuals)
 UI:RegisterTab("Misc", Misc)
 
 UI:OpenTab("Home")
+
+local ErebusAPI = Load("ErebusAPI.lua")
+assert(Icons, "[EREBUS] API failed to load.")
+
+ErebusAPI:StartSession()

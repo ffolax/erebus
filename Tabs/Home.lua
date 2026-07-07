@@ -1,108 +1,114 @@
+function GetExecutor()
+
+    if identifyexecutor then
+        local ok, result = pcall(identifyexecutor)
+
+        if ok then
+            return result
+        end
+    end
+
+    return "Unknown"
+
+end
+
+function GetBankRobbed()
+
+    local Robberies = game.workspace:FindFirstChild("Robberies")
+
+    if Robberies and Robberies:FindFirstChild("BankRobbery") then
+
+        local LightRed = Robberies.BankRobbery:FindFirstChild("LightRed")
+
+        if LightRed then
+
+            if LightRed.Light.Enabled then
+
+                return "RED"
+
+            else
+
+                return "GREEN"
+
+            end
+
+        end
+
+    end
+
+    return "???"
+
+end
+
+function GetClubRobbed()
+
+    local Robberies = game.workspace:FindFirstChild("Robberies")
+
+    if Robberies and Robberies:FindFirstChild("Club Robbery") then
+
+        local Club = Robberies["Club Robbery"]:FindFirstChild("Club")
+        if not Club then return "???" end
+        local Door = Club:FindFirstChild("Door")
+
+        if Door then
+
+            local DoorPivot = Door:GetPivot()
+
+            if DoorPivot.RightVector == Vector3.new(1,0,0) then
+
+                return "GREEN"
+
+            else
+
+                return "RED"
+
+            end
+
+        end
+
+    end
+
+    return "???"
+
+end
+
+function GetJewelerRobbed()
+
+    local Robberies = game.workspace:FindFirstChild("Robberies")
+
+    if Robberies and Robberies:FindFirstChild("Jeweler Safe Robbery") then
+
+        local Jeweler = Robberies["Jeweler Safe Robbery"]:FindFirstChild("Jeweler")
+        if not Jeweler then return "???" end
+        local Door = Jeweler:FindFirstChild("Door")
+
+        if Door then
+
+            local DoorPivot = Door:GetPivot()
+
+            if DoorPivot.RightVector == Vector3.new(0,0,-1) then
+
+                return "GREEN"
+
+            else
+
+                return "RED"
+
+            end
+
+        end
+
+    end
+
+end
+
+local Stats = game:GetService("Stats")
+
+local function GetPing()
+    return Stats.Network.ServerStatsItem["Data Ping"]:GetValueString()
+end
+
 return function(Context)
-
-    local function GetExecutor()
-
-        if identifyexecutor then
-            local ok, result = pcall(identifyexecutor)
-
-            if ok then
-                return result
-            end
-        end
-
-        return "Unknown"
-
-    end
-
-    local function GetBankRobbed()
-
-        local Robberies = game.workspace:FindFirstChild("Robberies")
-
-        if Robberies and Robberies.BankRobbery then
-
-            local LightRed = Robberies.BankRobbery:FindFirstChild("LightRed")
-
-            if LightRed then
-
-                if LightRed.Light.Enabled then
-
-                    return "RED"
-
-                else
-
-                    return "GREEN"
-
-                end
-
-            end
-
-        end
-
-        return "???"
-
-    end
-
-    local function GetClubRobbed()
-
-        local Robberies = game.workspace:FindFirstChild("Robberies")
-
-        if Robberies and Robberies:FindFirstChild("Club Robbery") then
-
-            local Club = Robberies["Club Robbery"]:FindFirstChild("Club")
-            if not Club then return "???" end
-            local Door = Club.Door
-
-            if Door then
-
-                local DoorPivot = Door:GetPivot()
-
-                if DoorPivot.RightVector == Vector3.new(1,0,0) then
-
-                    return "GREEN"
-
-                else
-
-                    return "RED"
-
-                end
-
-            end
-
-        end
-
-        return "???"
-
-    end
-
-    local function GetJewelerRobbed()
-
-        local Robberies = game.workspace:FindFirstChild("Robberies")
-
-        if Robberies and Robberies:FindFirstChild("Jeweler Safe Robbery") then
-
-            local Jeweler = Robberies["Jeweler Safe Robbery"]:FindFirstChild("Jeweler")
-            if not Jeweler then return "???" end
-            local Door = Jeweler.Door
-
-            if Door then
-
-                local DoorPivot = Door:GetPivot()
-
-                if DoorPivot.RightVector == Vector3.new(0,0,-1) then
-
-                    return "GREEN"
-
-                else
-
-                    return "RED"
-
-                end
-
-            end
-
-        end
-
-    end
 
     local Container = Context:CreateContainer(250)
 
@@ -117,6 +123,10 @@ return function(Context)
 
             {"FPS", function()
                 return math.floor(workspace:GetRealPhysicsFPS())
+            end},
+
+            {"Ping", function()
+                return GetPing()
             end},
 
             {"Game ID", function()
