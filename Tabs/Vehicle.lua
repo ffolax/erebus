@@ -1,21 +1,21 @@
+local function FindVehicle()
+
+    local Player = game:GetService("Players").LocalPlayer
+    local Vehicles = workspace:FindFirstChild("Vehicles")
+
+    if Vehicles then
+        return Vehicles:FindFirstChild(Player.Name)
+    end
+
+end
+
 return function(Context)
 
-    local function FindVehicle()
-
-        local p = game:GetService("Players").LocalPlayer
-        local Vehicles = game.workspace:FindFirstChild("Vehicles")
-
-        if Vehicles and Vehicles:FindFirstChild(p.Name) then
-            
-            return Vehicles:FindFirstChild(p.Name)
-
-        end
-
-    end
+    local Container = Context:CreateContainer(250)
 
     Context:AddViewport({
         Container = Container,
-        Model = FindVehicle()
+        Model = FindVehicle
     })
 
 end

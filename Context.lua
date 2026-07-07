@@ -211,9 +211,9 @@ end
 
 function Context:AddViewport(options)
 
-    local Container = options.Container or self:CreateContainer(250)
+    local RunService = game:GetService("RunService")
 
-    Container.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+    local Container = options.Container or self:CreateContainer(250)
 
     local Viewport = Instance.new("ViewportFrame")
     Viewport.Size = UDim2.new(1, -10, 1, -35)
@@ -227,53 +227,88 @@ function Context:AddViewport(options)
     Corner.Parent = Viewport
 
     local NameLabel = Instance.new("TextLabel")
-    NameLabel.Size = UDim2.new(1, -10, 0, 22)
-    NameLabel.Position = UDim2.new(0, 8, 1, -26)
+    NameLabel.Size = UDim2.new(1,-10,0,22)
+    NameLabel.Position = UDim2.new(0,8,1,-26)
     NameLabel.BackgroundTransparency = 1
     NameLabel.Font = Enum.Font.GothamBold
     NameLabel.TextSize = 15
-    NameLabel.TextXAlignment = Enum.TextXAlignment.Left
     NameLabel.TextColor3 = Color3.fromRGB(235,235,245)
+    NameLabel.TextXAlignment = Enum.TextXAlignment.Left
     NameLabel.Text = "No Vehicle"
     NameLabel.Parent = Container
-
-    if not options.Model then
-        return Viewport
-    end
-
-    local Config = options.Model:GetAttribute("Config")
-
-    if Config then
-        NameLabel.Text = tostring(Config)
-    else
-        NameLabel.Text = options.Model.Name
-    end
-
-    local Model = options.Model:Clone()
-    Model.Parent = Viewport
-
-    print(Model:GetBoundingBox())
 
     local Camera = Instance.new("Camera")
     Camera.Parent = Viewport
     Viewport.CurrentCamera = Camera
 
-    if not Model.PrimaryPart then
-        Model.PrimaryPart = Model:FindFirstChildWhichIsA("BasePart", true)
-    end
+    local CurrentVehicle
+    local CurrentModel
+    local CurrentRotation = 0
 
-    if Model.PrimaryPart then
+    local function LoadVehicle(Vehicle)
 
-        local CF, Size = Model:GetBoundingBox()
+        if CurrentModel then
+            CurrentModel:Destroy()
+            CurrentModel = nil
+        end
 
+        CurrentVehicle = Vehicle
+
+        if not Vehicle then
+            NameLabel.Text = "No Vehicle"
+            return
+        end
+
+        NameLabel.Text = tostring(Vehicle:GetAttribute("Config") or Vehicle.Name)
+
+        CurrentModel = Vehicle:Clone()
+        CurrentModel.Parent = Viewport
+
+        if not CurrentModel.PrimaryPart then
+            CurrentModel.PrimaryPart = CurrentModel:FindFirstChildWhichIsA("BasePart", true)
+        end
+
+        if CurrentModel.PrimaryPart then
+            CurrentModel:PivotTo(CFrame.new())
+        end
+
+        CurrentRotation = 0
+
+        local CF, Size = CurrentModel:GetBoundingBox()
         local Radius = math.max(Size.X, Size.Y, Size.Z)
 
         Camera.CFrame = CFrame.lookAt(
-            CF.Position + Vector3.new(Radius * 1.5, Radius, Radius * 1.5),
-            CF.Position
+            Vector3.new(Radius * 0.75, Radius * 0.45, Radius * 0.75),
+            Vector3.zero
         )
 
     end
+
+    LoadVehicle(options.Model())
+
+    RunService.RenderStepped:Connect(function(dt)
+
+        local Vehicle = options.Model()
+
+        if Vehicle ~= CurrentVehicle then
+            LoadVehicle(Vehicle)
+        end
+
+        if CurrentModel then
+
+            CurrentRotation += dt * 35
+
+            CurrentModel:PivotTo(
+                CFrame.Angles(
+                    0,
+                    math.rad(CurrentRotation),
+                    0
+                )
+            )
+
+        end
+
+    end)
 
     return Viewport
 
