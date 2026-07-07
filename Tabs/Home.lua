@@ -18,6 +18,10 @@ return function(Context)
             {"Place ID", function()
                 return game.PlaceId
             end},
+
+            {"Executor", function()
+                return indentifyexecutor and identifyexecutor() or "Unknown"
+            end},
         }
     })
 
