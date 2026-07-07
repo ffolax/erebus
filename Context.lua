@@ -213,6 +213,8 @@ function Context:AddViewport(options)
 
     local Container = options.Container or self:CreateContainer(250)
 
+    Container.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+
     local Viewport = Instance.new("ViewportFrame")
     Viewport.Size = UDim2.new(1, -10, 1, -35)
     Viewport.Position = UDim2.new(0, 5, 0, 5)
@@ -250,6 +252,8 @@ function Context:AddViewport(options)
     local Model = options.Model:Clone()
     Model.Parent = Viewport
 
+    print(Model:GetBoundingBox())
+
     local Camera = Instance.new("Camera")
     Camera.Parent = Viewport
     Viewport.CurrentCamera = Camera
@@ -260,14 +264,14 @@ function Context:AddViewport(options)
 
     if Model.PrimaryPart then
 
-        Model:PivotTo(CFrame.new())
+        local CF, Size = Model:GetBoundingBox()
 
-        local Size = Model:GetExtentsSize()
         local Radius = math.max(Size.X, Size.Y, Size.Z)
 
-        Camera.CFrame =
-            CFrame.new(0, Radius * 0.6, Radius * 2.2)
-            * CFrame.Angles(math.rad(-15), math.rad(180), 0)
+        Camera.CFrame = CFrame.lookAt(
+            CF.Position + Vector3.new(Radius * 1.5, Radius, Radius * 1.5),
+            CF.Position
+        )
 
     end
 
