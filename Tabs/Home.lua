@@ -196,34 +196,37 @@ return function(Context)
                 end
 
                 local Success, Response = pcall(function()
-                    return game:HttpGet(Url)
+
+                    return request({
+                        Url = Url,
+                        Method = "GET"
+                    })
+
                 end)
 
-                print(Response)
-
                 if not Success then
-                    warn("[EREBUS] Failed to fetch server list.")
+                    warn("[EREBUS] Request failed.")
+                    return
+                end
+
+                if not Response.Success then
+                    warn("[EREBUS] HTTP Error:", Response.StatusCode, Response.StatusMessage)
                     return
                 end
 
                 local SuccessDecode, Data = pcall(function()
-                    return HttpService:JSONDecode(Response)
+                    return HttpService:JSONDecode(Response.Body)
                 end)
 
                 if not SuccessDecode then
-                    warn("[EREBUS] Failed to decode server list.")
-                    print(Response)
+                    warn("[EREBUS] Failed to decode JSON.")
+                    print(Response.Body)
                     return
                 end
 
-                if type(Data) ~= "table" or not Data.data then
-                    print("----- API KEYS -----")
-
-                    for k, v in pairs(Data) do
-                        print(k, typeof(v))
-                    end
-
+                if not Data.data then
                     warn("[EREBUS] Invalid API response.")
+                    print(Data)
                     return
                 end
 
