@@ -426,7 +426,7 @@ function UI:Init(Context, Icons)
 
 	content.ScrollBarThickness = 5
 
-	content.Parent = MainFrame
+	content.Parent = main
 
 	local Layout = Instance.new("UIListLayout")
 
@@ -581,14 +581,25 @@ function UI:Init(Context, Icons)
 	end
 
 	task.defer(function()
+
 		local homeButton = self.Tabs["Home"]
+
 		if homeButton then
+
 			self:SetActiveTab(homeButton)
+
 			if self.TabCallbacks["Home"] then
+
 				self:ClearContent()
-				self.TabCallbacks["Home"](self.Content)
+
+				self.Context:SetParent(self.Content)
+
+				self.TabCallbacks["Home"](self.Context)
+
 			end
+
 		end
+
 	end)
 
 	----------------------------------------------------
@@ -760,7 +771,7 @@ function UI:ClearContent()
 
 	for _,v in ipairs(self.Content:GetChildren()) do
 
-		if v:IsA("GuiObject") then
+		if not v:IsA("UIListLayout") then
 			v:Destroy()
 		end
 

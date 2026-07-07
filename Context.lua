@@ -54,18 +54,18 @@ function Context:CreateContainer(height)
 
 end
 
-function Context:AddTitle(text,color)
+function Context:AddTitle(options)
 
     local Container = self:CreateContainer(40)
 
     local Label = Instance.new("TextLabel")
-    Label.Size = UDim2.fromScale(1,1)
+    Label.Size = UDim2.fromScale(0.95,1)
     Label.BackgroundTransparency = 1
-    Label.Text = text
+    Label.Text = options.Text
     Label.Font = Enum.Font.GothamBold
     Label.TextSize = 20
     Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.TextColor3 = color or Color3.fromRGB(255,255,255)
+    Label.TextColor3 = options.Color3 or Color3.fromRGB(255,255,255)
     Label.Parent = Container
 
 end
