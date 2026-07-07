@@ -54,7 +54,7 @@ function Context:CreateContainer(height)
 
 end
 
-function Context:AddTitle(text)
+function Context:AddTitle(text,color)
 
     local Container = self:CreateContainer(40)
 
@@ -65,6 +65,7 @@ function Context:AddTitle(text)
     Label.Font = Enum.Font.GothamBold
     Label.TextSize = 20
     Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.TextColor3 = color or Color3.fromRGB(255,255,255)
     Label.Parent = Container
 
 end

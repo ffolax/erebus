@@ -2,7 +2,7 @@ return function(Context)
 
     local Container = Context:CreateContainer(250)
 
-    Context:AddTitle("Welcome")
+    Context:AddTitle("Welcome",Color3.fromRGB(255,255,255))
 
     Context:AddButton({
         Text = "Test Button",

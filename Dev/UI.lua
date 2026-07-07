@@ -416,18 +416,24 @@ function UI:Init(Context, Icons)
 	-- CONTENT
 	----------------------------------------------------
 
-	local content = Instance.new("Frame")
-	content.Name = "Content"
-	content.Size = UDim2.new(1,-170,1,-36)
-	content.Position = UDim2.new(0,170,0,36)
-	content.BackgroundTransparency = 1
-	content.Parent = main
+	self.Content = Instance.new("ScrollingFrame")
+	self.Content.Size = UDim2.fromScale(1,1)
+	self.Content.BackgroundTransparency = 1
+	self.Content.BorderSizePixel = 0
 
-	local list = Instance.new("UIListLayout")
-	list.Padding = UDim.new(0,8)
-	list.HorizontalAlignment = Enum.HorizontalAlignment.Center
-	list.SortOrder = Enum.SortOrder.LayoutOrder
-	list.Parent = content
+	self.Content.CanvasSize = UDim2.new(0,0,0,0)
+	self.Content.AutomaticCanvasSize = Enum.AutomaticSize.Y
+
+	self.Content.ScrollBarThickness = 5
+
+	self.Content.Parent = MainFrame
+
+	local Layout = Instance.new("UIListLayout")
+
+	Layout.Padding = UDim.new(0,10)
+	Layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+	Layout.Parent = self.Content
 
 	----------------------------------------------------
 	-- RESIZE HANDLE
