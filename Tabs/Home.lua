@@ -177,7 +177,7 @@ return function(Context)
             local Cursor = ""
             local ValidServers = {}
 
-            local MAX_PAGES = 20
+            local MAX_PAGES = 5
             local PagesSearched = 0
 
             while true do
@@ -242,13 +242,17 @@ return function(Context)
 
                 end
 
+                if #ValidServers >= 20 then
+                    break
+                end
+
                 if not Data.nextPageCursor or Data.nextPageCursor == "" then
                     break
                 end
 
                 Cursor = Data.nextPageCursor
 
-                task.wait(0.05)
+                task.wait(0.15)
 
             end
 
