@@ -7,7 +7,7 @@ return function(Context)
 
         Stats = {
             {"Players", function()
-                return #Players:GetPlayers()
+                return #game:GetService("Players"):GetPlayers()
             end},
 
             {"FPS", function()
