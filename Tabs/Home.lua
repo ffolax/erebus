@@ -2,18 +2,22 @@ return function(Context)
 
     local Container = Context:CreateContainer(250)
 
-    Context:AddTitle({
-        Text = "Welcome",
-        Color3 = Color3.fromRGB(255,255,255)
-    })
+    Context:AddStatistics({
+        Title = "Statistics",
 
-    Context:AddButton({
-        Text = "Test Button",
-        Container = Container,
+        Stats = {
+            {"Players", function()
+                return #Players:GetPlayers()
+            end},
 
-        Callback = function()
-            print("clicked")
-        end
+            {"FPS", function()
+                return math.floor(workspace:GetRealPhysicsFPS())
+            end},
+
+            {"Place ID", function()
+                return game.PlaceId
+            end},
+        }
     })
 
 end

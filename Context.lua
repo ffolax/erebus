@@ -60,7 +60,7 @@ function Context:AddTitle(options)
 
     local Label = Instance.new("TextLabel")
     Label.Size = UDim2.fromScale(0.95,1)
-    Label.Position = UDim2.fromScale(0.05,0)
+    Label.Position = UDim2.fromScale(0.2,0)
     Label.BackgroundTransparency = 1
     Label.Text = options.Text
     Label.Font = Enum.Font.GothamBold
@@ -68,6 +68,74 @@ function Context:AddTitle(options)
     Label.TextXAlignment = Enum.TextXAlignment.Left
     Label.TextColor3 = options.Color3 or Color3.fromRGB(255,255,255)
     Label.Parent = Container
+
+end
+
+function Context:AddStatistics(options)
+
+    local Container = options.Container or self:CreateContainer(140)
+
+    local Title = Instance.new("TextLabel")
+    Title.Size = UDim2.new(1,-10,0,24)
+    Title.Position = UDim2.new(0,5,0,5)
+    Title.BackgroundTransparency = 1
+    Title.Font = Enum.Font.GothamBold
+    Title.TextSize = 16
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.Text = options.Title or "Statistics"
+    Title.Parent = Container
+
+    local Holder = Instance.new("Frame")
+    Holder.BackgroundTransparency = 1
+    Holder.Position = UDim2.new(0,5,0,32)
+    Holder.Size = UDim2.new(1,-10,1,-37)
+    Holder.Parent = Container
+
+    local Layout = Instance.new("UIListLayout")
+    Layout.Padding = UDim.new(0,4)
+    Layout.Parent = Holder
+
+    local Labels = {}
+
+    for _, Stat in ipairs(options.Stats or {}) do
+
+        local Name = Stat[1]
+        local Getter = Stat[2]
+
+        local Label = Instance.new("TextLabel")
+        Label.BackgroundTransparency = 1
+        Label.Size = UDim2.new(1,0,0,18)
+        Label.Font = Enum.Font.Gotham
+        Label.TextSize = 14
+        Label.TextXAlignment = Enum.TextXAlignment.Left
+        Label.Text = Name .. ": " .. tostring(Getter())
+        Label.Parent = Holder
+
+        Labels[#Labels + 1] = {
+            Label = Label,
+            Name = Name,
+            Getter = Getter
+        }
+
+    end
+
+    task.spawn(function()
+
+        while Container.Parent do
+
+            for _, Stat in ipairs(Labels) do
+
+                Stat.Label.Text = Stat.Name .. ": " .. tostring(Stat.Getter())
+
+            end
+
+            task.wait(0.25)
+
+        end
+
+    end)
+
+    return Container
 
 end
 
