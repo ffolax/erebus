@@ -153,6 +153,8 @@ function Context:AddButton(options)
     Button.Size = UDim2.new(1,-10,1,-10)
     Button.Position = UDim2.new(0,5,0,5)
     Button.BackgroundColor3 = Color3.fromRGB(120, 60, 220)
+    Button.TextColor3 = Color3.fromRGB(255,255,255)
+    Button.TextScaled = true
 
     local Corner = Instance.new("UICorner")
     Corner.CornerRadius = UDim.new(0,8)
