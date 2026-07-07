@@ -138,6 +138,10 @@ return function(Context)
             {"Club", function()
                 return GetClubRobbed()
             end},
+
+            {"Jeweler", function()
+                return GetJewelerRobbed()
+            end},
         }
     })
 
