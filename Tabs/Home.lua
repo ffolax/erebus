@@ -174,11 +174,6 @@ return function(Context)
             local PlaceId = game.PlaceId
             local CurrentJobId = game.JobId
 
-            local Request =
-                request
-                or http_request
-                or (syn and syn.request)
-
             local Cursor = ""
             local ValidServers = {}
 
@@ -193,41 +188,22 @@ return function(Context)
                     break
                 end
 
-                local Url = ("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=100"):format(PlaceId)
+                local Url = ("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=100")
+                    :format(PlaceId)
 
                 if Cursor ~= "" then
                     Url ..= "&cursor=" .. HttpService:UrlEncode(Cursor)
                 end
 
-                local Success, Response
+                local Success, Response = pcall(function()
+                    return game:HttpGet(Url)
+                end)
 
-                if Request then
+                print(Response)
 
-                    Success, Response = pcall(function()
-                        return Request({
-                            Url = Url,
-                            Method = "GET"
-                        })
-                    end)
-
-                    if not Success then
-                        warn("[EREBUS] Request failed.")
-                        return
-                    end
-
-                    Response = Response.Body
-
-                else
-
-                    Success, Response = pcall(function()
-                        return game:HttpGet(Url)
-                    end)
-
-                    if not Success then
-                        warn("[EREBUS] HttpGet failed.")
-                        return
-                    end
-
+                if not Success then
+                    warn("[EREBUS] Failed to fetch server list.")
+                    return
                 end
 
                 local SuccessDecode, Data = pcall(function()
@@ -235,13 +211,13 @@ return function(Context)
                 end)
 
                 if not SuccessDecode then
-                    warn("[EREBUS] Failed to decode response.")
+                    warn("[EREBUS] Failed to decode server list.")
                     print(Response)
                     return
                 end
 
-                if not Data.data then
-                    warn("[EREBUS] API returned an unexpected response:")
+                if type(Data) ~= "table" or not Data.data then
+                    warn("[EREBUS] Invalid API response.")
                     print(Data)
                     return
                 end
@@ -249,8 +225,8 @@ return function(Context)
                 for _, Server in ipairs(Data.data) do
 
                     if Server.id ~= CurrentJobId
-                    and Server.playing > 0
-                    and Server.playing < Server.maxPlayers then
+                        and Server.playing > 0
+                        and Server.playing < Server.maxPlayers then
 
                         table.insert(ValidServers, Server.id)
 
