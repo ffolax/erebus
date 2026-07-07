@@ -45,6 +45,7 @@ function Context:CreateContainer(height)
     local Layout = Instance.new("UIListLayout")
     Layout.Padding = UDim.new(0,5)
     Layout.SortOrder = Enum.SortOrder.LayoutOrder
+    Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     Layout.Parent = Container
 
     local Corner = Instance.new("UICorner")
@@ -111,6 +112,7 @@ function Context:AddStatistics(options)
         Label.TextSize = 14
         Label.TextXAlignment = Enum.TextXAlignment.Left
         Label.Text = Name .. ": " .. tostring(Getter())
+        Label.TextColor3 = Color3.fromRGB(255,255,255)
         Label.Parent = Holder
 
         Labels[#Labels + 1] = {
