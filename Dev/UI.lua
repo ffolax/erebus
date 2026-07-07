@@ -61,6 +61,7 @@ function UI:Init(Context, Icons)
 	self.Icons = Icons
 	self.Theme = Theme
 	self.Connections = {}
+	self.TabCallbacks = {}
 
 	-- ScreenGui
 	local screen = Instance.new("ScreenGui")
@@ -558,7 +559,6 @@ function UI:Init(Context, Icons)
 	self.Tabs = {}
 	self.ActiveTab = nil
 	self.TabOrder = { "Home", "Player", "Vehicle", "Visuals", "Misc" }
-	self.TabCallbacks = {}
 
 	for _, tabName in ipairs(self.TabOrder) do
 		self:CreateTab(tabName, function(contentFrame)
@@ -684,7 +684,10 @@ function UI:CreateTab(name, callback)
 		if callback then
 
 			self:ClearContent()
-			callback(self.Content)
+
+			self.Context:SetParent(self.Content)
+
+			callback(self.Context)
 
 		end
 
@@ -759,23 +762,10 @@ function UI:ClearContent()
 
 end
 
-function UI:OpenTab(name)
-
-    self:ClearContent()
-
-    self.Context:SetParent(self.Content)
-
-    local callback = self.TabCallbacks[name]
-
-    if callback then
-        callback(self.Context)
-    end
-
-end
-
 function UI:RegisterTab(name, callback)
-	self.TabCallbacks = self.TabCallbacks or {}
-	self.TabCallbacks[name] = callback
+
+    self.TabCallbacks[name] = callback
+
 end
 
 return UI

@@ -7,7 +7,7 @@ local function Load(Path)
 	end)
 
 	if not Success then
-		warn("[Loader] Failed loading:", Path)
+		warn("[EREBUS] Failed loading:", Path)
 		warn(Result)
 		return nil
 	end
@@ -17,21 +17,21 @@ local function Load(Path)
 end
 
 local Context = Load("Context.lua")
-assert(Context, "Context failed to load.")
+assert(Context, "[EREBUS] Context failed to load.")
 
 local Icons = Load("Icons.lua")
-assert(Icons, "Icons failed to load.")
+assert(Icons, "[EREBUS] Icons failed to load.")
 
 local UI = Load("Dev/UI.lua")
-assert(UI, "UI failed to load.")
+assert(UI, "[EREBUS] UI failed to load.")
 
 Context.BASE = BASE
 
 Context:Init()
 
 UI:Init(
-	Context,
-	Icons
+    Context,
+    Icons
 )
 
 local Home = loadstring(game:HttpGet(BASE .. "Tabs/Home.lua"))()

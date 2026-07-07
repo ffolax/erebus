@@ -1,24 +1,15 @@
-return function(Context, contentFrame)
+return function(Context)
 
     local Container = Context:CreateContainer(250)
 
-    Context:AddTitle("Welcome to Erebus")
+    Context:AddTitle("Welcome")
 
     Context:AddButton({
         Text = "Test Button",
         Container = Container,
 
         Callback = function()
-            print("Clicked!")
-        end
-    })
-
-    Context:AddToggle({
-        Text = "Example Toggle",
-        Container = Container,
-
-        Callback = function(state)
-            print("Toggle:", state)
+            print("clicked")
         end
     })
 
