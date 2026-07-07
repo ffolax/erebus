@@ -765,6 +765,23 @@ function UI:SetActiveTab(button)
 
 end
 
+function UI:OpenTab(name)
+
+    local Button = self.Tabs[name]
+    local Callback = self.TabCallbacks[name]
+
+    if not Button or not Callback then
+        return
+    end
+
+    self:SetActiveTab(Button)
+    self:ClearContent()
+
+    self.Context:SetParent(self.Content)
+    Callback(self.Context)
+
+end
+
 ----------------------------------------------------
 -- CLEAR CONTENT
 ----------------------------------------------------

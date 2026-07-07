@@ -45,3 +45,5 @@ UI:RegisterTab("Player", Player)
 UI:RegisterTab("Vehicle", Vehicle)
 UI:RegisterTab("Visuals", Visuals)
 UI:RegisterTab("Misc", Misc)
+
+UI:OpenTab("Home")
