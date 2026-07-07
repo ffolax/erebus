@@ -44,6 +44,7 @@ function Context:CreateContainer(height)
 
     local Layout = Instance.new("UIListLayout")
     Layout.Padding = UDim.new(0,5)
+    Layout.SortOrder = Enum.SortOrder.LayoutOrder
     Layout.Parent = Container
 
     local Corner = Instance.new("UICorner")
@@ -80,6 +81,7 @@ function Context:AddStatistics(options)
     Title.Position = UDim2.new(0,5,0,5)
     Title.BackgroundTransparency = 1
     Title.Font = Enum.Font.GothamBold
+    Title.Color3 = Color3.fromRGB(255,255,255)
     Title.TextSize = 16
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Text = options.Title or "Statistics"

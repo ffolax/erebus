@@ -4,6 +4,7 @@ return function(Context)
 
     Context:AddStatistics({
         Title = "Statistics",
+        Container = Container,
 
         Stats = {
             {"Players", function()
