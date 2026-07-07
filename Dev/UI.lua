@@ -74,12 +74,11 @@ function UI:Init(Context, Icons)
 	intro.Parent = screen
 	intro.AnchorPoint = Vector2.new(0.5, 0.5)
 	intro.Position = UDim2.new(0.5, 0, 0.5, 0)
-	intro.Size = UDim2.new(1,-120,1,0)
+	intro.Size = UDim2.fromScale(1,0,1,0)
 	intro.BackgroundTransparency = 1
 	intro.Text = "EREBUS"
 	intro.Font = Enum.Font.GothamBlack
 	intro.TextSize = 28
-	intro.TextXAlignment = Enum.TextXAlignment.Left
 	intro.TextColor3 = Theme.Accent
 	intro.TextTransparency = 1
 
@@ -594,12 +593,11 @@ function UI:Init(Context, Icons)
 	
 		task.wait(0.8)
 
-		TweenService:Create(intro, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
-			Position = UDim2.fromOffset(title.AbsolutePosition.X, title.AbsolutePosition.Y + title.AbsoluteSize.Y / 2),
-			TextSize = 18,
+		TweenService:Create(intro, TweenInfo.new(3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+			TextSize = 40,
 		}):Play()
 	
-		task.wait(0.6)
+		task.wait(3.5)
 	
 		main.Visible = true
 	
