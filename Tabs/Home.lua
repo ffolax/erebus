@@ -217,8 +217,13 @@ return function(Context)
                 end
 
                 if type(Data) ~= "table" or not Data.data then
+                    print("----- API KEYS -----")
+
+                    for k, v in pairs(Data) do
+                        print(k, typeof(v))
+                    end
+
                     warn("[EREBUS] Invalid API response.")
-                    print(Data)
                     return
                 end
 
