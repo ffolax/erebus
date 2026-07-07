@@ -34,8 +34,3 @@ UI:Init(
 	Icons
 )
 
-local Home = loadstring(game:HttpGet(BaseURL .. "Tabs/Home.lua"))()
-local Player = loadstring(game:HttpGet(BaseURL .. "Tabs/Player.lua"))()
-local Vehicle = loadstring(game:HttpGet(BaseURL .. "Tabs/Vehicle.lua"))()
-local Visuals = loadstring(game:HttpGet(BaseURL .. "Tabs/Visuals.lua"))()
-local Misc = loadstring(game:HttpGet(BaseURL .. "Tabs/Misc.lua"))()
