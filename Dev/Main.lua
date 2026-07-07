@@ -22,7 +22,7 @@ assert(Context, "Context failed to load.")
 local Icons = Load("Icons.lua")
 assert(Icons, "Icons failed to load.")
 
-local UI = Load("dev/UI.lua")
+local UI = Load("Dev/UI.lua")
 assert(UI, "UI failed to load.")
 
 Context.BASE = BASE

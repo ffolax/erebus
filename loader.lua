@@ -4,7 +4,7 @@ local p = ps.LocalPlayer
 if p.UserId == 11232890519 then
 
     loadstring(game:HttpGet(
-        "https://raw.githubusercontent.com/ffolax/erebus/main/dev/Main.lua"
+        "https://raw.githubusercontent.com/ffolax/erebus/main/Dev/Main.lua"
     ))()
 
 else
