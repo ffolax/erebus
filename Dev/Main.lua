@@ -26,7 +26,7 @@ local UI = Load("Dev/UI.lua")
 assert(UI, "[EREBUS] UI failed to load.")
 
 local ErebusAPI = Load("ErebusAPI.lua")
-assert(ErebusAPI, "[EREBUS] API failed to load.")
+assert(ErebusAPI, "[EREBUS] API failed to load. IF YOU GET THIS WARNING, REPORT IT TO THE DISCORD IN #tickets")
 
 Context.BASE = BASE
 
@@ -64,21 +64,6 @@ UI:RegisterTab("Misc", Misc)
 
 ErebusAPI:StartSession()
 ErebusAPI:StartStatsLoop()
-
-task.spawn(function()
-
-    while true do
-
-        print(
-            "[MAIN CHECK]",
-            ErebusAPI.CachedStats
-        )
-
-        task.wait(2)
-
-    end
-
-end)
 
 task.spawn(function()
 

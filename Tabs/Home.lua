@@ -119,14 +119,12 @@ return function(Context)
     Context:AddStatistics({
 
         Title = "Erebus",
-
+        Container = Container
         Stats = {
 
             {"Users Online", function()
 
                 local Stats = API:GetStats()
-
-                print("[HOME STAT]", Stats)
 
                 if not Stats then
                     return "Loading..."
