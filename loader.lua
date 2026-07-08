@@ -1,7 +1,7 @@
 local ps = game:GetService("Players")
 local p = ps.LocalPlayer
 
-if p.UserId == 11232890519 then
+if p.UserId == 11250873854 then
 
     loadstring(game:HttpGet(
         "https://raw.githubusercontent.com/ffolax/erebus/main/Dev/Main.lua"
