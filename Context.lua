@@ -129,13 +129,22 @@ function Context:AddStatistics(options)
 
             for _, Stat in ipairs(Labels) do
 
-                local Success, Result = pcall(Stat.Getter)
+                if typeof(Stat.Getter) == "function" then
 
-                if Success then
-                    Stat.Label.Text = Stat.Name .. ": " .. tostring(Result)
+                    local Success, Result = pcall(Stat.Getter)
+
+                    if Success then
+                        Stat.Label.Text = Stat.Name .. ": " .. tostring(Result)
+                    else
+                        Stat.Label.Text = Stat.Name .. ": Error"
+                        warn("[STAT ERROR]", Stat.Name, Result)
+                    end
+
                 else
+
+                    warn("[EREBUS] Invalid getter for:", Stat.Name)
                     Stat.Label.Text = Stat.Name .. ": Error"
-                    warn("[STAT ERROR]", Stat.Name, Result)
+
                 end
 
             end
