@@ -65,6 +65,20 @@ UI:RegisterTab("Misc", Misc)
 ErebusAPI:StartSession()
 ErebusAPI:StartStatsLoop()
 
+task.spawn(function()
+
+    while true do
+
+        print(
+            "[MAIN CHECK]",
+            ErebusAPI.CachedStats
+        )
+
+        task.wait(2)
+
+    end
+
+end)
 
 task.spawn(function()
 

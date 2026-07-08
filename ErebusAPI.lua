@@ -97,19 +97,37 @@ end
 
 function API:StartStatsLoop()
 
+    print("[EREBUS API] Stats loop started")
+
     task.spawn(function()
 
         while true do
 
+            print("[EREBUS API] Requesting stats")
+
             local Response = request({
-
                 Url = STATS_URL,
-                Method = "GET"
+                Method = "GET",
 
+                Headers = {
+                    ["Content-Type"] = "application/json"
+                }
             })
 
 
-            if Response and Response.Success then
+            if not Response then
+
+                warn("[EREBUS API] No response")
+
+            elseif not Response.Success then
+
+                warn(
+                    "[EREBUS API] Failed:",
+                    Response.StatusCode,
+                    Response.Body
+                )
+
+            else
 
                 local Success, Data = pcall(function()
                     return HttpService:JSONDecode(Response.Body)
@@ -121,15 +139,15 @@ function API:StartStatsLoop()
                     self.CachedStats = Data
 
                     print(
-                        "[EREBUS API] Stats updated:",
+                        "[EREBUS API] Updated:",
                         Data.online_users
                     )
 
+                else
+
+                    warn("[EREBUS API] JSON decode failed")
+
                 end
-
-            else
-
-                warn("[EREBUS API] Failed fetching stats.")
 
             end
 
