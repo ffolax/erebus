@@ -113,9 +113,6 @@ return function(Context)
     local Container = Context:CreateContainer(250)
     local API = Context.Services.API
 
-    print("HOME API:", API)
-    print("CACHE:", API and API.CachedStats)
-
     Context:AddStatistics({
 
         Title = "Erebus",
@@ -134,6 +131,18 @@ return function(Context)
 
             end},
 
+            {"Total Sessions", function()
+
+                local Stats = API:GetStats()
+
+                if not Stats then
+                    return "Loading..."
+                end
+
+                return Stats.total_sessions or 0
+
+            end},
+
 
             {"Players",function()
                 return #game:GetService("Players"):GetPlayers()
@@ -148,12 +157,6 @@ return function(Context)
             {"Ping",function()
                 return GetPing()
             end},
-
-
-            {"Game ID",function()
-                return game.GameId
-            end},
-
 
             {"Place ID",function()
                 return game.PlaceId
