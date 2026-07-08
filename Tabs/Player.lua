@@ -4,12 +4,67 @@ return function(Context)
         Text = "Aimbot Settings"
     })
 
+    local FOVCircle
+
     Context:AddToggle({
-        Text = "Aimbot",
+        Text = "FOV Circle",
 
-        Callback = function(Value)
+        Callback = function(Enabled)
 
+            if Enabled then
 
+                FOVCircle = Drawing.new("Circle")
+                FOVCircle.Visible = true
+                FOVCircle.Filled = false
+                FOVCircle.Thickness = 2
+                FOVCircle.Radius = 150
+                FOVCircle.NumSides = 64
+                FOVCircle.Position = workspace.CurrentCamera.ViewportSize / 2
+
+                task.spawn(function()
+
+                    while FOVCircle.Visible do
+                        FOVCircle.Position = Vector2.new(workspace.CurrentCamera.ViewportSize.X/2, workspace.CurrentCamera.ViewportSize.Y/2)
+                        
+                        local closestPlayer = nil
+                        local minDistance = math.huge
+                        
+                        for _, player in ipairs(workspace:GetChildren()) do
+                            if player:IsA("Humanoid") then
+                                local humanoidRootPart = player:FindFirstChild("HumanoidRootPart")
+                                if humanoidRootPart then
+                                    local screenPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(humanoidRootPart.Position)
+                                    if onScreen then
+                                        local distance = (Vector2.new(screenPos.X, screenPos.Y) - FOVCircle.Position).Magnitude
+                                        if distance < minDistance and distance <= FOVCircle.Radius then
+                                            minDistance = distance
+                                            closestPlayer = player
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        
+                        if closestPlayer then
+                            local target = closestPlayer:FindFirstChild("HumanoidRootPart")
+                            if target then
+                                workspace.CurrentCamera.CFrame = CFrame.lookAt(workspace.CurrentCamera.CFrame.Position, target.Position)
+                            end
+                        end
+                        
+                        wait()
+                    end
+
+                end)
+
+            else
+
+                if FOVCircle then
+                    FOVCircle:Remove()
+                    FOVCircle = nil
+                end
+
+            end
 
         end
     })
@@ -27,6 +82,26 @@ return function(Context)
             
         end
 
+    })
+
+    Context:AddTitle({
+        Text = "Ignore Settings"
+    })
+
+    Context:AddToggle({
+        Text = "Ignore Civilians",
+
+        Callback = function(Enabled)
+
+        end
+    })
+
+    Context:AddToggle({
+        Text = "Ignore Untouchable Teams",
+
+        Callback = function(Enabled)
+
+        end
     })
 
 end
