@@ -6,6 +6,7 @@ return function(Context)
 
     local FOVCircle
     local renderConnection = nil
+    local TargetPart
 
     Context:AddToggle({
         Text = "Aimbot",
@@ -48,7 +49,9 @@ return function(Context)
                     end
                     
                     if closestPlayer then
-                        local target = closestPlayer:FindFirstChild("HumanoidRootPart")
+
+                        local target = closestPlayer:FindFirstChild(TargetPart) or closestPlayer:FindFirstChild("HumanoidRootPart")
+
                         if target then
                             workspace.CurrentCamera.CFrame = CFrame.lookAt(workspace.CurrentCamera.CFrame.Position, target.Position)
                         end
