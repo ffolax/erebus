@@ -43,15 +43,15 @@ function FindPlrVehicle()
 
         return car
 
-	else
+    end
 
-		StarterGui:SetCore("SendNotification", {
+	StarterGui:SetCore("SendNotification", {
 			Title = "EREBUS";
 			Text = "Cannot find vehicle!";
 			Duration = 3; -- seconds
-		})
+	})
 
-    end
+	return nil
 
 end
 

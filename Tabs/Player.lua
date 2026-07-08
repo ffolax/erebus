@@ -1,3 +1,18 @@
+local userInputService = game:GetService("UserInputService")
+local rightClick = false
+
+userInputService.InputBegan:Connect(function(input, gameProcessed)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 and not gameProcessed then
+        rightClick = true
+    end
+end)
+
+userInputService.InputEnded:Connect(function(input, gameProcessed)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 and not gameProcessed then
+        rightClick = false
+    end
+end)
+
 return function(Context)
 
     Context:AddTitle({
@@ -10,7 +25,6 @@ return function(Context)
 
     Context:AddToggle({
         Text = "Aimbot",
-        Default = "HumanoidRootPart",
         Callback = function(Enabled)
             if Enabled then
                 FOVCircle = Drawing.new("Circle")
@@ -35,6 +49,7 @@ return function(Context)
                     
                     for _, player in ipairs(workspace:GetChildren()) do
                         if player:IsA("Model") and game.Players:GetPlayerFromCharacter(player) then
+                            if game.Players:GetPlayerFromCharacter(player) == game.Players.LocalPlayer then continue end
                             local humanoidRootPart = player:FindFirstChild("HumanoidRootPart")
                             if humanoidRootPart then
                                 local screenPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(humanoidRootPart.Position)
@@ -76,11 +91,11 @@ return function(Context)
     Context:AddDropdown({
 
         Text = "Target Part",
-
         Items = {
             "Head",
             "HumanoidRootPart",
         },
+        Default = "HumanoidRootPart",
 
         Callback = function(Value)
             TargetPart = Value
