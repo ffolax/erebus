@@ -2,6 +2,8 @@ local Context = {}
 
 Context.NextLayoutOrder = 1
 
+Context.Values = {}
+
 Context.State = {
     Tabs = {},
     ActiveTab = nil,
@@ -214,7 +216,13 @@ end
 
 function Context:AddToggle(options)
 
-    local Enabled = options.Default or false
+    local Id = options.Id or options.Text
+
+    if self.Values[Id] == nil then
+        self.Values[Id] = options.Default or false
+    end
+
+    local Enabled = self.Values[Id]
 
     local Button = self:AddButton({
         Text = options.Text,
@@ -224,6 +232,7 @@ function Context:AddToggle(options)
     Button.MouseButton1Click:Connect(function()
 
         Enabled = not Enabled
+        self.Values[Id] = Enabled
 
         if Enabled then
             Button.Text = options.Text .. ": On"
@@ -246,8 +255,15 @@ function Context:AddDropdown(options)
     local TweenService = game:GetService("TweenService")
 
     local Items = options.Items or {}
-    local Selected = options.Default or Items[1] or "None"
     local Open = false
+
+    local Id = options.Id or options.Text
+
+    if self.Values[Id] == nil then
+        self.Values[Id] = options.Default or Items[1] or "None"
+    end
+
+    local Selected = self.Values[Id]
 
     ---------------------------------------------------
     -- Main Container
@@ -470,6 +486,9 @@ function Context:AddDropdown(options)
                 tostring(Item)
             )
 
+            Selected = Item
+            self.Values[Id] = Item
+
             if options.Callback then
                 options.Callback(Item)
             end
@@ -504,7 +523,8 @@ function Context:AddDropdown(options)
 
         SetValue = function(Value)
 
-            Selected = Value
+            Selected = Item
+            self.Values[Id] = Item
 
             Label.Text = string.format(
                 "%s: %s",
