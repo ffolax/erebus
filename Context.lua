@@ -135,6 +135,7 @@ function Context:AddStatistics(options)
                     Stat.Label.Text = Stat.Name .. ": " .. tostring(Result)
                 else
                     Stat.Label.Text = Stat.Name .. ": Error"
+                    warn("[STAT ERROR]", Stat.Name, Result)
                 end
 
             end

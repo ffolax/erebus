@@ -122,9 +122,11 @@ return function(Context)
 
         Stats = {
 
-            ["Users Online"] = function()
+            {"Users Online", function()
 
                 local Stats = API:GetStats()
+
+                print("[HOME STAT]", Stats)
 
                 if not Stats then
                     return "Loading..."
@@ -132,52 +134,52 @@ return function(Context)
 
                 return tostring(Stats.online_users or 0)
 
-            end,
+            end},
 
 
-            ["Players"] = function()
+            {"Players",function()
                 return #game:GetService("Players"):GetPlayers()
-            end,
+            end},
 
 
-            ["FPS"] = function()
+            {"FPS",function()
                 return math.floor(workspace:GetRealPhysicsFPS())
-            end,
+            end},
 
 
-            ["Ping"] = function()
+            {"Ping",function()
                 return GetPing()
-            end,
+            end},
 
 
-            ["Game ID"] = function()
+            {"Game ID",function()
                 return game.GameId
-            end,
+            end},
 
 
-            ["Place ID"] = function()
+            {"Place ID",function()
                 return game.PlaceId
-            end,
+            end},
 
 
-            ["Executor"] = function()
+            {"Executor",function()
                 return GetExecutor()
-            end,
+            end},
 
 
-            ["Bank"] = function()
+            {"Bank",function()
                 return GetBankRobbed()
-            end,
+            end},
 
 
-            ["Club"] = function()
+            {"Club",function()
                 return GetClubRobbed()
-            end,
+            end},
 
 
-            ["Jeweler"] = function()
+            {"Jeweler",function()
                 return GetJewelerRobbed()
-            end
+            end}
 
         }
 
