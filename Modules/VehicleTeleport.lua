@@ -1,7 +1,6 @@
 local VehicleTeleport = {}
 
 local Vehicles = game.workspace:FindFirstChild("Vehicles")
-local Robberies = game.workspace:FindFirstChild("Robberies")
 
 local TeleportPoints = {
 
