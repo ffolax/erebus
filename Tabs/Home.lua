@@ -313,4 +313,20 @@ return function(Context)
         end
     })
 
+    Context:AddDropdown({
+
+    Text = "Vehicle",
+
+    Items = {
+        "Camaro",
+        "Bugatti",
+        "Lamborghini"
+    },
+
+    Callback = function(Value)
+        print("Selected:", Value)
+    end
+
+})
+
 end

@@ -219,6 +219,162 @@ function Context:AddToggle(options)
 
 end
 
+function Context:AddDropdown(options)
+
+    local TweenService = game:GetService("TweenService")
+
+    local Items = options.Items or {}
+    local Selected = options.Default or Items[1] or "None"
+    local Open = false
+
+    local Container = options.Container or self:CreateContainer(40)
+    Container.ClipsDescendants = true
+
+    local MainButton = Instance.new("TextButton")
+    MainButton.Size = UDim2.new(1,-10,0,30)
+    MainButton.Position = UDim2.new(0,5,0,5)
+    MainButton.BackgroundColor3 = Color3.fromRGB(120,60,220)
+    MainButton.Text = ""
+    MainButton.Parent = Container
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0,8)
+    Corner.Parent = MainButton
+
+    local Label = Instance.new("TextLabel")
+    Label.BackgroundTransparency = 1
+    Label.Size = UDim2.new(1,-35,1,0)
+    Label.Position = UDim2.new(0,10,0,0)
+    Label.Font = Enum.Font.Gotham
+    Label.TextSize = 14
+    Label.TextColor3 = Color3.fromRGB(255,255,255)
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.Text = (options.Text or "Dropdown") .. ": " .. tostring(Selected)
+    Label.Parent = MainButton
+
+    local Arrow = Instance.new("TextLabel")
+    Arrow.BackgroundTransparency = 1
+    Arrow.Size = UDim2.new(0,25,1,0)
+    Arrow.Position = UDim2.new(1,-25,0,0)
+    Arrow.Font = Enum.Font.GothamBold
+    Arrow.TextSize = 16
+    Arrow.TextColor3 = Color3.fromRGB(255,255,255)
+    Arrow.Text = "▼"
+    Arrow.Parent = MainButton
+
+    local List = Instance.new("Frame")
+    List.BackgroundTransparency = 1
+    List.Position = UDim2.new(0,5,0,40)
+    List.Size = UDim2.new(1,-10,0,#Items * 28)
+    List.Parent = Container
+
+    local Layout = Instance.new("UIListLayout")
+    Layout.Padding = UDim.new(0,4)
+    Layout.Parent = List
+
+    local function Close()
+
+        Open = false
+
+        TweenService:Create(
+            Container,
+            TweenInfo.new(.15),
+            {
+                Size = UDim2.new(1,-20,0,40)
+            }
+        ):Play()
+
+        TweenService:Create(
+            Arrow,
+            TweenInfo.new(.15),
+            {
+                Rotation = 0
+            }
+        ):Play()
+
+    end
+
+    local function OpenDropdown()
+
+        Open = true
+
+        TweenService:Create(
+            Container,
+            TweenInfo.new(.15),
+            {
+                Size = UDim2.new(1,-20,0,40 + (#Items * 28) + 5)
+            }
+        ):Play()
+
+        TweenService:Create(
+            Arrow,
+            TweenInfo.new(.15),
+            {
+                Rotation = 180
+            }
+        ):Play()
+
+    end
+
+    for _, Item in ipairs(Items) do
+
+        local Option = Instance.new("TextButton")
+        Option.Size = UDim2.new(1,0,0,24)
+        Option.BackgroundColor3 = Color3.fromRGB(30,30,40)
+        Option.TextColor3 = Color3.fromRGB(255,255,255)
+        Option.Font = Enum.Font.Gotham
+        Option.TextSize = 14
+        Option.Text = tostring(Item)
+        Option.Parent = List
+
+        local Corner = Instance.new("UICorner")
+        Corner.CornerRadius = UDim.new(0,6)
+        Corner.Parent = Option
+
+        Option.MouseButton1Click:Connect(function()
+
+            Selected = Item
+
+            Label.Text = (options.Text or "Dropdown") .. ": " .. tostring(Item)
+
+            Close()
+
+            if options.Callback then
+                options.Callback(Item)
+            end
+
+        end)
+
+    end
+
+    MainButton.MouseButton1Click:Connect(function()
+
+        if Open then
+            Close()
+        else
+            OpenDropdown()
+        end
+
+    end)
+
+    return {
+
+        GetValue = function()
+            return Selected
+        end,
+
+        SetValue = function(Value)
+
+            Selected = Value
+
+            Label.Text = (options.Text or "Dropdown") .. ": " .. tostring(Value)
+
+        end
+
+    }
+
+end
+
 function Context:AddSlider(options)
 
     local Frame = Instance.new("Frame")
