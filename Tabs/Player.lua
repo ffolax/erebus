@@ -8,16 +8,15 @@ return function(Context)
     local holdingRightClick = false
     local userInputService = game:GetService("UserInputService")
     local mouse = game.Players.LocalPlayer:GetMouse()
-
-    -- Right-click input handling
+    
     userInputService.InputBegan:Connect(function(input, gameProcessed)
-        if input.KeyCode == Enum.KeyCode.RightMouseButton and not gameProcessed then
+        if input.UserInputType == Enum.UserInputType.MouseButton2 and not gameProcessed then
             holdingRightClick = true
         end
     end)
 
     userInputService.InputEnded:Connect(function(input, gameProcessed)
-        if input.KeyCode == Enum.KeyCode.RightMouseButton and not gameProcessed then
+        if input.UserInputType == Enum.UserInputType.MouseButton2 and not gameProcessed then
             holdingRightClick = false
         end
     end)
