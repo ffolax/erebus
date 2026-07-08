@@ -5,13 +5,22 @@ return function(Context)
     })
 
     local FOVCircle
+    local holdingRightClick = false
+    local mouse = game.Players.LocalPlayer:GetMouse()
+    local TargetPart
+
+    mouse.Button2Down:Connect(function()
+        holdingRightClick = true
+    end)
+
+    mouse.Button2Up:Connect(function()
+        holdingRightClick = false
+    end)
+
     Context:AddToggle({
         Text = "Aimbot",
-
         Callback = function(Enabled)
-
             if Enabled then
-
                 FOVCircle = Drawing.new("Circle")
                 FOVCircle.Visible = true
                 FOVCircle.Filled = false
@@ -21,7 +30,6 @@ return function(Context)
                 FOVCircle.Position = workspace.CurrentCamera.ViewportSize / 2
 
                 task.spawn(function()
-
                     while FOVCircle do
                         FOVCircle.Position = Vector2.new(workspace.CurrentCamera.ViewportSize.X/2, workspace.CurrentCamera.ViewportSize.Y/2)
                         
@@ -30,6 +38,7 @@ return function(Context)
                         
                         for _, player in ipairs(workspace:GetChildren()) do
                             if player:IsA("Model") and game.Players:GetPlayerFromCharacter(player) then
+                                if game.Players:GetPlayerFromCharacter(player) == game.Players.LocalPlayer then continue end
                                 local humanoidRootPart = player:FindFirstChild("HumanoidRootPart")
                                 if humanoidRootPart then
                                     local screenPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(humanoidRootPart.Position)
@@ -45,7 +54,9 @@ return function(Context)
                         end
                         
                         if closestPlayer then
-                            local target = closestPlayer:FindFirstChild("HumanoidRootPart")
+
+                            local target = target = closestPlayer:FindFirstChild("HumanoidRootPart")
+                            
                             if target then
                                 workspace.CurrentCamera.CFrame = CFrame.lookAt(workspace.CurrentCamera.CFrame.Position, target.Position)
                             end
@@ -53,18 +64,13 @@ return function(Context)
                         
                         wait()
                     end
-
                 end)
-
             else
-
                 if FOVCircle then
                     FOVCircle:Remove()
                     FOVCircle = nil
                 end
-
             end
-
         end
     })
 
