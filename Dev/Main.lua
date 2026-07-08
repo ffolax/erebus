@@ -62,7 +62,33 @@ UI:Init(
 )
 
 
-local Home = loadstring(game:HttpGet(BASE .. "Tabs/Home.lua"))()
+print("[EREBUS] Downloading Home")
+
+local HomeSource = game:HttpGet(BASE .. "Tabs/Home.lua")
+
+print("[EREBUS] Home size:", #HomeSource)
+
+local HomeChunk, Error = loadstring(HomeSource)
+
+if not HomeChunk then
+    warn("[EREBUS] Home compile error:")
+    warn(Error)
+    return
+end
+
+print("[EREBUS] Home compiled")
+
+local Success, HomeResult = pcall(HomeChunk)
+
+if not Success then
+    warn("[EREBUS] Home runtime error:")
+    warn(HomeResult)
+    return
+end
+
+print("[EREBUS] Home result:", HomeResult)
+
+local Home = HomeResult
 local Player = loadstring(game:HttpGet(BASE .. "Tabs/Player.lua"))()
 local Vehicle = loadstring(game:HttpGet(BASE .. "Tabs/Vehicle.lua"))()
 local Visuals = loadstring(game:HttpGet(BASE .. "Tabs/Visuals.lua"))()
