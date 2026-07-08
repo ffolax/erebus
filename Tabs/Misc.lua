@@ -22,31 +22,57 @@ return function(Context)
 
     Context:AddToggle({
 
-        Text = "Spin Vehicle",
+        Text = "Noclip through vehicles",
 
         Callback = function(State)
 
-            Spinning = State
+            if State then
 
-            if not State then
-                return
-            end
+                for _,v in pairs(game.workspace:GetDescendants()) do
 
-            local Vehicle = FindPlrVehicle()
+                    if v:IsDescendantOf(game.workspace.Vehicles) then
 
-            if Vehicle then
+                        local Vehicle = FindPlrVehicle()
 
-                local Root = Vehicle:FindFirstChildOfClass("Seat")
+                        if Vehicle then
 
-                local Attachment = Instance.new("Attachment")
-                Attachment.Parent = Root
+                            if v:IsDescendantOf(Vehicle) then continue end
 
-                local Spin = Instance.new("AngularVelocity")
-                Spin.Attachment0 = Attachment
-                Spin.AngularVelocity = Vector3.new(0, 50, 0)
-                Spin.MaxTorque = math.huge
-                Spin.RelativeTo = Enum.ActuatorRelativeTo.World
-                Spin.Parent = Root
+                            if v:IsA("BasePart") then
+
+                                v.CanCollide = false
+
+                            end
+
+                       end
+
+                   end
+
+                end
+
+            else
+
+                for _,v in pairs(game.workspace:GetDescendants()) do
+
+                    if v:IsDescendantOf(game.workspace.Vehicles) then
+
+                        local Vehicle = FindPlrVehicle()
+
+                        if Vehicle then
+
+                            if v:IsDescendantOf(Vehicle) then continue end
+
+                            if v:IsA("BasePart") then
+
+                                v.CanCollide = true
+
+                            end
+
+                       end
+
+                   end
+
+                end
 
             end
 
