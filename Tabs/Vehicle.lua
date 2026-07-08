@@ -20,9 +20,17 @@ return function(Context)
 
     local Container = Context:CreateContainer(250)
 
+    Context:AddTitle({
+        Text = "Teleport"
+    })
+
     Context:AddViewport({
         Container = Container,
         Model = FindVehicle
+    })
+
+    Context:AddTitle({
+        Text = "TIP: You can press any location on the map UI to teleport there!"
     })
 
     Context:AddButton({
@@ -70,6 +78,6 @@ return function(Context)
         Text = "Vehicle Settings"
     })
 
-    
+
 
 end

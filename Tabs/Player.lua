@@ -1,11 +1,15 @@
 return function(Context)
 
+    Context:AddTitle({
+        Text = "Aimbot Settings"
+    })
+
     Context:AddToggle({
         Text = "Aimbot",
 
         Callback = function(Value)
 
-            
+
 
         end
     })
