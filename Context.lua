@@ -289,14 +289,11 @@ function Context:AddDropdown(options)
     Label.Text = string.format("%s: %s", options.Text or "Dropdown", Selected)
     Label.Parent = Button
 
-    local Arrow = Instance.new("TextLabel")
+    local Arrow = Instance.new("ImageLabel")
     Arrow.BackgroundTransparency = 1
     Arrow.Size = UDim2.new(0,20,1,0)
     Arrow.Position = UDim2.new(1,-25,0,0)
-    Arrow.Font = Enum.Font.GothamBold
-    Arrow.TextSize = 16
-    Arrow.Text = "▼"
-    Arrow.TextColor3 = Color3.new(1,1,1)
+    Arrow.Image = Context.Services.Icons.Controls.Dropdown
     Arrow.Parent = Button
 
     ---------------------------------------------------
@@ -326,7 +323,7 @@ function Context:AddDropdown(options)
 
         local Layout = Dropdown:FindFirstChildOfClass("UIListLayout")
 
-        local Height = Layout.AbsoluteContentSize.Y + 5
+        local Height = Layout.AbsoluteContentSize.Y + 6
 
         Dropdown.Visible = true
 

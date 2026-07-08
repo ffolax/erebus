@@ -88,7 +88,7 @@ local Icons = {
 
 		ToggleOn = "",
 		ToggleOff = "",
-		Dropdown = "",
+		Dropdown = "rbxassetid://123440906697385",
 		Slider = "",
 		Keybind = "",
 		Search = "",
