@@ -25,7 +25,16 @@ assert(Icons, "[EREBUS] Icons failed to load.")
 local UI = Load("Dev/UI.lua")
 assert(UI, "[EREBUS] UI failed to load.")
 
+local ErebusAPI = Load("ErebusAPI.lua")
+assert(ErebusAPI, "[EREBUS] API failed to load.")
+
 Context.BASE = BASE
+
+Context.Services = {
+    API = ErebusAPI,
+    UI = UI,
+    Icons = Icons,
+}
 
 Context:Init()
 
@@ -34,11 +43,13 @@ UI:Init(
     Icons
 )
 
+
 local Home = loadstring(game:HttpGet(BASE .. "Tabs/Home.lua"))()
 local Player = loadstring(game:HttpGet(BASE .. "Tabs/Player.lua"))()
 local Vehicle = loadstring(game:HttpGet(BASE .. "Tabs/Vehicle.lua"))()
 local Visuals = loadstring(game:HttpGet(BASE .. "Tabs/Visuals.lua"))()
 local Misc = loadstring(game:HttpGet(BASE .. "Tabs/Misc.lua"))()
+
 
 UI:RegisterTab("Home", Home)
 UI:RegisterTab("Player", Player)
@@ -46,22 +57,18 @@ UI:RegisterTab("Vehicle", Vehicle)
 UI:RegisterTab("Visuals", Visuals)
 UI:RegisterTab("Misc", Misc)
 
-UI:OpenTab("Home")
-
-local ErebusAPI = Load("ErebusAPI.lua")
-assert(Icons, "[EREBUS] API failed to load.")
-
-Context.Services = {
-    API = ErebusAPI,
-    UI = UI,
-    Icons = Icons,
-}
 
 ErebusAPI:StartSession()
 ErebusAPI:StartStatsLoop()
 
+
 task.spawn(function()
+
     while task.wait(30) do
         ErebusAPI:Heartbeat()
     end
+
 end)
+
+
+UI:OpenTab("Home")
