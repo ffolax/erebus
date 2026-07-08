@@ -18,11 +18,11 @@ end
 
 return function(Context)
 
-    local Container = Context:CreateContainer(250)
-
     Context:AddTitle({
         Text = "Teleport"
     })
+
+    local Container = Context:CreateContainer(250)
 
     Context:AddViewport({
         Container = Container,

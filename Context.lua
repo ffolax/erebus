@@ -224,9 +224,9 @@ function Context:AddToggle(options)
         Enabled = not Enabled
 
         if Enabled then
-            Button.Text = options.Text .. " ON"
+            Button.Text = options.Text .. ": On"
         else
-            Button.Text = options.Text .. " OFF"
+            Button.Text = options.Text .. ": Off"
         end
 
         if options.Callback then

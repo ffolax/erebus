@@ -123,67 +123,53 @@ function MoveVehicle(endPosition)
 
 end
 
-return function(Context)
+local function SetupMapToMove()
 
-	local function SetupMapToMove()
+	local NavigationMap
 
-		local NavigationMap
-
-		for _, obj in pairs(PlrGui:GetDescendants()) do
-			if obj:IsA("ViewportFrame") and string.find(obj.Name, "Map") then
-				NavigationMap = obj
-				break
-			end
+	for _, obj in pairs(PlrGui:GetDescendants()) do
+		if obj:IsA("ViewportFrame") and string.find(obj.Name, "Map") then
+			NavigationMap = obj
+			break
 		end
-
-		if not NavigationMap then
-			return
-		end
-
-		NavigationMap.Destroying:Once(function()
-			task.wait()
-			SetupMapToMove()
-		end)
-
-		local conns = {}
-
-		for _, MapPoints in pairs(NavigationMap:GetChildren()) do
-			if MapPoints:IsA("ImageButton") then
-				local conn
-				conn = MapPoints:GetPropertyChangedSignal("BackgroundColor3"):Connect(function()
-
-					if MapPoints.BackgroundColor3 ~= Color3.fromRGB(0,0,0) then
-
-						local SelectedMapPoint = MapPoints:FindFirstChild("3")
-						local LettersOnly = SelectedMapPoint.Text:gsub("[^%a]", "")
-
-						if TeleportPoints[LettersOnly] then
-
-							if not CurrentlyTeleporting then
-								CurrentlyTeleporting = true
-								MoveVehicle(TeleportPoints[LettersOnly], TeleportSpeed)
-							end
-						end
-
-					end
-				end)
-
-				table.insert(conns,conn)
-			end
-		end
-
-		getgenv().Erebus = getgenv().Erebus or {}
-
-		if getgenv().Erebus.Instance then
-			getgenv().Erebus.Instance.Destroying:Connect(function()
-				for _,v in pairs(conns) do
-					v:Disconnect()
-				end
-			end)
-		end
-
 	end
 
-	SetupMapToMove()
+	if not NavigationMap then
+		return
+	end
+
+	NavigationMap.Destroying:Once(function()
+		task.wait()
+		SetupMapToMove()
+	end)
+
+	local conns = {}
+
+	for _, MapPoints in pairs(NavigationMap:GetChildren()) do
+		if MapPoints:IsA("ImageButton") then
+			local conn
+			conn = MapPoints:GetPropertyChangedSignal("BackgroundColor3"):Connect(function()
+
+				if MapPoints.BackgroundColor3 ~= Color3.fromRGB(0,0,0) then
+
+					local SelectedMapPoint = MapPoints:FindFirstChild("3")
+					local LettersOnly = SelectedMapPoint.Text:gsub("[^%a]", "")
+
+					if TeleportPoints[LettersOnly] then
+
+						if not CurrentlyTeleporting then
+							CurrentlyTeleporting = true
+							MoveVehicle(TeleportPoints[LettersOnly], TeleportSpeed)
+						end
+					end
+
+				end
+			end)
+
+			table.insert(conns,conn)
+		end
+	end
 
 end
+
+SetupMapToMove()
