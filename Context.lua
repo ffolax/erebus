@@ -1,5 +1,7 @@
 local Context = {}
 
+Context.NextLayoutOrder = 1
+
 Context.State = {
     Tabs = {},
     ActiveTab = nil,
@@ -37,31 +39,40 @@ end
 function Context:CreateContainer(height)
 
     local Container = Instance.new("Frame")
-    Container.Size = UDim2.new(1,-20,0,0)
-    Container.AutomaticSize = Enum.AutomaticSize.Y
+    Container.Size = UDim2.new(1,-20,0,height)
     Container.BackgroundColor3 = Color3.fromRGB(22,22,32)
     Container.BorderSizePixel = 0
     Container.Parent = self.Parent
 
-    Container:SetAttribute("ClosedHeight", height)
-
-    local Content = Instance.new("Frame")
-    Content.BackgroundTransparency = 1
-    Content.Size = UDim2.new(1,0,0,height)
-    Content.AutomaticSize = Enum.AutomaticSize.Y
-    Content.Parent = Container
+    Container.LayoutOrder = self.NextLayoutOrder
+    self.NextLayoutOrder += 1
 
     local Layout = Instance.new("UIListLayout")
     Layout.Padding = UDim.new(0,5)
-    Layout.Parent = Content
+    Layout.SortOrder = Enum.SortOrder.LayoutOrder
+    Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    Layout.Parent = Container
 
     local Corner = Instance.new("UICorner")
     Corner.CornerRadius = UDim.new(0,8)
     Corner.Parent = Container
 
-    Container.Content = Content
-
     return Container
+
+end
+
+function Context:CreateSpacer()
+
+    local Spacer = Instance.new("Frame")
+    Spacer.Size = UDim2.new(1,-20,0,0)
+    Spacer.BackgroundTransparency = 1
+    Spacer.BorderSizePixel = 0
+    Spacer.Parent = self.Parent
+
+    Spacer.LayoutOrder = self.NextLayoutOrder
+    self.NextLayoutOrder += 1
+
+    return Spacer
 
 end
 
@@ -236,89 +247,212 @@ function Context:AddDropdown(options)
     local Selected = options.Default or Items[1] or "None"
     local Open = false
 
-    local Container = options.Container or self:CreateContainer(40)
-    Container.ClipsDescendants = true
+    local function OpenDropdown()
 
-    local MainButton = Instance.new("TextButton")
-    MainButton.Size = UDim2.new(1,-10,0,30)
-    MainButton.Position = UDim2.new(0,5,0,5)
-    MainButton.BackgroundColor3 = Color3.fromRGB(120,60,220)
-    MainButton.Text = ""
-    MainButton.Parent = Container
+        Open = true
 
-    local Corner = Instance.new("UICorner")
-    Corner.CornerRadius = UDim.new(0,8)
-    Corner.Parent = MainButton
+        local Layout = Dropdown:FindFirstChildOfClass("UIListLayout")
 
-    local Label = Instance.new("TextLabel")
-    Label.BackgroundTransparency = 1
-    Label.Size = UDim2.new(1,-35,1,0)
-    Label.Position = UDim2.new(0,10,0,0)
-    Label.Font = Enum.Font.Gotham
-    Label.TextSize = 14
-    Label.TextColor3 = Color3.fromRGB(255,255,255)
-    Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.Text = (options.Text or "Dropdown") .. ": " .. tostring(Selected)
-    Label.Parent = MainButton
+        local Height = Layout.AbsoluteContentSize.Y + 5
 
-    local Arrow = Instance.new("TextLabel")
-    Arrow.BackgroundTransparency = 1
-    Arrow.Size = UDim2.new(0,25,1,0)
-    Arrow.Position = UDim2.new(1,-25,0,0)
-    Arrow.Font = Enum.Font.GothamBold
-    Arrow.TextSize = 16
-    Arrow.TextColor3 = Color3.fromRGB(255,255,255)
-    Arrow.Text = "▼"
-    Arrow.Parent = MainButton
-
-    local List = Instance.new("Frame")
-    List.BackgroundTransparency = 1
-    List.Position = UDim2.new(0,5,0,40)
-    List.Size = UDim2.new(1,-10,0,#Items * 28)
-    List.Parent = Container
-
-    local Layout = Instance.new("UIListLayout")
-    Layout.Padding = UDim.new(0,4)
-    Layout.Parent = List
-
-    local ClosedHeight = Container:GetAttribute("ClosedHeight") or 40
-
-    local function Refresh()
-
-        local Height = ClosedHeight
-
-        if Open then
-            Height += (#Items * 28) + 5
-        end
+        Dropdown.Visible = true
 
         TweenService:Create(
-            Container,
-            TweenInfo.new(.15, Enum.EasingStyle.Quad),
+            Arrow,
+            TweenInfo.new(
+                .15,
+                Enum.EasingStyle.Quad,
+                Enum.EasingDirection.Out
+            ),
             {
-                Size = UDim2.new(1,-20,0,Height)
+                Rotation = 180
             }
         ):Play()
 
         TweenService:Create(
-            Arrow,
-            TweenInfo.new(.15),
+            Spacer,
+            TweenInfo.new(
+                .15,
+                Enum.EasingStyle.Quad,
+                Enum.EasingDirection.Out
+            ),
             {
-                Rotation = Open and 180 or 0
+                Size = UDim2.new(
+                    1,
+                    -20,
+                    0,
+                    Height
+                )
+            }
+        ):Play()
+
+        TweenService:Create(
+            Dropdown,
+            TweenInfo.new(
+                .15,
+                Enum.EasingStyle.Quad,
+                Enum.EasingDirection.Out
+            ),
+            {
+                Size = UDim2.new(
+                    1,
+                    0,
+                    0,
+                    Height
+                )
             }
         ):Play()
 
     end
 
+    local function CloseDropdown()
+
+        Open = false
+
+        TweenService:Create(
+            Arrow,
+            TweenInfo.new(
+                .15,
+                Enum.EasingStyle.Quad,
+                Enum.EasingDirection.Out
+            ),
+            {
+                Rotation = 0
+            }
+        ):Play()
+
+        TweenService:Create(
+            Spacer,
+            TweenInfo.new(
+                .15,
+                Enum.EasingStyle.Quad,
+                Enum.EasingDirection.Out
+            ),
+            {
+                Size = UDim2.new(
+                    1,
+                    -20,
+                    0,
+                    0
+                )
+            }
+        ):Play()
+
+        TweenService:Create(
+            Dropdown,
+            TweenInfo.new(
+                .15,
+                Enum.EasingStyle.Quad,
+                Enum.EasingDirection.Out
+            ),
+            {
+                Size = UDim2.new(
+                    1,
+                    0,
+                    0,
+                    0
+                )
+            }
+        ):Play()
+
+        task.delay(.15, function()
+
+            if not Open then
+                Dropdown.Visible = false
+            end
+
+        end)
+
+    end
+
+    ---------------------------------------------------
+    -- Main Container
+    ---------------------------------------------------
+
+    local MainContainer = options.Container or self:CreateContainer(40)
+
+    MainContainer.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+
+    local Spacer = Instance.new("Frame")
+    Spacer.BackgroundTransparency = 1
+    Spacer.BorderSizePixel = 0
+    Spacer.Size = UDim2.new(1,-20,0,0)
+    Spacer.Parent = MainContainer.Parent
+
+    Spacer.LayoutOrder = MainContainer.LayoutOrder + 1
+
+    local Layout = Instance.new("UIListLayout")
+    Layout.Padding = UDim.new(0,5)
+    Layout.Parent = Spacer
+
+    local Button = Instance.new("TextButton")
+    Button.Size = UDim2.new(1,-10,1,-10)
+    Button.Position = UDim2.new(0,5,0,5)
+    Button.BackgroundColor3 = Color3.fromRGB(120,60,220)
+    Button.Text = ""
+    Button.Parent = MainContainer
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0,8)
+    Corner.Parent = Button
+
+    local Label = Instance.new("TextLabel")
+    Label.BackgroundTransparency = 1
+    Label.Size = UDim2.new(1,-35,1,0)
+    Label.Position = UDim2.new(0,10,0,0)
+    Label.Font = Enum.Font.GothamBold
+    Label.TextSize = 14
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.TextColor3 = Color3.new(1,1,1)
+    Label.Text = string.format("%s: %s", options.Text or "Dropdown", Selected)
+    Label.Parent = Button
+
+    local Arrow = Instance.new("TextLabel")
+    Arrow.BackgroundTransparency = 1
+    Arrow.Size = UDim2.new(0,20,1,0)
+    Arrow.Position = UDim2.new(1,-25,0,0)
+    Arrow.Font = Enum.Font.GothamBold
+    Arrow.TextSize = 16
+    Arrow.Text = "▼"
+    Arrow.TextColor3 = Color3.new(1,1,1)
+    Arrow.Parent = Button
+
+    ---------------------------------------------------
+    -- Dropdown Container
+    ---------------------------------------------------
+
+    local Dropdown = Instance.new("Frame")
+    Dropdown.Size = UDim2.new(1,-20,0,0)
+    Dropdown.BackgroundColor3 = Color3.fromRGB(22,22,32)
+    Dropdown.BorderSizePixel = 0
+    Dropdown.Visible = false
+    Dropdown.Parent = Spacer
+
+    local DropCorner = Instance.new("UICorner")
+    DropCorner.CornerRadius = UDim.new(0,8)
+    DropCorner.Parent = Dropdown
+
+    local Layout = Instance.new("UIListLayout")
+    Layout.Padding = UDim.new(0,5)
+    Layout.Parent = Dropdown
+
+    Dropdown.LayoutOrder = MainContainer.LayoutOrder + 1
+
+    ---------------------------------------------------
+    -- Options
+    ---------------------------------------------------
+
     for _, Item in ipairs(Items) do
 
         local Option = Instance.new("TextButton")
-        Option.Size = UDim2.new(1,0,0,24)
-        Option.BackgroundColor3 = Color3.fromRGB(30,30,40)
-        Option.TextColor3 = Color3.fromRGB(255,255,255)
+        Option.Size = UDim2.new(1,-10,0,28)
+        Option.Position = UDim2.new(0,5,0,0)
+        Option.BackgroundColor3 = Color3.fromRGB(32,32,42)
+        Option.TextColor3 = Color3.new(1,1,1)
         Option.Font = Enum.Font.Gotham
         Option.TextSize = 14
         Option.Text = tostring(Item)
-        Option.Parent = List
+        Option.Parent = Dropdown
 
         local Corner = Instance.new("UICorner")
         Corner.CornerRadius = UDim.new(0,6)
@@ -328,10 +462,31 @@ function Context:AddDropdown(options)
 
             Selected = Item
 
-            Label.Text = (options.Text or "Dropdown") .. ": " .. tostring(Item)
+            Label.Text = string.format(
+                "%s: %s",
+                options.Text or "Dropdown",
+                tostring(Item)
+            )
 
-            Open = false
-            Refresh()
+            CloseDropdown()
+
+            TweenService:Create(
+                Arrow,
+                TweenInfo.new(.15),
+                {Rotation = 0}
+            ):Play()
+
+            TweenService:Create(
+                Dropdown,
+                TweenInfo.new(.15),
+                {
+                    Size = UDim2.new(1,-20,0,0)
+                }
+            ):Play()
+
+            task.delay(.15,function()
+                Dropdown.Visible = false
+            end)
 
             if options.Callback then
                 options.Callback(Item)
@@ -341,12 +496,23 @@ function Context:AddDropdown(options)
 
     end
 
-    MainButton.MouseButton1Click:Connect(function()
+    ---------------------------------------------------
+    -- Toggle
+    ---------------------------------------------------
 
-        Open = not Open
-        Refresh()
+    Button.MouseButton1Click:Connect(function()
+
+        if Open then
+            CloseDropdown()
+        else
+            OpenDropdown()
+        end
 
     end)
+
+    ---------------------------------------------------
+    -- API
+    ---------------------------------------------------
 
     return {
 
@@ -358,7 +524,11 @@ function Context:AddDropdown(options)
 
             Selected = Value
 
-            Label.Text = (options.Text or "Dropdown") .. ": " .. tostring(Value)
+            Label.Text = string.format(
+                "%s: %s",
+                options.Text or "Dropdown",
+                tostring(Value)
+            )
 
         end
 
