@@ -117,7 +117,7 @@ local function QueueErebus()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/ffolax/erebus/main/loader.lua"))()
     ]])
 
-    task.wait(0.1)
+    task.wait(0.25)
 
 end
 
