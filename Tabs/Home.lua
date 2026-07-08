@@ -1,3 +1,4 @@
+print("[EREBUS] Loading Home.lua")
 function GetExecutor()
 
     if identifyexecutor then
@@ -42,31 +43,36 @@ end
 
 function GetClubRobbed()
 
-    local Robberies = game.workspace:FindFirstChild("Robberies")
+    local Robberies = workspace:FindFirstChild("Robberies")
 
     if Robberies and Robberies:FindFirstChild("Club Robbery") then
 
         local Club = Robberies["Club Robbery"]:FindFirstChild("Club")
-        if not Club then return "???" end
+
+        if not Club then
+            print("[EREBUS] Checking Club")
+            return "???"
+        end
+
         local Door = Club:FindFirstChild("Door")
 
         if Door then
 
             local DoorPivot = Door:GetPivot()
 
+            print("[EREBUS] Checking Club")
+
             if DoorPivot.RightVector == Vector3.new(1,0,0) then
-
                 return "GREEN"
-
             else
-
                 return "RED"
-
             end
 
         end
 
     end
+
+    print("[EREBUS] Checking Club")
 
     return "???"
 
