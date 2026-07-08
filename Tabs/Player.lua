@@ -32,34 +32,38 @@ return function(Context)
                 task.spawn(function()
                     while FOVCircle do
                         FOVCircle.Position = Vector2.new(workspace.CurrentCamera.ViewportSize.X/2, workspace.CurrentCamera.ViewportSize.Y/2)
+
+                        if holdingRightClick then
                         
-                        local closestPlayer = nil
-                        local minDistance = math.huge
-                        
-                        for _, player in ipairs(workspace:GetChildren()) do
-                            if player:IsA("Model") and game.Players:GetPlayerFromCharacter(player) then
-                                if game.Players:GetPlayerFromCharacter(player) == game.Players.LocalPlayer then continue end
-                                local humanoidRootPart = player:FindFirstChild("HumanoidRootPart")
-                                if humanoidRootPart then
-                                    local screenPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(humanoidRootPart.Position)
-                                    if onScreen then
-                                        local distance = (Vector2.new(screenPos.X, screenPos.Y) - FOVCircle.Position).Magnitude
-                                        if distance < minDistance and distance <= FOVCircle.Radius then
-                                            minDistance = distance
-                                            closestPlayer = player
+                            local closestPlayer = nil
+                            local minDistance = math.huge
+                            
+                            for _, player in ipairs(workspace:GetChildren()) do
+                                if player:IsA("Model") and game.Players:GetPlayerFromCharacter(player) then
+                                    if game.Players:GetPlayerFromCharacter(player) == game.Players.LocalPlayer then continue end
+                                    local humanoidRootPart = player:FindFirstChild("HumanoidRootPart")
+                                    if humanoidRootPart then
+                                        local screenPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(humanoidRootPart.Position)
+                                        if onScreen then
+                                            local distance = (Vector2.new(screenPos.X, screenPos.Y) - FOVCircle.Position).Magnitude
+                                            if distance < minDistance and distance <= FOVCircle.Radius then
+                                                minDistance = distance
+                                                closestPlayer = player
+                                            end
                                         end
                                     end
                                 end
                             end
-                        end
-                        
-                        if closestPlayer then
-
-                            local target = target = closestPlayer:FindFirstChild("HumanoidRootPart")
                             
-                            if target then
-                                workspace.CurrentCamera.CFrame = CFrame.lookAt(workspace.CurrentCamera.CFrame.Position, target.Position)
+                            if closestPlayer then
+
+                                local target = target = closestPlayer:FindFirstChild("HumanoidRootPart")
+                                
+                                if target then
+                                    workspace.CurrentCamera.CFrame = CFrame.lookAt(workspace.CurrentCamera.CFrame.Position, target.Position)
+                                end
                             end
+
                         end
                         
                         wait()
