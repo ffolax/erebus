@@ -15,13 +15,13 @@ return function(Context)
     }
 
     userInputService.InputBegan:Connect(function(input, gameProcessed)
-        if input.KeyCode == Enum.KeyCode.RightMouseButton and not gameProcessed then
+        if input.UserInputType == Enum.UserInputType.MouseButton2 and not gameProcessed then
             inputState.RightMouseButton = true
         end
     end)
 
     userInputService.InputEnded:Connect(function(input, gameProcessed)
-        if input.KeyCode == Enum.KeyCode.RightMouseButton and not gameProcessed then
+        if input.UserInputType == Enum.UserInputType.MouseButton2 and not gameProcessed then
             inputState.RightMouseButton = false
         end
     end)
