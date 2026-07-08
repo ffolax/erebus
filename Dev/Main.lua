@@ -36,6 +36,10 @@ Context.Services = {
     Icons = Icons,
 }
 
+print("Services:", Context.Services)
+print("API:", Context.Services.API)
+print("CachedStats:", Context.Services.API.CachedStats)
+
 Context:Init()
 
 UI:Init(

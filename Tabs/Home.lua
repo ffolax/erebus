@@ -111,6 +111,10 @@ end
 return function(Context)
 
     local Container = Context:CreateContainer(250)
+    local API = Context.Services.API
+
+    print("HOME API:", API)
+    print("CACHE:", API and API.CachedStats)
 
     Context:AddStatistics({
 
@@ -118,48 +122,62 @@ return function(Context)
 
         Stats = {
 
-            {"Users Online", function()
+            ["Users Online"] = function()
 
-                local Stats = Context.API.CachedStats
-                return Stats and Stats.online_users or "..."
+                local Stats = API:GetStats()
 
-            end},
+                if not Stats then
+                    return "Loading..."
+                end
 
-            {"Players", function()
+                return Stats.online_users or 0
+
+            end,
+
+
+            ["Players"] = function()
                 return #game:GetService("Players"):GetPlayers()
-            end},
+            end,
 
-            {"FPS", function()
+
+            ["FPS"] = function()
                 return math.floor(workspace:GetRealPhysicsFPS())
-            end},
+            end,
 
-            {"Ping", function()
+
+            ["Ping"] = function()
                 return GetPing()
-            end},
+            end,
 
-            {"Game ID", function()
+
+            ["Game ID"] = function()
                 return game.GameId
-            end},
+            end,
 
-            {"Place ID", function()
+
+            ["Place ID"] = function()
                 return game.PlaceId
-            end},
+            end,
 
-            {"Executor", function()
+
+            ["Executor"] = function()
                 return GetExecutor()
-            end},
+            end,
 
-            {"Bank", function()
+
+            ["Bank"] = function()
                 return GetBankRobbed()
-            end},
+            end,
 
-            {"Club", function()
+
+            ["Club"] = function()
                 return GetClubRobbed()
-            end},
+            end,
 
-            {"Jeweler", function()
+
+            ["Jeweler"] = function()
                 return GetJewelerRobbed()
-            end},
+            end
 
         }
 
