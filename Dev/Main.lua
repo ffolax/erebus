@@ -51,4 +51,17 @@ UI:OpenTab("Home")
 local ErebusAPI = Load("ErebusAPI.lua")
 assert(Icons, "[EREBUS] API failed to load.")
 
+Context.Services = {
+    API = ErebusAPI,
+    UI = UI,
+    Icons = Icons,
+}
+
 ErebusAPI:StartSession()
+ErebusAPI:StartStatsLoop()
+
+task.spawn(function()
+    while task.wait(30) do
+        ErebusAPI:Heartbeat()
+    end
+end)
