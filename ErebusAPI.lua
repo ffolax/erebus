@@ -49,9 +49,6 @@ function API:StartSession()
 
     end
 
-
-    print("[EREBUS API] Session started!")
-
     return true
 
 end
@@ -97,8 +94,6 @@ end
 
 function API:StartStatsLoop()
 
-    print("[EREBUS API] Stats loop started")
-
     task.spawn(function()
 
         while true do
@@ -137,11 +132,6 @@ function API:StartStatsLoop()
                 if Success then
 
                     self.CachedStats = Data
-
-                    print(
-                        "[EREBUS API] Updated:",
-                        Data.online_users
-                    )
 
                 else
 

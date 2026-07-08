@@ -23,7 +23,7 @@ return function(Context)
 
                 task.spawn(function()
 
-                    while FOVCircle.Visible do
+                    while FOVCircle do
                         FOVCircle.Position = Vector2.new(workspace.CurrentCamera.ViewportSize.X/2, workspace.CurrentCamera.ViewportSize.Y/2)
                         
                         local closestPlayer = nil
