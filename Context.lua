@@ -37,20 +37,29 @@ end
 function Context:CreateContainer(height)
 
     local Container = Instance.new("Frame")
-    Container.Size = UDim2.new(1,-20,0,height)
+    Container.Size = UDim2.new(1,-20,0,0)
+    Container.AutomaticSize = Enum.AutomaticSize.Y
     Container.BackgroundColor3 = Color3.fromRGB(22,22,32)
     Container.BorderSizePixel = 0
     Container.Parent = self.Parent
 
+    Container:SetAttribute("ClosedHeight", height)
+
+    local Content = Instance.new("Frame")
+    Content.BackgroundTransparency = 1
+    Content.Size = UDim2.new(1,0,0,height)
+    Content.AutomaticSize = Enum.AutomaticSize.Y
+    Content.Parent = Container
+
     local Layout = Instance.new("UIListLayout")
     Layout.Padding = UDim.new(0,5)
-    Layout.SortOrder = Enum.SortOrder.LayoutOrder
-    Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    Layout.Parent = Container
+    Layout.Parent = Content
 
     local Corner = Instance.new("UICorner")
     Corner.CornerRadius = UDim.new(0,8)
     Corner.Parent = Container
+
+    Container.Content = Content
 
     return Container
 
@@ -272,15 +281,21 @@ function Context:AddDropdown(options)
     Layout.Padding = UDim.new(0,4)
     Layout.Parent = List
 
-    local function Close()
+    local ClosedHeight = Container:GetAttribute("ClosedHeight") or 40
 
-        Open = false
+    local function Refresh()
+
+        local Height = ClosedHeight
+
+        if Open then
+            Height += (#Items * 28) + 5
+        end
 
         TweenService:Create(
             Container,
-            TweenInfo.new(.15),
+            TweenInfo.new(.15, Enum.EasingStyle.Quad),
             {
-                Size = UDim2.new(1,-20,0,40)
+                Size = UDim2.new(1,-20,0,Height)
             }
         ):Play()
 
@@ -288,29 +303,7 @@ function Context:AddDropdown(options)
             Arrow,
             TweenInfo.new(.15),
             {
-                Rotation = 0
-            }
-        ):Play()
-
-    end
-
-    local function OpenDropdown()
-
-        Open = true
-
-        TweenService:Create(
-            Container,
-            TweenInfo.new(.15),
-            {
-                Size = UDim2.new(1,-20,0,40 + (#Items * 28) + 5)
-            }
-        ):Play()
-
-        TweenService:Create(
-            Arrow,
-            TweenInfo.new(.15),
-            {
-                Rotation = 180
+                Rotation = Open and 180 or 0
             }
         ):Play()
 
@@ -337,7 +330,8 @@ function Context:AddDropdown(options)
 
             Label.Text = (options.Text or "Dropdown") .. ": " .. tostring(Item)
 
-            Close()
+            Open = false
+            Refresh()
 
             if options.Callback then
                 options.Callback(Item)
@@ -349,11 +343,8 @@ function Context:AddDropdown(options)
 
     MainButton.MouseButton1Click:Connect(function()
 
-        if Open then
-            Close()
-        else
-            OpenDropdown()
-        end
+        Open = not Open
+        Refresh()
 
     end)
 
