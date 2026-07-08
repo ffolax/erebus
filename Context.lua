@@ -313,6 +313,9 @@ function Context:AddDropdown(options)
 
     local DropdownLayout = Instance.new("UIListLayout")
     DropdownLayout.Padding = UDim.new(0,5)
+    DropdownLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+    DropdownLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    Dropdown.ClipsDescendants = true
     DropdownLayout.Parent = Dropdown
 
     Dropdown.LayoutOrder = MainContainer.LayoutOrder + 1
@@ -459,6 +462,12 @@ function Context:AddDropdown(options)
 
             CloseDropdown()
 
+            Label.Text = string.format(
+                "%s: %s",
+                options.Text or "Dropdown",
+                tostring(Item)
+            )
+
             if options.Callback then
                 options.Callback(Item)
             end
@@ -501,8 +510,18 @@ function Context:AddDropdown(options)
                 tostring(Value)
             )
 
-        end
+            if options.Callback then
+                options.Callback(Value)
+            end
 
+        end,
+
+        Destroy = function()
+
+            MainContainer:Destroy()
+            Spacer:Destroy()
+
+        end
     }
 
 end

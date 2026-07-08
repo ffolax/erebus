@@ -1,6 +1,6 @@
 return function(Context)
 
-    Context:AddDropdown({
+    local TargetPartDropdown = Context:AddDropdown({
 
         Text = "Target Part",
 
@@ -10,7 +10,7 @@ return function(Context)
         },
 
         Callback = function(Value)
-            print("Target Part:", Value)
+            
         end
 
     })
