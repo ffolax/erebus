@@ -2,17 +2,31 @@ local BASE = "https://raw.githubusercontent.com/ffolax/erebus/main/"
 
 local function Load(Path)
 
-	local Success, Result = pcall(function()
-		return loadstring(game:HttpGet(BASE .. Path))()
-	end)
+    print("[EREBUS] Loading:", Path)
 
-	if not Success then
-		warn("[EREBUS] Failed loading:", Path)
-		warn(Result)
-		return nil
-	end
+    local Source = game:HttpGet(BASE .. Path)
 
-	return Result
+	print(Source:sub(1,100))
+
+    local Chunk, Error = loadstring(Source)
+
+    if not Chunk then
+        warn("[EREBUS] Compile failed:", Path)
+        warn(Error)
+        return nil
+    end
+
+    local Success, Result = pcall(Chunk)
+
+    if not Success then
+        warn("[EREBUS] Runtime failed:", Path)
+        warn(Result)
+        return nil
+    end
+
+    print("[EREBUS] Loaded:", Path)
+
+    return Result
 
 end
 
