@@ -6,15 +6,20 @@ return function(Context)
 
     local FOVCircle
     local holdingRightClick = false
+    local userInputService = game:GetService("UserInputService")
     local mouse = game.Players.LocalPlayer:GetMouse()
-    local TargetPart
 
-    mouse.Button2Down:Connect(function()
-        holdingRightClick = true
+    -- Right-click input handling
+    userInputService.InputBegan:Connect(function(input, gameProcessed)
+        if input.KeyCode == Enum.KeyCode.RightMouseButton and not gameProcessed then
+            holdingRightClick = true
+        end
     end)
 
-    mouse.Button2Up:Connect(function()
-        holdingRightClick = false
+    userInputService.InputEnded:Connect(function(input, gameProcessed)
+        if input.KeyCode == Enum.KeyCode.RightMouseButton and not gameProcessed then
+            holdingRightClick = false
+        end
     end)
 
     Context:AddToggle({
@@ -32,15 +37,13 @@ return function(Context)
                 task.spawn(function()
                     while FOVCircle do
                         FOVCircle.Position = Vector2.new(workspace.CurrentCamera.ViewportSize.X/2, workspace.CurrentCamera.ViewportSize.Y/2)
-
-                        if holdingRightClick then
                         
+                        if holdingRightClick then
                             local closestPlayer = nil
                             local minDistance = math.huge
                             
                             for _, player in ipairs(workspace:GetChildren()) do
                                 if player:IsA("Model") and game.Players:GetPlayerFromCharacter(player) then
-                                    if game.Players:GetPlayerFromCharacter(player) == game.Players.LocalPlayer then continue end
                                     local humanoidRootPart = player:FindFirstChild("HumanoidRootPart")
                                     if humanoidRootPart then
                                         local screenPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(humanoidRootPart.Position)
@@ -56,14 +59,11 @@ return function(Context)
                             end
                             
                             if closestPlayer then
-
-                                local target = target = closestPlayer:FindFirstChild("HumanoidRootPart")
-                                
+                                local target = closestPlayer:FindFirstChild("HumanoidRootPart")
                                 if target then
                                     workspace.CurrentCamera.CFrame = CFrame.lookAt(workspace.CurrentCamera.CFrame.Position, target.Position)
                                 end
                             end
-
                         end
                         
                         wait()
