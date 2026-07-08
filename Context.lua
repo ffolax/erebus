@@ -247,6 +247,79 @@ function Context:AddDropdown(options)
     local Selected = options.Default or Items[1] or "None"
     local Open = false
 
+    ---------------------------------------------------
+    -- Main Container
+    ---------------------------------------------------
+
+    local MainContainer = options.Container or self:CreateContainer(40)
+
+    MainContainer.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+
+    local Spacer = Instance.new("Frame")
+    Spacer.BackgroundTransparency = 1
+    Spacer.BorderSizePixel = 0
+    Spacer.Size = UDim2.new(1,-20,0,0)
+    Spacer.Parent = MainContainer.Parent
+
+    Spacer.LayoutOrder = MainContainer.LayoutOrder + 1
+
+    local SpacerLayout = Instance.new("UIListLayout")
+    SpacerLayout.Padding = UDim.new(0,5)
+    SpacerLayout.Parent = Spacer
+
+    local Button = Instance.new("TextButton")
+    Button.Size = UDim2.new(1,-10,1,-10)
+    Button.Position = UDim2.new(0,5,0,5)
+    Button.BackgroundColor3 = Color3.fromRGB(120,60,220)
+    Button.Text = ""
+    Button.Parent = MainContainer
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0,8)
+    Corner.Parent = Button
+
+    local Label = Instance.new("TextLabel")
+    Label.BackgroundTransparency = 1
+    Label.Size = UDim2.new(1,-35,1,0)
+    Label.Position = UDim2.new(0,10,0,0)
+    Label.Font = Enum.Font.GothamBold
+    Label.TextSize = 14
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.TextColor3 = Color3.new(1,1,1)
+    Label.Text = string.format("%s: %s", options.Text or "Dropdown", Selected)
+    Label.Parent = Button
+
+    local Arrow = Instance.new("TextLabel")
+    Arrow.BackgroundTransparency = 1
+    Arrow.Size = UDim2.new(0,20,1,0)
+    Arrow.Position = UDim2.new(1,-25,0,0)
+    Arrow.Font = Enum.Font.GothamBold
+    Arrow.TextSize = 16
+    Arrow.Text = "▼"
+    Arrow.TextColor3 = Color3.new(1,1,1)
+    Arrow.Parent = Button
+
+    ---------------------------------------------------
+    -- Dropdown Container
+    ---------------------------------------------------
+
+    local Dropdown = Instance.new("Frame")
+    Dropdown.Size = UDim2.new(1,-20,0,0)
+    Dropdown.BackgroundColor3 = Color3.fromRGB(22,22,32)
+    Dropdown.BorderSizePixel = 0
+    Dropdown.Visible = false
+    Dropdown.Parent = Spacer
+
+    local DropCorner = Instance.new("UICorner")
+    DropCorner.CornerRadius = UDim.new(0,8)
+    DropCorner.Parent = Dropdown
+
+    local DropdownLayout = Instance.new("UIListLayout")
+    DropdownLayout.Padding = UDim.new(0,5)
+    DropdownLayout.Parent = Dropdown
+
+    Dropdown.LayoutOrder = MainContainer.LayoutOrder + 1
+
     local function OpenDropdown()
 
         Open = true
@@ -366,79 +439,6 @@ function Context:AddDropdown(options)
     end
 
     ---------------------------------------------------
-    -- Main Container
-    ---------------------------------------------------
-
-    local MainContainer = options.Container or self:CreateContainer(40)
-
-    MainContainer.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-
-    local Spacer = Instance.new("Frame")
-    Spacer.BackgroundTransparency = 1
-    Spacer.BorderSizePixel = 0
-    Spacer.Size = UDim2.new(1,-20,0,0)
-    Spacer.Parent = MainContainer.Parent
-
-    Spacer.LayoutOrder = MainContainer.LayoutOrder + 1
-
-    local Layout = Instance.new("UIListLayout")
-    Layout.Padding = UDim.new(0,5)
-    Layout.Parent = Spacer
-
-    local Button = Instance.new("TextButton")
-    Button.Size = UDim2.new(1,-10,1,-10)
-    Button.Position = UDim2.new(0,5,0,5)
-    Button.BackgroundColor3 = Color3.fromRGB(120,60,220)
-    Button.Text = ""
-    Button.Parent = MainContainer
-
-    local Corner = Instance.new("UICorner")
-    Corner.CornerRadius = UDim.new(0,8)
-    Corner.Parent = Button
-
-    local Label = Instance.new("TextLabel")
-    Label.BackgroundTransparency = 1
-    Label.Size = UDim2.new(1,-35,1,0)
-    Label.Position = UDim2.new(0,10,0,0)
-    Label.Font = Enum.Font.GothamBold
-    Label.TextSize = 14
-    Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.TextColor3 = Color3.new(1,1,1)
-    Label.Text = string.format("%s: %s", options.Text or "Dropdown", Selected)
-    Label.Parent = Button
-
-    local Arrow = Instance.new("TextLabel")
-    Arrow.BackgroundTransparency = 1
-    Arrow.Size = UDim2.new(0,20,1,0)
-    Arrow.Position = UDim2.new(1,-25,0,0)
-    Arrow.Font = Enum.Font.GothamBold
-    Arrow.TextSize = 16
-    Arrow.Text = "▼"
-    Arrow.TextColor3 = Color3.new(1,1,1)
-    Arrow.Parent = Button
-
-    ---------------------------------------------------
-    -- Dropdown Container
-    ---------------------------------------------------
-
-    local Dropdown = Instance.new("Frame")
-    Dropdown.Size = UDim2.new(1,-20,0,0)
-    Dropdown.BackgroundColor3 = Color3.fromRGB(22,22,32)
-    Dropdown.BorderSizePixel = 0
-    Dropdown.Visible = false
-    Dropdown.Parent = Spacer
-
-    local DropCorner = Instance.new("UICorner")
-    DropCorner.CornerRadius = UDim.new(0,8)
-    DropCorner.Parent = Dropdown
-
-    local Layout = Instance.new("UIListLayout")
-    Layout.Padding = UDim.new(0,5)
-    Layout.Parent = Dropdown
-
-    Dropdown.LayoutOrder = MainContainer.LayoutOrder + 1
-
-    ---------------------------------------------------
     -- Options
     ---------------------------------------------------
 
@@ -460,33 +460,7 @@ function Context:AddDropdown(options)
 
         Option.MouseButton1Click:Connect(function()
 
-            Selected = Item
-
-            Label.Text = string.format(
-                "%s: %s",
-                options.Text or "Dropdown",
-                tostring(Item)
-            )
-
             CloseDropdown()
-
-            TweenService:Create(
-                Arrow,
-                TweenInfo.new(.15),
-                {Rotation = 0}
-            ):Play()
-
-            TweenService:Create(
-                Dropdown,
-                TweenInfo.new(.15),
-                {
-                    Size = UDim2.new(1,-20,0,0)
-                }
-            ):Play()
-
-            task.delay(.15,function()
-                Dropdown.Visible = false
-            end)
 
             if options.Callback then
                 options.Callback(Item)
