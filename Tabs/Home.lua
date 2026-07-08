@@ -115,7 +115,7 @@ return function(Context)
 
     Context:AddStatistics({
 
-        Title = "Erebus",
+        Title = "Statistics",
         Container = Container,
         Stats = {
 

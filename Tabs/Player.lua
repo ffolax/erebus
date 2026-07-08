@@ -1,5 +1,15 @@
 return function(Context)
 
+    Context:AddToggle({
+        Text = "Aimbot",
+
+        Callback = function(Value)
+
+            
+
+        end
+    })
+
     local TargetPartDropdown = Context:AddDropdown({
 
         Text = "Target Part",

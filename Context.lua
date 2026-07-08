@@ -251,7 +251,7 @@ function Context:AddDropdown(options)
     -- Main Container
     ---------------------------------------------------
 
-    local MainContainer = options.Container or self:CreateContainer(40)
+    local MainContainer = options.Container or self:CreateContainer(42)
 
     MainContainer.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
@@ -617,7 +617,7 @@ function Context:AddViewport(options)
 
     LoadVehicle(options.Model())
 
-    RunService.Heartbeat:Connect(function(dt)
+    RunService.RenderStepped:Connect(function(dt)
 
         local Vehicle = options.Model()
 
