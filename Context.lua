@@ -80,13 +80,15 @@ function Context:AddTitle(options)
 
     local Container = self:CreateContainer(40)
 
+    Container.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+
     local Label = Instance.new("TextLabel")
-    Label.Size = UDim2.fromScale(0.95,1)
+    Label.Size = UDim2.fromScale(0.95,0.9)
     Label.Position = UDim2.fromScale(0.2,0)
     Label.BackgroundTransparency = 1
     Label.Text = options.Text
     Label.Font = Enum.Font.GothamBold
-    Label.TextSize = 20
+    Label.TextScaled = true
     Label.TextXAlignment = Enum.TextXAlignment.Left
     Label.TextColor3 = options.Color3 or Color3.fromRGB(255,255,255)
     Label.Parent = Container
