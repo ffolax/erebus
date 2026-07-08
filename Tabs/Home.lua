@@ -102,6 +102,23 @@ function GetJewelerRobbed()
 
 end
 
+local function QueueErebus()
+
+    local Queue =
+        queue_on_teleport
+        or queueonteleport
+        or (syn and syn.queue_on_teleport)
+
+    if not Queue then
+        return
+    end
+
+    Queue([[
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ffolax/erebus/main/loader.lua"))()
+    ]])
+
+end
+
 local Stats = game:GetService("Stats")
 
 local function GetPing()
@@ -193,6 +210,8 @@ return function(Context)
 
             local TeleportService = game:GetService("TeleportService")
             local LocalPlayer = game:GetService("Players").LocalPlayer
+
+            QueueErebus()
 
             TeleportService:TeleportToPlaceInstance(
                 game.PlaceId,
@@ -303,6 +322,8 @@ return function(Context)
             end
 
             local ServerId = ValidServers[math.random(#ValidServers)]
+
+            QueueErebus()
 
             TeleportService:TeleportToPlaceInstance(
                 PlaceId,
