@@ -28,6 +28,7 @@ local TeleportPoints = {
 
 }
 
+local Players = game:GetService("Players")
 local Plr = Players.LocalPlayer
 local PlrGui = Plr:WaitForChild("PlayerGui")
 
