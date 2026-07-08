@@ -8,16 +8,21 @@ return function(Context)
     local holdingRightClick = false
     local userInputService = game:GetService("UserInputService")
     local mouse = game.Players.LocalPlayer:GetMouse()
-    
+
+    -- Track input state manually
+    local inputState = {
+        RightMouseButton = false
+    }
+
     userInputService.InputBegan:Connect(function(input, gameProcessed)
-        if input.UserInputType == Enum.UserInputType.MouseButton2 and not gameProcessed then
-            holdingRightClick = true
+        if input.KeyCode == Enum.KeyCode.RightMouseButton and not gameProcessed then
+            inputState.RightMouseButton = true
         end
     end)
 
     userInputService.InputEnded:Connect(function(input, gameProcessed)
-        if input.UserInputType == Enum.UserInputType.MouseButton2 and not gameProcessed then
-            holdingRightClick = false
+        if input.KeyCode == Enum.KeyCode.RightMouseButton and not gameProcessed then
+            inputState.RightMouseButton = false
         end
     end)
 
@@ -37,7 +42,7 @@ return function(Context)
                     while FOVCircle do
                         FOVCircle.Position = Vector2.new(workspace.CurrentCamera.ViewportSize.X/2, workspace.CurrentCamera.ViewportSize.Y/2)
                         
-                        if holdingRightClick then
+                        if inputState.RightMouseButton then
                             local closestPlayer = nil
                             local minDistance = math.huge
                             
