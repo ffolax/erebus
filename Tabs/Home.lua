@@ -1,4 +1,3 @@
-print("[EREBUS] Loading Home.lua")
 function GetExecutor()
 
     if identifyexecutor then
@@ -50,7 +49,6 @@ function GetClubRobbed()
         local Club = Robberies["Club Robbery"]:FindFirstChild("Club")
 
         if not Club then
-            print("[EREBUS] Checking Club")
             return "???"
         end
 
@@ -59,8 +57,6 @@ function GetClubRobbed()
         if Door then
 
             local DoorPivot = Door:GetPivot()
-
-            print("[EREBUS] Checking Club")
 
             if DoorPivot.RightVector == Vector3.new(1,0,0) then
                 return "GREEN"
@@ -71,8 +67,6 @@ function GetClubRobbed()
         end
 
     end
-
-    print("[EREBUS] Checking Club")
 
     return "???"
 
@@ -125,7 +119,7 @@ return function(Context)
     Context:AddStatistics({
 
         Title = "Erebus",
-        Container = Container
+        Container = Container,
         Stats = {
 
             {"Users Online", function()
