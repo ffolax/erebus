@@ -52,6 +52,8 @@ return function(Context)
 
                         local target = closestPlayer:FindFirstChild(TargetPart) or closestPlayer:FindFirstChild("HumanoidRootPart")
 
+                        print(TargetPart,target)
+
                         if target then
                             workspace.CurrentCamera.CFrame = CFrame.lookAt(workspace.CurrentCamera.CFrame.Position, target.Position)
                         end
