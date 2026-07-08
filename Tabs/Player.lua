@@ -7,7 +7,7 @@ return function(Context)
     local FOVCircle
 
     Context:AddToggle({
-        Text = "FOV Circle",
+        Text = "Aimbot",
 
         Callback = function(Enabled)
 
@@ -30,7 +30,7 @@ return function(Context)
                         local minDistance = math.huge
                         
                         for _, player in ipairs(workspace:GetChildren()) do
-                            if player:IsA("Humanoid") then
+                            if player:IsA("Model") and game.Players:GetPlayerFromCharacter(player) then
                                 local humanoidRootPart = player:FindFirstChild("HumanoidRootPart")
                                 if humanoidRootPart then
                                     local screenPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(humanoidRootPart.Position)
