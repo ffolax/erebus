@@ -10,6 +10,7 @@ return function(Context)
 
     Context:AddToggle({
         Text = "Aimbot",
+        Default = "HumanoidRootPart",
         Callback = function(Enabled)
             if Enabled then
                 FOVCircle = Drawing.new("Circle")

@@ -30,6 +30,7 @@ local TeleportPoints = {
 local Players = game:GetService("Players")
 local Plr = Players.LocalPlayer
 local PlrGui = Plr:WaitForChild("PlayerGui")
+local StarterGui = game:GetService("StarterGui")
 
 local CurrentlyTeleporting = false
 VehicleTeleport.TeleportSpeed = 100
@@ -41,6 +42,14 @@ function FindPlrVehicle()
     if car then
 
         return car
+
+	else
+
+		StarterGui:SetCore("SendNotification", {
+			Title = "EREBUS";
+			Text = "Cannot find vehicle!";
+			Duration = 3; -- seconds
+		})
 
     end
 
