@@ -105,7 +105,7 @@ end
 local Stats = game:GetService("Stats")
 
 local function GetPing()
-    return Stats.Network.ServerStatsItem["Data Ping"]:GetValueString()
+    return math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()) .. " ms"
 end
 
 return function(Context)
@@ -113,10 +113,18 @@ return function(Context)
     local Container = Context:CreateContainer(250)
 
     Context:AddStatistics({
-        Title = "Statistics",
-        Container = Container,
+
+        Title = "Erebus",
 
         Stats = {
+
+            {"Users Online", function()
+
+                local Stats = Context.API.CachedStats
+                return Stats and Stats.online_users or "..."
+
+            end},
+
             {"Players", function()
                 return #game:GetService("Players"):GetPlayers()
             end},
@@ -152,7 +160,9 @@ return function(Context)
             {"Jeweler", function()
                 return GetJewelerRobbed()
             end},
+
         }
+
     })
 
     Context:AddButton({
