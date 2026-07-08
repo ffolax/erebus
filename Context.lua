@@ -129,7 +129,13 @@ function Context:AddStatistics(options)
 
             for _, Stat in ipairs(Labels) do
 
-                Stat.Label.Text = Stat.Name .. ": " .. tostring(Stat.Getter())
+                local Success, Result = pcall(Stat.Getter)
+
+                if Success then
+                    Stat.Label.Text = Stat.Name .. ": " .. tostring(Result)
+                else
+                    Stat.Label.Text = Stat.Name .. ": Error"
+                end
 
             end
 

@@ -104,7 +104,7 @@ function API:StartStatsLoop()
             local Response = request({
 
                 Url = STATS_URL,
-                Method = "GET",
+                Method = "GET"
 
             })
 
@@ -112,9 +112,7 @@ function API:StartStatsLoop()
             if Response and Response.Success then
 
                 local Success, Data = pcall(function()
-
                     return HttpService:JSONDecode(Response.Body)
-
                 end)
 
 
@@ -122,7 +120,16 @@ function API:StartStatsLoop()
 
                     self.CachedStats = Data
 
+                    print(
+                        "[EREBUS API] Stats updated:",
+                        Data.online_users
+                    )
+
                 end
+
+            else
+
+                warn("[EREBUS API] Failed fetching stats.")
 
             end
 

@@ -130,7 +130,7 @@ return function(Context)
                     return "Loading..."
                 end
 
-                return Stats.online_users or 0
+                return tostring(Stats.online_users or 0)
 
             end,
 
