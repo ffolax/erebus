@@ -98,8 +98,6 @@ function API:StartStatsLoop()
 
         while true do
 
-            print("[EREBUS API] Requesting stats")
-
             local Response = request({
                 Url = STATS_URL,
                 Method = "GET",
