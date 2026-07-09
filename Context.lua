@@ -582,6 +582,16 @@ function Context:AddSlider(options)
     -- Label
     ---------------------------------------------------
 
+    local SliderFrame = Instance.new("Frame")
+    SliderFrame.Size = UDim2.new(1,-10,1,-10)
+    SliderFrame.Position = UDim2.new(0,5,0,5)
+    SliderFrame.BackgroundColor3 = Color3.fromRGB(120,60,220)
+    SliderFrame.Parent = Slider.Container
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0,8)
+    Corner.Parent = SliderFrame
+
     local Label = Instance.new("TextLabel")
     Label.BackgroundTransparency = 1
     Label.Size = UDim2.new(1,-20,0,18)
@@ -590,7 +600,7 @@ function Context:AddSlider(options)
     Label.TextSize = 14
     Label.TextColor3 = Color3.new(1,1,1)
     Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.Parent = Slider
+    Label.Parent = SliderFrame
 
     ---------------------------------------------------
     -- Bar
@@ -601,7 +611,7 @@ function Context:AddSlider(options)
     Bar.Position = UDim2.new(0,10,1,-14)
     Bar.BackgroundColor3 = Color3.fromRGB(45,45,55)
     Bar.BorderSizePixel = 0
-    Bar.Parent = Slider
+    Bar.Parent = SliderFrame
 
     Instance.new("UICorner",Bar).CornerRadius = UDim.new(1,0)
 
