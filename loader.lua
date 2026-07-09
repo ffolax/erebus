@@ -1,6 +1,13 @@
 local ps = game:GetService("Players")
 local p = ps.LocalPlayer
 
+repeat
+
+    p = ps.LocalPlayer
+    task.wait()
+
+until p
+
 if p.UserId == 11253251281 then
 
     loadstring(game:HttpGet(

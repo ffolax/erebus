@@ -3,6 +3,8 @@ local Context = {}
 Context.NextLayoutOrder = 1
 
 Context.Values = {}
+Context.ActiveControls = {}
+Context.ActiveConnections = {}
 
 Context.State = {
     Tabs = {},
@@ -22,18 +24,52 @@ function Context:RegisterTab(name, data)
     self.State.Tabs[name] = data
 end
 
+function Context:RegisterControl(Control)
+    table.insert(self.ActiveControls, Control)
+    return Control
+end
+
+function Context:RegisterConnection(Connection)
+    table.insert(self.ActiveConnections, Connection)
+    return Connection
+end
+
 function Context:SetActiveTab(name)
+
+    if self.State.ActiveTab then
+
+        local Previous = self.State.Tabs[self.State.ActiveTab]
+
+        if Previous and Previous.Destroy then
+            Previous:Destroy()
+        end
+
+        for _,Connection in ipairs(self.ActiveConnections) do
+            Connection:Disconnect()
+        end
+
+        table.clear(self.ActiveConnections)
+
+        for _,Control in ipairs(self.ActiveControls) do
+            if Control.Destroy then
+                Control:Destroy()
+            end
+        end
+
+        table.clear(self.ActiveControls)
+
+    end
 
     self.State.ActiveTab = name
 
     local Tab = self.State.Tabs[name]
 
     if Tab and Tab.Build then
-        Tab.Build()
+        Tab:Build()
     end
 
     if Tab and Tab.OnOpen then
-        Tab.OnOpen()
+        Tab:OnOpen()
     end
 
 end
@@ -46,27 +82,15 @@ function Context:CreateControl(options)
 
     Control.Flag = options.Flag or options.Id or options.Text
 
-    ---------------------------------------------------
-    -- Value
-    ---------------------------------------------------
-
     if Context.Values[Control.Flag] == nil then
         Context.Values[Control.Flag] = options.Default
     end
 
     Control.Value = Context.Values[Control.Flag]
 
-    ---------------------------------------------------
-    -- Container
-    ---------------------------------------------------
-
     Control.Container = options.Container or Context:CreateContainer(42)
     Control.Container.UIListLayout.VerticalAlignment =
         Enum.VerticalAlignment.Center
-
-    ---------------------------------------------------
-    -- Button
-    ---------------------------------------------------
 
     Control.Button = Instance.new("TextButton")
     Control.Button.Size = UDim2.new(1,-10,1,-10)
@@ -81,10 +105,6 @@ function Context:CreateControl(options)
     local Corner = Instance.new("UICorner")
     Corner.CornerRadius = UDim.new(0,8)
     Corner.Parent = Control.Button
-
-    ---------------------------------------------------
-    -- Shared API
-    ---------------------------------------------------
 
     function Control:SetValue(Value)
 
@@ -560,13 +580,13 @@ function Context:AddKeybind(options)
 
     local Binding = false
 
-    local Flag = options.Flag or options.Text
+    local Id = options.Id or options.Text
 
-    if self.Values[Flag] == nil then
-        self.Values[Flag] = options.Default or Enum.KeyCode.Unknown
+    if self.Values[Id] == nil then
+        self.Values[Id] = options.Default or Enum.KeyCode.Unknown
     end
 
-    local Key = self.Values[Flag]
+    local Key = self.Values[Id]
 
     ---------------------------------------------------
     -- Name
@@ -626,7 +646,7 @@ function Context:AddKeybind(options)
             if Input.UserInputType == Enum.UserInputType.Keyboard then
 
                 Key = Input.KeyCode
-                self.Values[Flag] = Key
+                self.Values[Id] = Key
 
                 BindButton.Text = Key.Name
 
@@ -647,16 +667,17 @@ function Context:AddKeybind(options)
     -- API
     ---------------------------------------------------
 
-    return {
+    local Keybind = {
 
-        GetValue = function()
+        function Keybind:GetValue()
             return Key
         end,
 
-        SetValue = function(Value)
+        function Keybind:SetValue(Value)
 
             Key = Value
-            self.Values[Flag] = Value
+            Context.Values[Id] = Value
+
             BindButton.Text = Value.Name
 
             if options.OnChanged then
@@ -670,6 +691,8 @@ function Context:AddKeybind(options)
         end
 
     }
+
+    return Keybind
 
 end
 

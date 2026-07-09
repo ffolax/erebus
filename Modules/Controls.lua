@@ -5,9 +5,26 @@ local Controls = {}
 Controls.Binds = {}
 Controls.Connections = {}
 
-function Controls:Bind(Key, Callback)
+function Controls:Bind(Keybind, Callback)
 
-    self.Binds[Key] = Callback
+    local Binding = {
+        Keybind = Keybind,
+        Callback = Callback
+    }
+
+    table.insert(self.Bindings, Binding)
+
+    function Binding:Disconnect()
+
+        local Index = table.find(Controls.Bindings, self)
+
+        if Index then
+            table.remove(Controls.Bindings, Index)
+        end
+
+    end
+
+    return Binding
 
 end
 
@@ -36,10 +53,12 @@ function Controls:Init()
                 return
             end
 
-            local Callback = self.Binds[Input.KeyCode] or self.Binds[Input.UserInputType]
+            for _, Binding in ipairs(self.Bindings) do
 
-            if Callback then
-                Callback(true)
+                if Input.KeyCode == Binding.Keybind:GetValue() then
+                    Binding.Callback(true)
+                end
+
             end
 
         end)
@@ -47,10 +66,12 @@ function Controls:Init()
     self.Connections.InputEnded =
         UserInputService.InputEnded:Connect(function(Input)
 
-            local Callback = self.Binds[Input.KeyCode] or self.Binds[Input.UserInputType]
+            for _, Binding in ipairs(self.Bindings) do
 
-            if Callback then
-                Callback(false)
+                if Input.KeyCode == Binding.Keybind:GetValue() then
+                    Binding.Callback(false)
+                end
+
             end
 
         end)

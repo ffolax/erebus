@@ -80,16 +80,23 @@ return function(Context)
         end
     })
 
+    
     local AimbotKey = Context:AddKeybind({
         Text = "Aimbot Keybind",
         Default = Enum.KeyCode.V
     })
 
-    Controls:Bind(AimbotKey, function(Down)
-        if Down then
-            AimbotToggle:Toggle()
-        end
-    end)
+    Context:RegisterConnection(
+        Context.Services.Controls:Bind(AimbotKey,function(Down)
+
+            if Down then
+                AimbotToggle:Toggle()
+            end
+
+        end)
+    )
+
+    print(Controls.Bindings)
 
     Context:AddDropdown({
 
