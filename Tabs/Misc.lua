@@ -65,15 +65,22 @@ return function(Context)
                     end
                 end
 
-                if NewBody.PrimaryPart and MyVehicle.PrimaryPart then
-                    NewBody:PivotTo(MyVehicle.PrimaryPart.CFrame * CFrame.new(2,1.5,2))
-                end
-
                 local MainBody = NewBody:FindFirstChild("Body", true)
 
                 if not MainBody or not MainBody:IsA("BasePart") then
                     warn("Couldn't find main Body meshpart.")
                     return
+                end
+
+                if NewBody.PrimaryPart and MyVehicle.PrimaryPart and MainBody then
+
+                    local YOffset = MainBody.Size.Y / 3
+
+                    NewBody:PivotTo(
+                        MyVehicle.PrimaryPart.CFrame *
+                        CFrame.new(2, YOffset, 2)
+                    )
+
                 end
 
                 for _, Part in ipairs(NewBody:GetDescendants()) do
