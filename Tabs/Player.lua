@@ -42,12 +42,12 @@ return function(Context)
 
                 -- Create new connection
                 renderConnection = game:GetService("RunService").RenderStepped:Connect(function()
-                    FOVCircle.Position = Vector2.new(workspace.CurrentCamera.ViewportSize.X/2, workspace.CurrentCamera.ViewportSize.Y/2)
-                    
-                    local closestPlayer = nil
-                    local minDistance = math.huge
 
                     if rightClick then
+                        FOVCircle.Position = Vector2.new(workspace.CurrentCamera.ViewportSize.X/2, workspace.CurrentCamera.ViewportSize.Y/2)
+                        
+                        local closestPlayer = nil
+                        local minDistance = math.huge
                     
                         for _, player in ipairs(workspace:GetChildren()) do
                             if player:IsA("Model") and game.Players:GetPlayerFromCharacter(player) then

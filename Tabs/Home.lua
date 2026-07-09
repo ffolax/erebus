@@ -100,6 +100,8 @@ function GetJewelerRobbed()
 
     end
 
+    return "???"
+
 end
 
 local function QueueErebus()
