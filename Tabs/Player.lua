@@ -13,44 +13,45 @@ return function(Context)
     local SpeedHackToggle = Context:AddToggle({
         Text = "Speed Hack",
         Callback = function(Enabled)
+
             if Enabled then
 
                 local Character = game.Players.LocalPlayer.Character
-                local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
-                
-                if not HumanoidRootPart then return end
+                local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
+                local Root = Character and Character:FindFirstChild("HumanoidRootPart")
 
-                local lastPosition = HumanoidRootPart.Position
-                local lastTime = tick()
-                
+                if not Humanoid or not Root then
+                    return
+                end
+
                 renderSteppedConn = RunService.RenderStepped:Connect(function()
-                    local currentTime = tick()
-                    local deltaTime = currentTime - lastTime
-                    
-                    if deltaTime > 0 then
-                        local currentVelocity = (HumanoidRootPart.Position - lastPosition) / deltaTime
-                        local targetVelocity = Vector3.new(Speed,0,Speed)
 
-                        local newPosition = HumanoidRootPart.Position + (targetVelocity - currentVelocity) * deltaTime
+                    local MoveDirection = Humanoid.MoveDirection
 
-                        HumanoidRootPart.Anchored = true
-                        HumanoidRootPart.CFrame = CFrame.new(newPosition)
+                    if MoveDirection.Magnitude > 0 then
 
-                        spawn(function()
-                            wait(0.1)
-                            HumanoidRootPart.Anchored = false
-                        end)
+                        local Y = Root.AssemblyLinearVelocity.Y
+
+                        Root.AssemblyLinearVelocity =
+                            Vector3.new(
+                                MoveDirection.X * Speed,
+                                Y,
+                                MoveDirection.Z * Speed
+                            )
+
                     end
-                    
-                    lastPosition = HumanoidRootPart.Position
-                    lastTime = currentTime
+
                 end)
+
             else
+
                 if renderSteppedConn then
                     renderSteppedConn:Disconnect()
                     renderSteppedConn = nil
                 end
+
             end
+
         end
     })
 
