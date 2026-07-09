@@ -1,5 +1,7 @@
 return function(Context)
 
+    local Controls = Context.Services.Controls
+
     Context:AddTitle({
         Text = "Aimbot Settings"
     })
@@ -9,7 +11,7 @@ return function(Context)
     local TargetPart = "HumanoidRootPart"
     local rightClick = true
 
-    Context:AddToggle({
+    local AimbotToggle = Context:AddToggle({
         Text = "Aimbot",
         Callback = function(Enabled)
             if Enabled then
@@ -83,9 +85,9 @@ return function(Context)
         Default = Enum.KeyCode.V
     })
 
-    Controls:Bind(FlyKey, function(Down)
+    Controls:Bind(AimbotKey, function(Down)
         if Down then
-            FlyToggle:Toggle()
+            AimbotToggle:Toggle()
         end
     end)
 

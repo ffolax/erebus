@@ -45,6 +45,7 @@ Context.Services = {
     API = ErebusAPI,
     UI = UI,
     Icons = Icons,
+    Controls = Controls,
 }
 
 Context:Init()
