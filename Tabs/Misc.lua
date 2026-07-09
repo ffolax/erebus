@@ -170,37 +170,15 @@ return function(Context)
 
             if State then
 
-                for _, v in ipairs(Vehicles:GetChildren()) do
+                local Vehicle = FindPlrVehicle()
 
-                    if v:IsDescendantOf(Vehicles) then
-
-                        local Vehicle = FindPlrVehicle()
-
-                        if Vehicle then
-
-                            if v:IsDescendantOf(Vehicle) then continue end
-
-                            if v:IsA("BasePart") then
-
-                                if v.CanCollide == false then continue end
-
-                                v.CanCollide = false
-
-                            end
-
-                       end
-
-                   end
-
+                if not Vehicle then
+                    return
                 end
 
-            else
-
                 for _, v in ipairs(Vehicles:GetChildren()) do
 
                     if v:IsDescendantOf(Vehicles) then
-
-                        local Vehicle = FindPlrVehicle()
 
                         if Vehicle then
 
@@ -208,9 +186,7 @@ return function(Context)
 
                             if v:IsA("BasePart") then
 
-                                if v.CanCollide == true then continue end
-
-                                v.CanCollide = true
+                                v.CanCollide = not State
 
                             end
 
