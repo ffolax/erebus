@@ -32,7 +32,7 @@ return function(Context)
                 if not SourceVehicle then return end
 
                 local MyVehicle = FindPlrVehicle()
-                if not MyVehicle return end
+                if not MyVehicle then return end
 
                 local SourceBody = SourceVehicle:FindFirstChild("Body")
                 if not SourceBody then
@@ -140,7 +140,7 @@ return function(Context)
 
     for _,v in pairs(Vehicles:GetChildren()) do
 
-        table.insert(VehicleTable,v)
+        table.insert(VehicleTable,v.Name)
 
     end
 
@@ -148,7 +148,7 @@ return function(Context)
     Context:AddDropdown({
 
         Text = "Morph Into",
-        Items = VehicleTable or {}
+        Items = VehicleTable or {},
 
         Callback = function(Value)
             SelectedMorph = Value
@@ -170,7 +170,7 @@ return function(Context)
 
             if State then
 
-                for _,v in pairs(game.workspace:GetDescendants()) do
+                for _, v in ipairs(Vehicles:GetChildren()) do
 
                     if v:IsDescendantOf(Vehicles) then
 
@@ -196,7 +196,7 @@ return function(Context)
 
             else
 
-                for _,v in pairs(game.workspace:GetDescendants()) do
+                for _, v in ipairs(Vehicles:GetChildren()) do
 
                     if v:IsDescendantOf(Vehicles) then
 
