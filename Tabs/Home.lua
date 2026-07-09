@@ -112,14 +112,24 @@ local function QueueErebus()
         or (syn and syn.queue_on_teleport)
 
     if not Queue then
-        return
+        warn("[EREBUS] queue_on_teleport not supported.")
+        return false
     end
 
-    Queue([[
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/ffolax/erebus/main/loader.lua"))()
-    ]])
+    local Success, Error = pcall(function()
 
-    task.wait(0.25)
+        Queue([[
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ffolax/erebus/main/loader.lua"))()
+        ]])
+
+    end)
+
+    if not Success then
+        warn("[EREBUS] Failed to queue:", Error)
+        return false
+    end
+
+    return true
 
 end
 
