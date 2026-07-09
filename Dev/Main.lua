@@ -36,6 +36,9 @@ assert(UI, "[EREBUS] UI failed to load.")
 local ErebusAPI = Load("ErebusAPI.lua")
 assert(ErebusAPI, "[EREBUS] API failed to load. IF YOU GET THIS WARNING, REPORT IT TO THE DISCORD IN #tickets")
 
+local Controls = Load("Modules/Controls.lua")
+assert(Controls, "[EREBUS] Controls failed to load.")
+
 Context.BASE = BASE
 
 Context.Services = {
@@ -45,6 +48,7 @@ Context.Services = {
 }
 
 Context:Init()
+Controls:Init()
 
 UI:Init(
     Context,

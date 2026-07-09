@@ -1,18 +1,3 @@
-local userInputService = game:GetService("UserInputService")
-local rightClick = false
-
-userInputService.InputBegan:Connect(function(input, gameProcessed)
-    if input.UserInputType == Enum.UserInputType.MouseButton2 and not gameProcessed then
-        rightClick = true
-    end
-end)
-
-userInputService.InputEnded:Connect(function(input, gameProcessed)
-    if input.UserInputType == Enum.UserInputType.MouseButton2 and not gameProcessed then
-        rightClick = false
-    end
-end)
-
 return function(Context)
 
     Context:AddTitle({
@@ -22,6 +7,7 @@ return function(Context)
     local FOVCircle
     local renderConnection = nil
     local TargetPart = "HumanoidRootPart"
+    local rightClick = true
 
     Context:AddToggle({
         Text = "Aimbot",
@@ -91,6 +77,17 @@ return function(Context)
             end
         end
     })
+
+    local AimbotKey = Context:AddKeybind({
+        Text = "Aimbot Keybind",
+        Default = Enum.KeyCode.V
+    })
+
+    Controls:Bind(FlyKey, function(Down)
+        if Down then
+            FlyToggle:Toggle()
+        end
+    end)
 
     Context:AddDropdown({
 

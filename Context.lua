@@ -210,7 +210,24 @@ function Context:AddButton(options)
         end)
     end
 
-    return Button
+    local API = {}
+
+    API.Button = Button
+    API.Container = Container
+
+    function API:Press()
+
+        if options.Callback then
+            options.Callback(Button)
+        end
+
+    end
+
+    Button.MouseButton1Click:Connect(function()
+        API:Press()
+    end)
+
+    return API
 
 end
 
@@ -224,29 +241,42 @@ function Context:AddToggle(options)
 
     local Enabled = self.Values[Id]
 
-    local Button = self:AddButton({
+    local Toggle = self:AddButton({
         Text = options.Text,
         Container = options.Container
     })
 
-    Button.MouseButton1Click:Connect(function()
+    local Button = Toggle.Button
 
-        Enabled = not Enabled
-        self.Values[Id] = Enabled
+    function Toggle:SetValue(Value)
 
-        if Enabled then
-            Button.Text = options.Text .. ": On"
-        else
-            Button.Text = options.Text .. ": Off"
-        end
+        Enabled = Value
+        self.Values[Id] = Value
+
+        Button.Text = options.Text ..
+            (Enabled and ": On" or ": Off")
 
         if options.Callback then
-            options.Callback(Enabled)
+            options.Callback(Value)
         end
 
+    end
+
+    function Toggle:GetValue()
+        return Enabled
+    end
+
+    function Toggle:Toggle()
+        self:SetValue(not Enabled)
+    end
+
+    Button.MouseButton1Click:Connect(function()
+        Toggle:Toggle()
     end)
 
-    return Button
+    Toggle:SetValue(Enabled)
+
+    return Toggle
 
 end
 
@@ -523,8 +553,8 @@ function Context:AddDropdown(options)
 
         SetValue = function(Value)
 
-            Selected = Item
-            self.Values[Id] = Item
+            Selected = Value
+            self.Values[Id] = Value
 
             Label.Text = string.format(
                 "%s: %s",
@@ -557,6 +587,128 @@ function Context:AddSlider(options)
     -- build slider here
 
     return Frame
+
+end
+
+function Context:AddKeybind(options)
+
+    local UserInputService = game:GetService("UserInputService")
+
+    local Container = options.Container or self:CreateContainer(42)
+    Container.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+
+    local Binding = false
+
+    local Flag = options.Flag or options.Text
+
+    if self.Values[Flag] == nil then
+        self.Values[Flag] = options.Default or Enum.KeyCode.Unknown
+    end
+
+    local Key = self.Values[Flag]
+
+    ---------------------------------------------------
+    -- Name
+    ---------------------------------------------------
+
+    local Label = Instance.new("TextLabel")
+    Label.BackgroundTransparency = 1
+    Label.Size = UDim2.new(1,-95,1,0)
+    Label.Position = UDim2.new(0,10,0,0)
+    Label.Font = Enum.Font.GothamBold
+    Label.TextSize = 14
+    Label.TextColor3 = Color3.new(1,1,1)
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.Text = options.Text
+    Label.Parent = Container
+
+    ---------------------------------------------------
+    -- Bind Button
+    ---------------------------------------------------
+
+    local BindButton = Instance.new("TextButton")
+    BindButton.AnchorPoint = Vector2.new(1,0.5)
+    BindButton.Position = UDim2.new(1,-10,.5,0)
+    BindButton.Size = UDim2.new(0,75,0,24)
+    BindButton.BackgroundColor3 = Color3.fromRGB(35,35,45)
+    BindButton.Font = Enum.Font.GothamBold
+    BindButton.TextSize = 13
+    BindButton.TextColor3 = Color3.new(1,1,1)
+    BindButton.Text = Key.Name
+    BindButton.Parent = Container
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0,6)
+    Corner.Parent = BindButton
+
+    ---------------------------------------------------
+    -- Rebind
+    ---------------------------------------------------
+
+    BindButton.MouseButton1Click:Connect(function()
+
+        if Binding then
+            return
+        end
+
+        Binding = true
+        BindButton.Text = "..."
+
+        local Connection
+
+        Connection = UserInputService.InputBegan:Connect(function(Input, GP)
+
+            if GP then
+                return
+            end
+
+            if Input.UserInputType == Enum.UserInputType.Keyboard then
+
+                Key = Input.KeyCode
+                self.Values[Flag] = Key
+
+                BindButton.Text = Key.Name
+
+                Binding = false
+                Connection:Disconnect()
+
+                if options.OnChanged then
+                    options.OnChanged(Key)
+                end
+
+            end
+
+        end)
+
+    end)
+
+    ---------------------------------------------------
+    -- API
+    ---------------------------------------------------
+
+    return {
+
+        GetValue = function()
+            return Key
+        end,
+
+        SetValue = function(Value)
+
+            Key = Value
+            self.Values[Flag] = Value
+            BindButton.Text = Value.Name
+
+            if options.OnChanged then
+                options.OnChanged(Value)
+            end
+
+        end,
+
+        GetKey = function()
+            return Key
+        end
+
+    }
 
 end
 
