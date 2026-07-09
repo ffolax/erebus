@@ -24,15 +24,17 @@ return function(Context)
 
                 }
 
-                Context.Services.Controls:Bind(MouseBind,function(Down)
+                Context:RegisterConnection(
+                    Context.Services.Controls:Bind(MouseBind,function(Down)
 
-                    if Down then
-                        print("Right click pressed")
-                    else
-                        print("Right click released")
-                    end
+                        if Down then
+                            rightClick = true
+                        else
+                            rightClick = false
+                        end
 
-                end)
+                    end)
+                )
 
                 FOVCircle = Drawing.new("Circle")
                 FOVCircle.Visible = true
