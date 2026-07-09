@@ -36,7 +36,7 @@ return function(Context)
 
                         RunService:BindToRenderStep(
                             RenderStepName,
-                            Enum.RenderPriority.Camera.Value + 1,
+                            10000,
                             function()
 
                             FOVCircle.Position =
