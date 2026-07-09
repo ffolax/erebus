@@ -262,7 +262,7 @@ return function(Context)
                     break
                 end
 
-                local Url = ("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=100")
+                local Url = ("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true")
                     :format(PlaceId)
 
                 if Cursor ~= "" then
