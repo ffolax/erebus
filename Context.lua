@@ -577,6 +577,7 @@ function Context:AddKeybind(options)
 
     local Container = options.Container or self:CreateContainer(42)
     Container.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+    Container.FillDirection = Enum.FillDirection.Horizontal
 
     local Binding = false
 

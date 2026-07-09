@@ -15,6 +15,25 @@ return function(Context)
         Text = "Aimbot",
         Callback = function(Enabled)
             if Enabled then
+
+                local MouseBind = {
+                
+                    GetValue = function()
+                        return Enum.UserInputType.MouseButton2
+                    end
+
+                }
+
+                Context.Services.Controls:Bind(MouseBind,function(Down)
+
+                    if Down then
+                        print("Right click pressed")
+                    else
+                        print("Right click released")
+                    end
+
+                end)
+
                 FOVCircle = Drawing.new("Circle")
                 FOVCircle.Visible = true
                 FOVCircle.Filled = false
@@ -127,6 +146,14 @@ return function(Context)
 
     Context:AddToggle({
         Text = "Ignore Untouchable Teams",
+
+        Callback = function(Enabled)
+
+        end
+    })
+
+    Context:AddToggle({
+        Text = "Wall Check",
 
         Callback = function(Enabled)
 

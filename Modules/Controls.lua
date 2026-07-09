@@ -5,10 +5,26 @@ local Controls = {}
 Controls.Bindings = {}
 Controls.Connections = {}
 
-function Controls:Bind(Keybind, Callback)
+local function IsInputMatch(Input, Bind)
+
+    local Value = Bind:GetValue()
+
+    if Value.EnumType == Enum.KeyCode then
+        return Input.KeyCode == Value
+    end
+
+    if Value.EnumType == Enum.UserInputType then
+        return Input.UserInputType == Value
+    end
+
+    return false
+
+end
+
+function Controls:Bind(Input, Callback)
 
     local Binding = {
-        Keybind = Keybind,
+        Input = Input,
         Callback = Callback
     }
 
@@ -55,7 +71,7 @@ function Controls:Init()
 
             for _, Binding in ipairs(self.Bindings) do
 
-                if Input.KeyCode == Binding.Keybind:GetValue() then
+                if IsInputMatch(Input, Binding.Input) then
                     Binding.Callback(true)
                 end
 
@@ -68,10 +84,9 @@ function Controls:Init()
 
             for _, Binding in ipairs(self.Bindings) do
 
-                if Input.KeyCode == Binding.Keybind:GetValue() then
+                if IsInputMatch(Input, Binding.Input) then
                     Binding.Callback(false)
                 end
-
             end
 
         end)
