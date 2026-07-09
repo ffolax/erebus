@@ -8,13 +8,14 @@ return function(Context)
     })
 
     local renderSteppedConn
+    local Speed = 20
 
     local SpeedHackToggle = Context:AddToggle({
         Text = "Speed Hack",
         Callback = function(Enabled)
             if Enabled then
 
-                local Character = game.Players.Character
+                local Character = game.Players.LocalPlayer.Character
                 local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
                 
                 if not HumanoidRootPart then return end
@@ -28,7 +29,7 @@ return function(Context)
                     
                     if deltaTime > 0 then
                         local currentVelocity = (HumanoidRootPart.Position - lastPosition) / deltaTime
-                        local targetVelocity = Vector3.new(10, 0, 10)
+                        local targetVelocity = Vector3.new(Speed,0,Speed)
 
                         local newPosition = HumanoidRootPart.Position + (targetVelocity - currentVelocity) * deltaTime
 
@@ -51,6 +52,23 @@ return function(Context)
                 end
             end
         end
+    })
+
+    local SpeedSlider = Context:AddSlider({
+
+        Text = "FOV",
+
+        Min = 16,
+        Max = 32,
+
+        Default = 20,
+
+        Callback = function(Value)
+
+            Speed = Value
+
+        end
+
     })
 
     local SpeedHackKey = Context:AddKeybind({
@@ -210,6 +228,25 @@ return function(Context)
 
         Callback = function(Value)
             TargetPart = Value
+        end
+
+    })
+
+    local FOVSlider = Context:AddSlider({
+
+        Text = "FOV Circle",
+
+        Min = 25,
+        Max = 500,
+
+        Default = 150,
+
+        Callback = function(Value)
+
+            if FOVCircle then
+                FOVCircle.Radius = Value
+            end
+
         end
 
     })
