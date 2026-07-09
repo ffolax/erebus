@@ -38,6 +38,95 @@ function Context:SetActiveTab(name)
 
 end
 
+function Context:CreateControl(options)
+
+    local Context = self
+
+    local Control = {}
+
+    Control.Flag = options.Flag or options.Id or options.Text
+
+    ---------------------------------------------------
+    -- Value
+    ---------------------------------------------------
+
+    if Context.Values[Control.Flag] == nil then
+        Context.Values[Control.Flag] = options.Default
+    end
+
+    Control.Value = Context.Values[Control.Flag]
+
+    ---------------------------------------------------
+    -- Container
+    ---------------------------------------------------
+
+    Control.Container = options.Container or Context:CreateContainer(42)
+    Control.Container.UIListLayout.VerticalAlignment =
+        Enum.VerticalAlignment.Center
+
+    ---------------------------------------------------
+    -- Button
+    ---------------------------------------------------
+
+    Control.Button = Instance.new("TextButton")
+    Control.Button.Size = UDim2.new(1,-10,1,-10)
+    Control.Button.Position = UDim2.new(0,5,0,5)
+    Control.Button.BackgroundColor3 = Color3.fromRGB(120,60,220)
+    Control.Button.Text = options.Text or ""
+    Control.Button.TextScaled = true
+    Control.Button.Font = Enum.Font.GothamBold
+    Control.Button.TextColor3 = Color3.new(1,1,1)
+    Control.Button.Parent = Control.Container
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0,8)
+    Corner.Parent = Control.Button
+
+    ---------------------------------------------------
+    -- Shared API
+    ---------------------------------------------------
+
+    function Control:SetValue(Value)
+
+        self.Value = Value
+        Context.Values[self.Flag] = Value
+
+    end
+
+    function Control:GetValue()
+
+        return self.Value
+
+    end
+
+    function Control:SetText(Text)
+
+        self.Button.Text = Text
+
+    end
+
+    function Control:Show()
+
+        self.Container.Visible = true
+
+    end
+
+    function Control:Hide()
+
+        self.Container.Visible = false
+
+    end
+
+    function Control:Destroy()
+
+        self.Container:Destroy()
+
+    end
+
+    return Control
+
+end
+
 function Context:CreateContainer(height)
 
     local Container = Instance.new("Frame")
@@ -185,77 +274,36 @@ end
 
 function Context:AddButton(options)
 
-    local Container = options.Container or self:CreateContainer(42)
+    local Button = self:CreateControl(options)
 
-    Container.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-
-    local Button = Instance.new("TextButton")
-    Button.Size = UDim2.new(1,-10,1,-10)
-    Button.Position = UDim2.new(0,5,0,5)
-    Button.BackgroundColor3 = Color3.fromRGB(120, 60, 220)
-    Button.TextColor3 = Color3.fromRGB(255,255,255)
-    Button.TextScaled = true
-    Button.Font = Enum.Font.GothamBold
-
-    local Corner = Instance.new("UICorner")
-    Corner.CornerRadius = UDim.new(0,8)
-    Corner.Parent = Button
-
-    Button.Text = options.Text
-    Button.Parent = Container
-
-    if options.Callback then
-        Button.MouseButton1Click:Connect(function()
-            options.Callback(Button)
-        end)
-    end
-
-    local API = {}
-
-    API.Button = Button
-    API.Container = Container
-
-    function API:Press()
+    function Button:Press()
 
         if options.Callback then
-            options.Callback(Button)
+            options.Callback(self.Button)
         end
 
     end
 
-    Button.MouseButton1Click:Connect(function()
-        API:Press()
+    Button.Button.MouseButton1Click:Connect(function()
+        Button:Press()
     end)
 
-    return API
+    return Button
 
 end
 
 function Context:AddToggle(options)
 
-    local Id = options.Id or options.Text
-
-    if self.Values[Id] == nil then
-        self.Values[Id] = options.Default or false
-    end
-
-    local Enabled = self.Values[Id]
-
-    local Toggle = self:AddButton({
-        Text = options.Text,
-        Container = options.Container
-    })
-
-    local Button = Toggle.Button
-    local Context = self
+    local Toggle = self:CreateControl(options)
 
     function Toggle:SetValue(Value)
 
-        Enabled = Value
-        Context.Values[Id] = Value
+        self.Value = Value
+        Context.Values[self.Flag] = Value
 
-        Button.Text = options.Text ..
-            (Enabled and ": On" or ": Off")
+        self.Button.Text =
+            options.Text ..
+            (Value and ": On" or ": Off")
 
         if options.Callback then
             options.Callback(Value)
@@ -263,19 +311,17 @@ function Context:AddToggle(options)
 
     end
 
-    function Toggle:GetValue()
-        return Enabled
-    end
-
     function Toggle:Toggle()
-        self:SetValue(not Enabled)
+
+        self:SetValue(not self.Value)
+
     end
 
-    Button.MouseButton1Click:Connect(function()
+    Toggle.Button.MouseButton1Click:Connect(function()
         Toggle:Toggle()
     end)
 
-    Toggle:SetValue(Enabled)
+    Toggle:SetValue(Toggle.Value)
 
     return Toggle
 
@@ -288,44 +334,15 @@ function Context:AddDropdown(options)
     local Items = options.Items or {}
     local Open = false
 
-    local Id = options.Id or options.Text
+    local Dropdown = self:CreateControl(options)
+    local Context = self
 
-    if self.Values[Id] == nil then
-        self.Values[Id] = options.Default or Items[1] or "None"
-    end
+    local Button = Dropdown.Button
+    local MainContainer = Dropdown.Container
 
-    local Selected = self.Values[Id]
-
-    ---------------------------------------------------
-    -- Main Container
-    ---------------------------------------------------
-
-    local MainContainer = options.Container or self:CreateContainer(42)
-
-    MainContainer.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-
-    local Spacer = Instance.new("Frame")
-    Spacer.BackgroundTransparency = 1
-    Spacer.BorderSizePixel = 0
-    Spacer.Size = UDim2.new(1,-20,0,0)
-    Spacer.Parent = MainContainer.Parent
-
-    Spacer.LayoutOrder = MainContainer.LayoutOrder + 1
-
-    local SpacerLayout = Instance.new("UIListLayout")
-    SpacerLayout.Padding = UDim.new(0,5)
-    SpacerLayout.Parent = Spacer
-
-    local Button = Instance.new("TextButton")
-    Button.Size = UDim2.new(1,-10,1,-10)
-    Button.Position = UDim2.new(0,5,0,5)
-    Button.BackgroundColor3 = Color3.fromRGB(120,60,220)
     Button.Text = ""
-    Button.Parent = MainContainer
 
-    local Corner = Instance.new("UICorner")
-    Corner.CornerRadius = UDim.new(0,8)
-    Corner.Parent = Button
+    Dropdown.Value = Dropdown.Value or Items[1] or "None"
 
     local Label = Instance.new("TextLabel")
     Label.BackgroundTransparency = 1
@@ -333,9 +350,8 @@ function Context:AddDropdown(options)
     Label.Position = UDim2.new(0,10,0,0)
     Label.Font = Enum.Font.GothamBold
     Label.TextSize = 14
-    Label.TextXAlignment = Enum.TextXAlignment.Left
     Label.TextColor3 = Color3.new(1,1,1)
-    Label.Text = string.format("%s: %s", options.Text or "Dropdown", Selected)
+    Label.TextXAlignment = Enum.TextXAlignment.Left
     Label.Parent = Button
 
     local Arrow = Instance.new("ImageLabel")
@@ -345,89 +361,67 @@ function Context:AddDropdown(options)
     Arrow.Image = Context.Services.Icons.Controls.Dropdown
     Arrow.Parent = Button
 
-    ---------------------------------------------------
-    -- Dropdown Container
-    ---------------------------------------------------
+    local Spacer = self:CreateSpacer()
 
-    local Dropdown = Instance.new("Frame")
-    Dropdown.Size = UDim2.new(1,-20,0,0)
-    Dropdown.BackgroundColor3 = Color3.fromRGB(22,22,32)
-    Dropdown.BorderSizePixel = 0
-    Dropdown.Visible = false
-    Dropdown.Parent = Spacer
+    Spacer.LayoutOrder = MainContainer.LayoutOrder + 1
+
+    local SpacerLayout = Instance.new("UIListLayout")
+    SpacerLayout.Padding = UDim.new(0,5)
+    SpacerLayout.Parent = Spacer
+
+    local DropdownFrame = Instance.new("Frame")
+    DropdownFrame.Size = UDim2.new(1,-20,0,0)
+    DropdownFrame.BackgroundColor3 = Color3.fromRGB(22,22,32)
+    DropdownFrame.BorderSizePixel = 0
+    DropdownFrame.Visible = false
+    DropdownFrame.ClipsDescendants = true
+    DropdownFrame.Parent = Spacer
 
     local DropCorner = Instance.new("UICorner")
     DropCorner.CornerRadius = UDim.new(0,8)
-    DropCorner.Parent = Dropdown
+    DropCorner.Parent = DropdownFrame
 
     local DropdownLayout = Instance.new("UIListLayout")
     DropdownLayout.Padding = UDim.new(0,5)
     DropdownLayout.VerticalAlignment = Enum.VerticalAlignment.Center
     DropdownLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    Dropdown.ClipsDescendants = true
-    DropdownLayout.Parent = Dropdown
+    DropdownLayout.Parent = DropdownFrame
 
-    Dropdown.LayoutOrder = MainContainer.LayoutOrder + 1
+    DropdownFrame.LayoutOrder = MainContainer.LayoutOrder + 1
 
-    local function OpenDropdown()
+    function Dropdown:Open()
 
         Open = true
 
-        local Layout = Dropdown:FindFirstChildOfClass("UIListLayout")
+        local Height = DropdownLayout.AbsoluteContentSize.Y + 6
 
-        local Height = Layout.AbsoluteContentSize.Y + 6
-
-        Dropdown.Visible = true
+        DropdownFrame.Visible = true
 
         TweenService:Create(
             Arrow,
-            TweenInfo.new(
-                .15,
-                Enum.EasingStyle.Quad,
-                Enum.EasingDirection.Out
-            ),
-            {
-                Rotation = 180
-            }
+            TweenInfo.new(.15),
+            {Rotation = 180}
         ):Play()
 
         TweenService:Create(
             Spacer,
-            TweenInfo.new(
-                .15,
-                Enum.EasingStyle.Quad,
-                Enum.EasingDirection.Out
-            ),
+            TweenInfo.new(.15),
             {
-                Size = UDim2.new(
-                    1,
-                    -20,
-                    0,
-                    Height
-                )
+                Size = UDim2.new(1,-20,0,Height)
             }
         ):Play()
 
         TweenService:Create(
-            Dropdown,
-            TweenInfo.new(
-                .15,
-                Enum.EasingStyle.Quad,
-                Enum.EasingDirection.Out
-            ),
+            DropdownFrame,
+            TweenInfo.new(.15),
             {
-                Size = UDim2.new(
-                    1,
-                    0,
-                    0,
-                    Height
-                )
+                Size = UDim2.new(1,0,0,Height)
             }
         ):Play()
 
     end
 
-    local function CloseDropdown()
+    function Dropdown:Close()
 
         Open = false
 
@@ -461,7 +455,7 @@ function Context:AddDropdown(options)
         ):Play()
 
         TweenService:Create(
-            Dropdown,
+            DropdownFrame,
             TweenInfo.new(
                 .15,
                 Enum.EasingStyle.Quad,
@@ -480,16 +474,29 @@ function Context:AddDropdown(options)
         task.delay(.15, function()
 
             if not Open then
-                Dropdown.Visible = false
+                DropdownFrame.Visible = false
             end
 
         end)
 
     end
 
-    ---------------------------------------------------
-    -- Options
-    ---------------------------------------------------
+    function Dropdown:SetValue(Value)
+
+        self.Value = Value
+        Context.Values[self.Flag] = Value
+
+        Label.Text = string.format(
+            "%s: %s",
+            options.Text or "Dropdown",
+            tostring(Value)
+        )
+
+        if options.Callback then
+            options.Callback(Value)
+        end
+
+    end
 
     for _, Item in ipairs(Items) do
 
@@ -501,7 +508,7 @@ function Context:AddDropdown(options)
         Option.Font = Enum.Font.Gotham
         Option.TextSize = 14
         Option.Text = tostring(Item)
-        Option.Parent = Dropdown
+        Option.Parent = DropdownFrame
 
         local Corner = Instance.new("UICorner")
         Corner.CornerRadius = UDim.new(0,6)
@@ -509,73 +516,26 @@ function Context:AddDropdown(options)
 
         Option.MouseButton1Click:Connect(function()
 
-            CloseDropdown()
-
-            Label.Text = string.format(
-                "%s: %s",
-                options.Text or "Dropdown",
-                tostring(Item)
-            )
-
-            Selected = Item
-            self.Values[Id] = Item
-
-            if options.Callback then
-                options.Callback(Item)
-            end
+            Dropdown:SetValue(Item)
+            Dropdown:Close()
 
         end)
 
     end
 
-    ---------------------------------------------------
-    -- Toggle
-    ---------------------------------------------------
+    Dropdown:SetValue(Dropdown.Value)
 
     Button.MouseButton1Click:Connect(function()
 
         if Open then
-            CloseDropdown()
+            Dropdown:Close()
         else
-            OpenDropdown()
+            Dropdown:Open()
         end
 
     end)
 
-    ---------------------------------------------------
-    -- API
-    ---------------------------------------------------
-
-    return {
-
-        GetValue = function()
-            return Selected
-        end,
-
-        SetValue = function(Value)
-
-            Selected = Value
-            self.Values[Id] = Value
-
-            Label.Text = string.format(
-                "%s: %s",
-                options.Text or "Dropdown",
-                tostring(Value)
-            )
-
-            if options.Callback then
-                options.Callback(Value)
-            end
-
-        end,
-
-        Destroy = function()
-
-            MainContainer:Destroy()
-            Spacer:Destroy()
-
-        end
-    }
+    return Dropdown
 
 end
 
