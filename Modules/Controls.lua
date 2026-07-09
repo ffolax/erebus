@@ -2,7 +2,7 @@ local UserInputService = game:GetService("UserInputService")
 
 local Controls = {}
 
-Controls.Binds = {}
+Controls.Bindings = {}
 Controls.Connections = {}
 
 function Controls:Bind(Keybind, Callback)
@@ -36,7 +36,7 @@ end
 
 function Controls:Clear()
 
-    table.clear(self.Binds)
+    table.clear(self.Bindings)
 
 end
 
@@ -85,7 +85,7 @@ function Controls:Destroy()
     end
 
     table.clear(self.Connections)
-    table.clear(self.Binds)
+    table.clear(self.Bindings)
 
 end
 
