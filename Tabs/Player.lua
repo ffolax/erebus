@@ -88,14 +88,7 @@ return function(Context)
 
                                 if target then
 
-                                    workspace.CurrentCamera.CFrame =
-                                        workspace.CurrentCamera.CFrame:Lerp(
-                                            CFrame.lookAt(
-                                                workspace.CurrentCamera.CFrame.Position,
-                                                target.Position
-                                            ),
-                                            0.15
-                                        )
+                                    workspace.CurrentCamera.CFrame = CFrame.lookAt(workspace.CurrentCamera.CFrame.Position,target.Position)
 
                                 end
                             end
