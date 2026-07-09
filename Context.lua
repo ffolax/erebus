@@ -667,30 +667,28 @@ function Context:AddKeybind(options)
     -- API
     ---------------------------------------------------
 
-    local Keybind = {
+    local Keybind = {}
 
-        function Keybind:GetValue()
-            return Key
-        end,
+    function Keybind:GetValue()
+        return Key
+    end
 
-        function Keybind:SetValue(Value)
+    function Keybind:SetValue(Value)
 
-            Key = Value
-            Context.Values[Id] = Value
+        Key = Value
+        self.Values[Id] = Value
 
-            BindButton.Text = Value.Name
+        BindButton.Text = Value.Name
 
-            if options.OnChanged then
-                options.OnChanged(Value)
-            end
-
-        end,
-
-        GetKey = function()
-            return Key
+        if options.OnChanged then
+            options.OnChanged(Value)
         end
 
-    }
+    end
+
+    function Keybind:GetKey()
+        return Key
+    end
 
     return Keybind
 
