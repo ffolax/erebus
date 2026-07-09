@@ -247,11 +247,12 @@ function Context:AddToggle(options)
     })
 
     local Button = Toggle.Button
+    local Context = self
 
     function Toggle:SetValue(Value)
 
         Enabled = Value
-        self.Values[Id] = Value
+        Context.Values[Id] = Value
 
         Button.Text = options.Text ..
             (Enabled and ": On" or ": Off")
