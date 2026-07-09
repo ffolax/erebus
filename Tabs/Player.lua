@@ -1,6 +1,66 @@
 return function(Context)
 
     local Controls = Context.Services.Controls
+    local RunService = game:GetService("RunService")
+
+    Context:AddTitle({
+        Text = "Player Settings"
+    })
+
+    local renderSteppedConn
+
+    local SpeedHackToggle = Context:AddToggle({
+        Text = "Speed Hack",
+        Callback = function(Enabled)
+            if Enabled then
+                local lastPosition = game.Players.LocalPlayer.CharacterRootPart.Position
+                local lastTime = tick()
+                
+                renderSteppedConn = RunService.RenderStepped:Connect(function()
+                    local currentTime = tick()
+                    local deltaTime = currentTime - lastTime
+                    
+                    if deltaTime > 0 then
+                        local currentVelocity = (game.Players.LocalPlayer.CharacterRootPart.Position - lastPosition) / deltaTime
+                        local targetVelocity = Vector3.new(10, 0, 10)
+
+                        local newPosition = game.Players.LocalPlayer.CharacterRootPart.Position + (targetVelocity - currentVelocity) * deltaTime
+
+                        game.Players.LocalPlayer.CharacterRootPart.Anchored = true
+                        game.Players.LocalPlayer.CharacterRootPart.CFrame = CFrame.new(newPosition)
+                        
+                        spawn(function()
+                            wait(0.1)
+                            game.Players.LocalPlayer.CharacterRootPart.Anchored = false
+                        end)
+                    end
+                    
+                    lastPosition = game.Players.LocalPlayer.CharacterRootPart.Position
+                    lastTime = currentTime
+                end)
+            else
+                if renderSteppedConn then
+                    renderSteppedConn:Disconnect()
+                    renderSteppedConn = nil
+                end
+            end
+        end
+    })
+
+    local SpeedHackKey = Context:AddKeybind({
+        Text = "Speed Hack Keybind",
+        Default = Enum.KeyCode.B
+    })
+
+    Context:RegisterConnection(
+        Context.Services.Controls:Bind(SpeedHackKey,function(Down)
+
+            if Down then
+                SpeedHackToggle:Toggle()
+            end
+
+        end)
+    )
 
     Context:AddTitle({
         Text = "Aimbot Settings"
@@ -8,8 +68,6 @@ return function(Context)
 
     local FOVCircle
     local TargetPart = "HumanoidRootPart"
-
-    local RunService = game:GetService("RunService")
     local RenderStepName = "ErebusAimbot"
 
     local AimbotToggle = Context:AddToggle({
@@ -134,8 +192,6 @@ return function(Context)
 
         end)
     )
-
-    print(Controls.Bindings)
 
     Context:AddDropdown({
 

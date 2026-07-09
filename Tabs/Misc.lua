@@ -16,13 +16,13 @@ end
 return function(Context)
 
     Context:AddTitle({
-        Text = "Morph"
+        Text = "Vehicle Morph"
     })
 
     local SelectedMorph
 
     Context:AddButton({
-        Text = "Vehicle Morph",
+        Text = "Morph (CLIENT-SIDED)",
 
         Callback = function()
 
@@ -92,6 +92,16 @@ return function(Context)
                         Weld.Part0 = MainBody
                         Weld.Part1 = Part
                         Weld.Parent = MainBody
+
+                        local destroyconn
+
+                        destroyconn = Part.Destroying:Connect(function()
+
+                            Weld:Destroy()
+
+                            destroyconn:Disconnect()
+
+                        end)
 
                     end
                 end
