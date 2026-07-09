@@ -10,6 +10,8 @@ return function(Context)
     local renderConnection
     local MouseConnection
     local TargetPart = "HumanoidRootPart"
+    local RunService = game:GetService("RunService")
+    local RenderStepName = "ErebusAimbot"
 
     local AimbotToggle = Context:AddToggle({
         Text = "Aimbot",
@@ -30,11 +32,12 @@ return function(Context)
 
                     if Down then
 
-                        if renderConnection then
-                            return
-                        end
+                        RunService:UnbindFromRenderStep(RenderStepName)
 
-                        renderConnection = game:GetService("RunService").RenderStepped:Connect(function()
+                        RunService:BindToRenderStep(
+                            RenderStepName,
+                            Enum.RenderPriority.Camera.Value + 1,
+                            function()
 
                             FOVCircle.Position =
                                 workspace.CurrentCamera.ViewportSize / 2
@@ -97,10 +100,7 @@ return function(Context)
 
                     else
 
-                        if renderConnection then
-                            renderConnection:Disconnect()
-                            renderConnection = nil
-                        end
+                        RunService:UnbindFromRenderStep(RenderStepName)
 
                     end
 
@@ -122,10 +122,7 @@ return function(Context)
                     FOVCircle = nil
                 end
 
-                if renderConnection then
-                    renderConnection:Disconnect()
-                    renderConnection = nil
-                end
+                RunService:UnbindFromRenderStep(RenderStepName)
 
                 if MouseConnection then
                     MouseConnection:Disconnect()
