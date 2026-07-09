@@ -57,7 +57,7 @@ return function(Context)
 
     local SpeedSlider = Context:AddSlider({
 
-        Text = "FOV",
+        Text = "Speed",
 
         Min = 16,
         Max = 32,

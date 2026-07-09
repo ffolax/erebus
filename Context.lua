@@ -563,16 +563,16 @@ function Context:AddSlider(options)
 
     local UserInputService = game:GetService("UserInputService")
 
-    local Slider = self:CreateControl(options)
-
-    local Button = Slider.Button
-
-    Button.Text = ""
+    local Id = options.Id or options.Text
 
     Slider.Min = options.Min or 0
     Slider.Max = options.Max or 100
 
-    Slider.Value = Slider.Value or options.Default or Slider.Min
+    if self.Values[Id] == nil then
+        self.Values[Id] = options.Default or Slider.Min
+    end
+
+    Slider.Value = self.Values[Id]
 
     local Dragging = false
 
@@ -588,7 +588,7 @@ function Context:AddSlider(options)
     Label.TextSize = 14
     Label.TextColor3 = Color3.new(1,1,1)
     Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.Parent = Button
+    Label.Parent = Slider
 
     ---------------------------------------------------
     -- Bar
@@ -599,7 +599,7 @@ function Context:AddSlider(options)
     Bar.Position = UDim2.new(0,10,1,-14)
     Bar.BackgroundColor3 = Color3.fromRGB(45,45,55)
     Bar.BorderSizePixel = 0
-    Bar.Parent = Button
+    Bar.Parent = Slider
 
     Instance.new("UICorner",Bar).CornerRadius = UDim.new(1,0)
 
@@ -637,6 +637,7 @@ function Context:AddSlider(options)
         Value = math.clamp(Value,Slider.Min,Slider.Max)
 
         Slider.Value = Value
+        self.Values[Id] = Value
 
         local Alpha =
             (Value-Slider.Min) /
@@ -655,6 +656,14 @@ function Context:AddSlider(options)
             options.Callback(Value)
         end
 
+    end
+
+    function Slider:GetValue()
+        return Slider.Value
+    end
+
+    function Slider:Destroy()
+        Slider.Container:Destroy()
     end
 
     ---------------------------------------------------
