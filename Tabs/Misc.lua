@@ -41,6 +41,7 @@ return function(Context)
                 end
 
                 local OldBody = MyVehicle.Body
+                OldBody.Body.CanCollide = false
 
                 if MyVehicle:FindFirstChild("MorphBody") then
 

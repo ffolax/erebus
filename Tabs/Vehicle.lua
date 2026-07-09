@@ -82,6 +82,7 @@ return function(Context)
 
                 car:SetAttribute("currentHealth",500)
                 car:SetAttribute("IsOn",true)
+                car:SetAttribute("currentFuel",math.huge)
 
             end
 

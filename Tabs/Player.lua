@@ -13,7 +13,13 @@ return function(Context)
         Text = "Speed Hack",
         Callback = function(Enabled)
             if Enabled then
-                local lastPosition = game.Players.LocalPlayer.CharacterRootPart.Position
+
+                local Character = game.Players.Character
+                local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+                
+                if not HumanoidRootPart then return end
+
+                local lastPosition = HumanoidRootPart.Position
                 local lastTime = tick()
                 
                 renderSteppedConn = RunService.RenderStepped:Connect(function()
@@ -21,21 +27,21 @@ return function(Context)
                     local deltaTime = currentTime - lastTime
                     
                     if deltaTime > 0 then
-                        local currentVelocity = (game.Players.LocalPlayer.CharacterRootPart.Position - lastPosition) / deltaTime
+                        local currentVelocity = (HumanoidRootPart.Position - lastPosition) / deltaTime
                         local targetVelocity = Vector3.new(10, 0, 10)
 
-                        local newPosition = game.Players.LocalPlayer.CharacterRootPart.Position + (targetVelocity - currentVelocity) * deltaTime
+                        local newPosition = HumanoidRootPart.Position + (targetVelocity - currentVelocity) * deltaTime
 
-                        game.Players.LocalPlayer.CharacterRootPart.Anchored = true
-                        game.Players.LocalPlayer.CharacterRootPart.CFrame = CFrame.new(newPosition)
-                        
+                        HumanoidRootPart.Anchored = true
+                        HumanoidRootPart.CFrame = CFrame.new(newPosition)
+
                         spawn(function()
                             wait(0.1)
-                            game.Players.LocalPlayer.CharacterRootPart.Anchored = false
+                            HumanoidRootPart.Anchored = false
                         end)
                     end
                     
-                    lastPosition = game.Players.LocalPlayer.CharacterRootPart.Position
+                    lastPosition = HumanoidRootPart.Position
                     lastTime = currentTime
                 end)
             else

@@ -124,6 +124,8 @@ local function QueueErebus()
 
     end)
 
+    task.wait(0.15)
+
     if not Success then
         warn("[EREBUS] Failed to queue:", Error)
         return false

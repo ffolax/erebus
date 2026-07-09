@@ -561,13 +561,156 @@ end
 
 function Context:AddSlider(options)
 
-    local Frame = Instance.new("Frame")
-    Frame.Size = UDim2.new(1,-20,0,55)
-    Frame.Parent = options.Container or self.Parent
+    local UserInputService = game:GetService("UserInputService")
 
-    -- build slider here
+    local Slider = self:CreateControl(options)
 
-    return Frame
+    local Button = Slider.Button
+
+    Button.Text = ""
+
+    Slider.Min = options.Min or 0
+    Slider.Max = options.Max or 100
+
+    Slider.Value = Slider.Value or options.Default or Slider.Min
+
+    local Dragging = false
+
+    ---------------------------------------------------
+    -- Label
+    ---------------------------------------------------
+
+    local Label = Instance.new("TextLabel")
+    Label.BackgroundTransparency = 1
+    Label.Size = UDim2.new(1,-20,0,18)
+    Label.Position = UDim2.new(0,10,0,3)
+    Label.Font = Enum.Font.GothamBold
+    Label.TextSize = 14
+    Label.TextColor3 = Color3.new(1,1,1)
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.Parent = Button
+
+    ---------------------------------------------------
+    -- Bar
+    ---------------------------------------------------
+
+    local Bar = Instance.new("Frame")
+    Bar.Size = UDim2.new(1,-20,0,6)
+    Bar.Position = UDim2.new(0,10,1,-14)
+    Bar.BackgroundColor3 = Color3.fromRGB(45,45,55)
+    Bar.BorderSizePixel = 0
+    Bar.Parent = Button
+
+    Instance.new("UICorner",Bar).CornerRadius = UDim.new(1,0)
+
+    ---------------------------------------------------
+    -- Fill
+    ---------------------------------------------------
+
+    local Fill = Instance.new("Frame")
+    Fill.BackgroundColor3 = Color3.fromRGB(120,60,220)
+    Fill.Size = UDim2.fromScale(0,1)
+    Fill.BorderSizePixel = 0
+    Fill.Parent = Bar
+
+    Instance.new("UICorner",Fill).CornerRadius = UDim.new(1,0)
+
+    ---------------------------------------------------
+    -- Knob
+    ---------------------------------------------------
+
+    local Knob = Instance.new("Frame")
+    Knob.Size = UDim2.fromOffset(12,12)
+    Knob.AnchorPoint = Vector2.new(.5,.5)
+    Knob.Position = UDim2.fromScale(0,.5)
+    Knob.BackgroundColor3 = Color3.fromRGB(255,255,255)
+    Knob.Parent = Bar
+
+    Instance.new("UICorner",Knob).CornerRadius = UDim.new(1,0)
+
+    ---------------------------------------------------
+    -- Update
+    ---------------------------------------------------
+
+    function Slider:SetValue(Value)
+
+        Value = math.clamp(Value,Slider.Min,Slider.Max)
+
+        Slider.Value = Value
+
+        local Alpha =
+            (Value-Slider.Min) /
+            (Slider.Max-Slider.Min)
+
+        Fill.Size = UDim2.fromScale(Alpha,1)
+        Knob.Position = UDim2.fromScale(Alpha,.5)
+
+        Label.Text = string.format(
+            "%s: %s",
+            options.Text,
+            math.floor(Value)
+        )
+
+        if options.Callback then
+            options.Callback(Value)
+        end
+
+    end
+
+    ---------------------------------------------------
+    -- Drag
+    ---------------------------------------------------
+
+    local function UpdateSlider(Input)
+
+        local X =
+            math.clamp(
+                Input.Position.X-Bar.AbsolutePosition.X,
+                0,
+                Bar.AbsoluteSize.X
+            )
+
+        local Alpha = X/Bar.AbsoluteSize.X
+
+        Slider:SetValue(
+            Slider.Min +
+            (Slider.Max-Slider.Min)*Alpha
+        )
+
+    end
+
+    Bar.InputBegan:Connect(function(Input)
+
+        if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+
+            Dragging = true
+            UpdateSlider(Input)
+
+        end
+
+    end)
+
+    UserInputService.InputChanged:Connect(function(Input)
+
+        if Dragging and Input.UserInputType == Enum.UserInputType.MouseMovement then
+
+            UpdateSlider(Input)
+
+        end
+
+    end)
+
+    UserInputService.InputEnded:Connect(function(Input)
+
+        if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+            Dragging = false
+        end
+
+    end)
+
+    Slider:SetValue(Slider.Value)
+
+    return Slider
 
 end
 
