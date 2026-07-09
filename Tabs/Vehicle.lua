@@ -62,14 +62,7 @@ return function(Context)
 
         Callback = function()
 
-            local TeleportService = game:GetService("TeleportService")
-            local LocalPlayer = game:GetService("Players").LocalPlayer
-
-            TeleportService:TeleportToPlaceInstance(
-                game.PlaceId,
-                game.JobId,
-                LocalPlayer
-            )
+            
 
         end
     })
@@ -78,6 +71,21 @@ return function(Context)
         Text = "Vehicle Settings"
     })
 
+    Context:AddButton({
+        Text = "Godmode",
 
+        Callback = function()
+
+            local car = FindPlrVehicle()
+
+            if car then
+
+                car:SetAttribute("currentHealth",99999)
+                car:SetAttribute("IsOn",true)
+
+            end
+
+        end
+    })
 
 end

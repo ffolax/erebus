@@ -40,6 +40,8 @@ return function(Context)
 
                             if v:IsA("BasePart") then
 
+                                if v.CanCollide == false then continue end
+
                                 v.CanCollide = false
 
                             end
@@ -63,6 +65,8 @@ return function(Context)
                             if v:IsDescendantOf(Vehicle) then continue end
 
                             if v:IsA("BasePart") then
+
+                                if v.CanCollide == true then continue end
 
                                 v.CanCollide = true
 

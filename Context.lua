@@ -194,7 +194,7 @@ function Context:AddTitle(options)
     Container.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
     local Label = Instance.new("TextLabel")
-    Label.Size = UDim2.fromScale(0.95,0.9)
+    Label.Size = UDim2.fromScale(0.95,0.75)
     Label.Position = UDim2.fromScale(0.2,0)
     Label.BackgroundTransparency = 1
     Label.Text = options.Text
