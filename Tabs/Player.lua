@@ -7,7 +7,8 @@ return function(Context)
     })
 
     local FOVCircle
-    local renderConnection = nil
+    local renderConnection
+    local MouseConnection
     local TargetPart = "HumanoidRootPart"
 
     local AimbotToggle = Context:AddToggle({
@@ -23,54 +24,64 @@ return function(Context)
 
                 }
 
-                Context:RegisterConnection(
-                    Context.Services.Controls:Bind(MouseBind,function(Down)
+                MouseConnection = Context.Services.Controls:Bind(MouseBind,function(Down)
 
-                        if Down then
-                            renderConnection = game:GetService("RunService").RenderStepped:Connect(function()
+                    if Down then
 
-                                FOVCircle.Position = Vector2.new(workspace.CurrentCamera.ViewportSize.X/2, workspace.CurrentCamera.ViewportSize.Y/2)
-                                    
-                                local closestPlayer = nil
-                                local minDistance = math.huge
-                            
-                                for _, player in ipairs(workspace:GetChildren()) do
-                                    if player:IsA("Model") and game.Players:GetPlayerFromCharacter(player) then
-                                        if game.Players:GetPlayerFromCharacter(player) == game.Players.LocalPlayer then continue end
-                                        local humanoidRootPart = player:FindFirstChild("HumanoidRootPart")
-                                        if humanoidRootPart then
-                                            local screenPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(humanoidRootPart.Position)
-                                            if onScreen then
-                                                local distance = (Vector2.new(screenPos.X, screenPos.Y) - FOVCircle.Position).Magnitude
-                                                if distance < minDistance and distance <= FOVCircle.Radius then
-                                                    minDistance = distance
-                                                    closestPlayer = player
-                                                end
+                        if renderConnection then
+                            return
+                        end
+
+                        renderConnection = game:GetService("RunService").RenderStepped:Connect(function()
+
+                            FOVCircle.Position = Vector2.new(workspace.CurrentCamera.ViewportSize.X/2, workspace.CurrentCamera.ViewportSize.Y/2)
+                                
+                            local closestPlayer = nil
+                            local minDistance = math.huge
+                        
+                            for _, player in ipairs(game.Players:GetPlayers()) do
+                                if player == game.Players.LocalPlayer then continue end
+                                    local character = player.Character
+                                    if not Character then continue end
+                                    local humanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+                                    if humanoidRootPart then
+                                        local screenPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(humanoidRootPart.Position)
+                                        if onScreen then
+                                            local distance = (Vector2.new(screenPos.X, screenPos.Y) - FOVCircle.Position).Magnitude
+                                            if distance < minDistance and distance <= FOVCircle.Radius then
+                                                minDistance = distance
+                                                closestPlayer = Character
                                             end
                                         end
                                     end
                                 end
-                                
-                                if closestPlayer then
-
-                                    local target = closestPlayer:FindFirstChild(TargetPart) or closestPlayer:FindFirstChild("HumanoidRootPart")
-
-                                    if target then
-                                        workspace.CurrentCamera.CFrame = CFrame.lookAt(workspace.CurrentCamera.CFrame.Position, target.Position)
-                                    end
-                                end
-                            end)
-                        else
-
-                            if renderConnection then
-                                renderConnection:Disconnect()
-                                renderConnection = nil
                             end
-                                        
-                        end
+                            
+                            if closestPlayer then
 
-                    end)
-                )
+                                local target = closestPlayer:FindFirstChild(TargetPart) or closestPlayer:FindFirstChild("HumanoidRootPart")
+
+                                if target then
+                                    workspace.CurrentCamera.CFrame =
+                                    workspace.CurrentCamera.CFrame:Lerp(
+                                        CFrame.lookAt(workspace.CurrentCamera.CFrame.Position,target.Position),
+                                        0.15
+                                    )
+                                end
+                            end
+                        end)
+                    else
+
+                        if renderConnection then
+                            renderConnection:Disconnect()
+                            renderConnection = nil
+                        end
+                                    
+                    end
+
+                end)
+
+                Context:RegisterConnection(MouseConnection)
 
                 FOVCircle = Drawing.new("Circle")
                 FOVCircle.Visible = true
@@ -79,8 +90,6 @@ return function(Context)
                 FOVCircle.Radius = 150
                 FOVCircle.NumSides = 64
                 FOVCircle.Position = workspace.CurrentCamera.ViewportSize / 2
-
-                -- Create new connection
             else
                 if FOVCircle then
                     FOVCircle:Remove()
@@ -90,6 +99,11 @@ return function(Context)
                 if renderConnection then
                     renderConnection:Disconnect()
                     renderConnection = nil
+                end
+
+                if MouseConnection then
+                    MouseConnection:Disconnect()
+                    MouseConnection = nil
                 end
             end
         end

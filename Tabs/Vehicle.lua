@@ -80,7 +80,7 @@ return function(Context)
 
             if car then
 
-                car:SetAttribute("currentHealth",99999)
+                car:SetAttribute("currentHealth",500)
                 car:SetAttribute("IsOn",true)
 
             end
