@@ -22,7 +22,7 @@ return function(Context)
     local SelectedMorph
 
     Context:AddButton({
-        Text = "Morph",
+        Text = "Vehicle Morph",
 
         Callback = function()
 
@@ -140,6 +140,12 @@ return function(Context)
 
     for _,v in pairs(Vehicles:GetChildren()) do
 
+        if v:FindFirstChild("DriveSeat") and v.DriveSeat:GetAttribute("Rent") == true then
+
+            v.Name = "E-Scooter"
+
+        end
+
         table.insert(VehicleTable,v.Name)
 
     end
@@ -168,31 +174,27 @@ return function(Context)
 
         Callback = function(State)
 
-            if State then
+            local Vehicle = FindPlrVehicle()
 
-                local Vehicle = FindPlrVehicle()
+            if not Vehicle then
+                return
+            end
 
-                if not Vehicle then
-                    return
-                end
+            for _, v in ipairs(Vehicles:GetDescendants()) do
 
-                for _, v in ipairs(Vehicles:GetChildren()) do
+                if v:IsDescendantOf(Vehicles) then
 
-                    if v:IsDescendantOf(Vehicles) then
+                    if Vehicle then
 
-                        if Vehicle then
+                        if v:IsDescendantOf(Vehicle) then continue end
 
-                            if v:IsDescendantOf(Vehicle) then continue end
+                        if v:IsA("BasePart") then
 
-                            if v:IsA("BasePart") then
+                            v.CanCollide = not State
 
-                                v.CanCollide = not State
+                        end
 
-                            end
-
-                       end
-
-                   end
+                    end
 
                 end
 
