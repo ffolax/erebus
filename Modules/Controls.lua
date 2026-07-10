@@ -5,13 +5,12 @@ local Controls = {}
 Controls.Bindings = {}
 Controls.Connections = {}
 
-local function IsInputMatch(Input, Bind)
+local function IsInputMatch(Input, Binding)
+    local Value = Context.Values[Binding.Flag]
 
-    print(Bind)
-    print(Bind.GetValue)
-    print(Bind:GetValue())
-
-    local Value = Bind:GetValue()
+    if not Value then
+        return false
+    end
 
     if Value.EnumType == Enum.KeyCode then
         return Input.KeyCode == Value
@@ -22,30 +21,24 @@ local function IsInputMatch(Input, Bind)
     end
 
     return false
-
 end
 
-function Controls:Bind(Input, Callback)
-
+function Controls:Bind(Flag, Callback)
     local Binding = {
-        Input = Input,
+        Flag = Flag,
         Callback = Callback
     }
 
     table.insert(self.Bindings, Binding)
 
     function Binding:Disconnect()
-
         local Index = table.find(Controls.Bindings, self)
-
         if Index then
             table.remove(Controls.Bindings, Index)
         end
-
     end
 
     return Binding
-
 end
 
 function Controls:Unbind(Key)
