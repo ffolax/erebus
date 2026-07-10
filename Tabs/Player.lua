@@ -110,12 +110,6 @@ return function(Context)
                 FOVCircle.NumSides = 64
                 FOVCircle.Position = workspace.CurrentCamera.ViewportSize / 2
 
-                MouseConnection = Context.Services.Controls:Bind(MouseBind,function(Down)
-
-                    print("Down:", Down)
-
-                end)
-
                 RunService:UnbindFromRenderStep(RenderStepName)
 
                 RunService:BindToRenderStep(
