@@ -1,15 +1,25 @@
-return function(Context)
+local Player = {}
+
+Player.Speed = 20
+Player.TargetPart = "HumanoidRootPart"
+
+Player.RenderSteppedConn = nil
+Player.FOVCircle = nil
+
+Player.RenderStepName = "ErebusAimbot"
+
+Player.Connections = {}
+
+local RunService = game:GetService("RunService")
+
+function Player:Build(Context)
 
     local Controls = Context.Services.Controls
-    local RunService = game:GetService("RunService")
 
     Context:AddTitle({
         Text = "Player Settings"
     })
-
-    local renderSteppedConn
-    local Speed = 20
-
+    
     local SpeedHackToggle = Context:AddToggle({
         Text = "Speed Hack",
         Callback = function(Enabled)
@@ -34,9 +44,9 @@ return function(Context)
 
                         Root.AssemblyLinearVelocity =
                             Vector3.new(
-                                MoveDirection.X * Speed,
+                                MoveDirection.X * self.Speed,
                                 Y,
-                                MoveDirection.Z * Speed
+                                MoveDirection.Z * self.Speed
                             )
 
                     end
@@ -66,7 +76,7 @@ return function(Context)
 
         Callback = function(Value)
 
-            Speed = Value
+            self.Speed = Value
 
         end
 
@@ -87,14 +97,6 @@ return function(Context)
         end)
     )
 
-    Context:AddTitle({
-        Text = "Aimbot Settings"
-    })
-
-    local FOVCircle
-    local TargetPart = "HumanoidRootPart"
-    local RenderStepName = "ErebusAimbot"
-
     local AimbotToggle = Context:AddToggle({
         Text = "Aimbot",
 
@@ -102,13 +104,16 @@ return function(Context)
 
             if Enabled then
 
-                FOVCircle = Drawing.new("Circle")
-                FOVCircle.Visible = true
-                FOVCircle.Filled = false
-                FOVCircle.Thickness = 2
-                FOVCircle.Radius = 150
-                FOVCircle.NumSides = 64
-                FOVCircle.Position = workspace.CurrentCamera.ViewportSize / 2
+                if not self.FOVCircle then
+                    self.FOVCircle = Drawing.new("Circle")
+                end
+
+                self.FOVCircle.Visible = true
+                self.FOVCircle.Filled = false
+                self.FOVCircle.Thickness = 2
+                self.FOVCircle.Radius = 150
+                self.FOVCircle.NumSides = 64
+                self.FOVCircle.Position = workspace.CurrentCamera.ViewportSize / 2
 
                 RunService:UnbindFromRenderStep(RenderStepName)
 
@@ -117,7 +122,7 @@ return function(Context)
                     10000,
                     function()
 
-                        FOVCircle.Position =
+                        self.FOVCircle.Position =
                             workspace.CurrentCamera.ViewportSize / 2
 
                         local closestPlayer
@@ -149,11 +154,11 @@ return function(Context)
                                     local distance =
                                         (
                                             Vector2.new(screenPos.X, screenPos.Y)
-                                            - FOVCircle.Position
+                                            - self.FOVCircle.Position
                                         ).Magnitude
 
                                     if distance < minDistance
-                                    and distance <= FOVCircle.Radius then
+                                    and distance <= self.FOVCircle.Radius then
 
                                         minDistance = distance
                                         closestPlayer = character
@@ -166,7 +171,7 @@ return function(Context)
                         if closestPlayer then
 
                             local target =
-                                closestPlayer:FindFirstChild(TargetPart)
+                                closestPlayer:FindFirstChild(self.TargetPart)
                                 or closestPlayer:FindFirstChild("HumanoidRootPart")
 
                             if target then
@@ -184,9 +189,9 @@ return function(Context)
 
             else
 
-                if FOVCircle then
-                    FOVCircle:Remove()
-                    FOVCircle = nil
+                if self.FOVCircle then
+                    self.FOVCircle:Remove()
+                    self.FOVCircle = nil
                 end
 
                 RunService:UnbindFromRenderStep(RenderStepName)
@@ -196,7 +201,10 @@ return function(Context)
         end
     })
 
-    
+    Context:AddTitle({
+        Text = "Aimbot Settings"
+    })
+
     local AimbotKey = Context:AddKeybind({
         Text = "Aimbot Keybind",
         Default = Enum.KeyCode.V
@@ -222,7 +230,7 @@ return function(Context)
         Default = "HumanoidRootPart",
 
         Callback = function(Value)
-            TargetPart = Value
+            self.TargetPart = Value
         end
 
     })
@@ -238,8 +246,8 @@ return function(Context)
 
         Callback = function(Value)
 
-            if FOVCircle then
-                FOVCircle.Radius = Value
+            if self.FOVCircle then
+                self.FOVCircle.Radius = Value
             end
 
         end
@@ -275,3 +283,27 @@ return function(Context)
     })
 
 end
+
+function Player:Destroy()
+
+    if self.RenderSteppedConn then
+        self.RenderSteppedConn:Disconnect()
+        self.RenderSteppedConn = nil
+    end
+
+    RunService:UnbindFromRenderStep(self.RenderStepName)
+
+    if self.FOVCircle then
+        self.FOVCircle:Remove()
+        self.FOVCircle = nil
+    end
+
+    for _,Connection in ipairs(self.Connections) do
+        Connection:Disconnect()
+    end
+
+    table.clear(self.Connections)
+
+end
+
+return Player

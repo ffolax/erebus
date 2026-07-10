@@ -1,3 +1,4 @@
+local Misc = {}
 local Plr = game:GetService("Players").LocalPlayer
 local Vehicles = game.workspace:FindFirstChild("Vehicles")
 
@@ -13,7 +14,7 @@ function FindPlrVehicle()
 
 end
 
-return function(Context)
+function Misc:Build(Context)
 
     Context:AddTitle({
         Text = "Vehicle Morph"
@@ -223,3 +224,9 @@ return function(Context)
     })
 
 end
+
+function Misc:Destroy()
+
+end
+
+return Misc

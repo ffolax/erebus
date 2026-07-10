@@ -4,6 +4,11 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
+local CurrentTab
+
+local GitHub =
+    "https://raw.githubusercontent.com/ffolax/erebus/main/Tabs"
+
 local UI = {}
 
 local Theme = {
@@ -765,6 +770,22 @@ function UI:SetActiveTab(button)
 
 end
 
+function UI:LoadTab(Module)
+
+    if CurrentTab and CurrentTab.Destroy then
+        CurrentTab:Destroy()
+    end
+
+    CurrentTab = require(Module)
+
+    if type(CurrentTab) == "function" then
+        CurrentTab(Context)
+    elseif CurrentTab.Build then
+        CurrentTab:Build(Context)
+    end
+
+end
+
 function UI:OpenTab(name)
 
     local Button = self.Tabs[name]
@@ -782,10 +803,6 @@ function UI:OpenTab(name)
 
 end
 
-----------------------------------------------------
--- CLEAR CONTENT
-----------------------------------------------------
-
 function UI:ClearContent()
 
 	for _,v in ipairs(self.Content:GetChildren()) do
@@ -798,9 +815,11 @@ function UI:ClearContent()
 
 end
 
-function UI:RegisterTab(name, callback)
+function UI:RegisterTab(Name, Module)
 
-    self.TabCallbacks[name] = callback
+    self:RegisterTab(Name, function()
+        self:LoadTab(Module)
+    end)
 
 end
 

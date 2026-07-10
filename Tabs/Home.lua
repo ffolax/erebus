@@ -141,7 +141,9 @@ local function GetPing()
     return math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()) .. " ms"
 end
 
-return function(Context)
+local Home = {}
+
+function Home:Build(Context)
 
     local Container = Context:CreateContainer(250)
     local API = Context.Services.API
@@ -351,3 +353,11 @@ return function(Context)
     })
 
 end
+
+function Module:Destroy()
+
+    
+
+end
+
+return Home

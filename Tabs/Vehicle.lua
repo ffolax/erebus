@@ -1,3 +1,5 @@
+local Vehicle = {}
+
 local function FindVehicle()
 
     local Player = game:GetService("Players").LocalPlayer
@@ -16,7 +18,7 @@ local function FindVehicle()
 
 end
 
-return function(Context)
+function Vehicle:Build(Context)
 
     Context:AddTitle({
         Text = "Teleport"
@@ -90,3 +92,11 @@ return function(Context)
     })
 
 end
+
+function Vehicle:Destroy()
+
+
+
+end
+
+return Vehicle
