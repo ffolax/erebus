@@ -736,6 +736,9 @@ function Context:AddKeybind(options)
 
     local Keybind = self:CreateControl(options)
 
+    Keybind.Button:Destroy()
+    Keybind.Button = nil
+
     Keybind:SetValue(
         Keybind:GetValue() or Enum.KeyCode.Unknown
     )
