@@ -644,12 +644,14 @@ function Context:AddSlider(options)
     -- Update
     ---------------------------------------------------
 
+    local Context = self
+
     function Slider:SetValue(Value)
 
         Value = math.clamp(Value,Slider.Min,Slider.Max)
 
         Slider.Value = Value
-        self.Values[Id] = Value
+        Context.Values[Id] = Value
 
         local Alpha =
             (Value-Slider.Min) /
