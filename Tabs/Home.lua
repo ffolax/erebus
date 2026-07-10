@@ -354,7 +354,7 @@ function Home:Build(Context)
 
 end
 
-function Module:Destroy()
+function Home:Destroy()
 
     
 
