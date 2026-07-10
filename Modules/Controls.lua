@@ -7,6 +7,10 @@ Controls.Connections = {}
 
 local function IsInputMatch(Input, Bind)
 
+    print(Bind)
+    print(Bind.GetValue)
+    print(Bind:GetValue())
+
     local Value = Bind:GetValue()
 
     if Value.EnumType == Enum.KeyCode then
