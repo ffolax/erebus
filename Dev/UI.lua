@@ -773,15 +773,11 @@ function UI:LoadTab(Module)
         CurrentTab:Destroy()
     end
 
-    local Source = game:HttpGet(
-        "https://raw.githubusercontent.com/ffolax/erebus/main/Tabs/" .. Module
-    )
-
-    CurrentTab = loadstring(Source)()
+    CurrentTab = Module
 
     if type(CurrentTab) == "function" then
         CurrentTab(Context)
-    elseif type(CurrentTab) == "table" and CurrentTab.Build then
+    elseif CurrentTab.Build then
         CurrentTab:Build(Context)
     end
 
