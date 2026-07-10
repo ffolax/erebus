@@ -814,7 +814,7 @@ end
 
 function UI:RegisterTab(Name, Module)
 
-    self:RegisterTab(Name, function()
+    self:CreateTab(Name, function()
         self:LoadTab(Module)
     end)
 
