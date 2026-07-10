@@ -4,9 +4,11 @@ local Controls = {}
 
 Controls.Bindings = {}
 Controls.Connections = {}
+Controls.Context = nil
 
 local function IsInputMatch(Input, Binding)
-    local Value = Context.Values[Binding.Flag]
+
+    local Value = Binding.Keybind:GetValue()
 
     if not Value then
         return false
@@ -21,29 +23,29 @@ local function IsInputMatch(Input, Binding)
     end
 
     return false
+
 end
 
-function Controls:Bind(Flag, Callback)
+function Controls:Bind(Keybind, Callback)
+
     local Binding = {
-        Flag = Flag,
+        Keybind = Keybind,
         Callback = Callback
     }
 
     table.insert(self.Bindings, Binding)
 
     function Binding:Disconnect()
+
         local Index = table.find(Controls.Bindings, self)
+
         if Index then
             table.remove(Controls.Bindings, Index)
         end
+
     end
 
     return Binding
-end
-
-function Controls:Unbind(Key)
-
-    self.Binds[Key] = nil
 
 end
 
@@ -53,7 +55,9 @@ function Controls:Clear()
 
 end
 
-function Controls:Init()
+function Controls:Init(Context)
+
+    self.Context = Context
 
     if self.Connections.InputBegan then
         return
@@ -67,11 +71,9 @@ function Controls:Init()
             end
 
             for _, Binding in ipairs(self.Bindings) do
-
-                if IsInputMatch(Input, Binding.Input) then
+                if IsInputMatch(Input, Binding) then
                     Binding.Callback(true)
                 end
-
             end
 
         end)
@@ -80,8 +82,7 @@ function Controls:Init()
         UserInputService.InputEnded:Connect(function(Input)
 
             for _, Binding in ipairs(self.Bindings) do
-
-                if IsInputMatch(Input, Binding.Input) then
+                if IsInputMatch(Input, Binding) then
                     Binding.Callback(false)
                 end
             end
@@ -98,6 +99,8 @@ function Controls:Destroy()
 
     table.clear(self.Connections)
     table.clear(self.Bindings)
+
+    self.Context = nil
 
 end
 

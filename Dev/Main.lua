@@ -49,7 +49,7 @@ Context.Services = {
 }
 
 Context:Init()
-Controls:Init()
+Controls:Init(Context)
 
 UI:Init(
     Context,
