@@ -738,6 +738,7 @@ function Context:AddKeybind(options)
 
     Keybind.Button:Destroy()
     Keybind.Button = nil
+    Keybind.Container.UIListLayout.FillDirection = Enum.FillDirection.Horizontal
 
     Keybind:SetValue(
         Keybind:GetValue() or Enum.KeyCode.Unknown
