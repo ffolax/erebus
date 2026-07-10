@@ -6,9 +6,6 @@ local RunService = game:GetService("RunService")
 
 local CurrentTab
 
-local GitHub =
-    "https://raw.githubusercontent.com/ffolax/erebus/main/Tabs"
-
 local UI = {}
 
 local Theme = {
@@ -776,11 +773,15 @@ function UI:LoadTab(Module)
         CurrentTab:Destroy()
     end
 
-    CurrentTab = require(Module)
+    local Source = game:HttpGet(
+        "https://raw.githubusercontent.com/ffolax/erebus/main/Tabs/" .. Module
+    )
+
+    CurrentTab = loadstring(Source)()
 
     if type(CurrentTab) == "function" then
         CurrentTab(Context)
-    elseif CurrentTab.Build then
+    elseif type(CurrentTab) == "table" and CurrentTab.Build then
         CurrentTab:Build(Context)
     end
 
