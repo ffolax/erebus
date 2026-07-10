@@ -567,6 +567,9 @@ function Context:AddSlider(options)
 
     local Slider = self:CreateControl(options)
 
+    Slider.Button:Destroy()
+    Slider.Button = nil
+
     Slider.Min = options.Min or 0
     Slider.Max = options.Max or 100
 
