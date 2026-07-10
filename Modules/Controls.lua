@@ -27,6 +27,9 @@ end
 
 function Controls:Bind(Input, Callback)
 
+    print(Input)
+    print(Input.GetValue)
+
     local Binding = {
         Input = Input,
         Callback = Callback

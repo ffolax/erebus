@@ -734,19 +734,13 @@ function Context:AddKeybind(options)
 
     local UserInputService = game:GetService("UserInputService")
 
-    local Container = options.Container or self:CreateContainer(42)
-    Container.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-    Container.UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+    local Keybind = self:CreateControl(options)
+
+    Keybind:SetValue(
+        Keybind:GetValue() or Enum.KeyCode.Unknown
+    )
 
     local Binding = false
-
-    local Id = options.Id or options.Text
-
-    if self.Values[Id] == nil then
-        self.Values[Id] = options.Default or Enum.KeyCode.Unknown
-    end
-
-    local Key = self.Values[Id]
 
     ---------------------------------------------------
     -- Name
@@ -761,29 +755,44 @@ function Context:AddKeybind(options)
     Label.TextColor3 = Color3.new(1,1,1)
     Label.TextXAlignment = Enum.TextXAlignment.Left
     Label.Text = options.Text
-    Label.Parent = Container
+    Label.Parent = Keybind.Container
 
     ---------------------------------------------------
     -- Bind Button
     ---------------------------------------------------
 
     local BindButton = Instance.new("TextButton")
-    BindButton.AnchorPoint = Vector2.new(1,0.5)
+    BindButton.AnchorPoint = Vector2.new(1,.5)
     BindButton.Position = UDim2.new(1,-10,.5,0)
     BindButton.Size = UDim2.new(0,75,0,24)
     BindButton.BackgroundColor3 = Color3.fromRGB(35,35,45)
     BindButton.Font = Enum.Font.GothamBold
     BindButton.TextSize = 13
     BindButton.TextColor3 = Color3.new(1,1,1)
-    BindButton.Text = Key.Name
-    BindButton.Parent = Container
+    BindButton.Parent = Keybind.Container
 
-    local Corner = Instance.new("UICorner")
-    Corner.CornerRadius = UDim.new(0,6)
-    Corner.Parent = BindButton
+    Instance.new("UICorner", BindButton).CornerRadius = UDim.new(0,6)
 
     ---------------------------------------------------
-    -- Rebind
+    -- Override SetValue
+    ---------------------------------------------------
+
+    local BaseSetValue = Keybind.SetValue
+
+    function Keybind:SetValue(Value)
+
+        BaseSetValue(self, Value)
+
+        BindButton.Text = Value.Name
+
+        if options.OnChanged then
+            options.OnChanged(Value)
+        end
+
+    end
+
+    ---------------------------------------------------
+    -- Rebinding
     ---------------------------------------------------
 
     BindButton.MouseButton1Click:Connect(function()
@@ -805,17 +814,10 @@ function Context:AddKeybind(options)
 
             if Input.UserInputType == Enum.UserInputType.Keyboard then
 
-                Key = Input.KeyCode
-                self.Values[Id] = Key
-
-                BindButton.Text = Key.Name
-
-                Binding = false
                 Connection:Disconnect()
+                Binding = false
 
-                if options.OnChanged then
-                    options.OnChanged(Key)
-                end
+                Keybind:SetValue(Input.KeyCode)
 
             end
 
@@ -823,32 +825,7 @@ function Context:AddKeybind(options)
 
     end)
 
-    ---------------------------------------------------
-    -- API
-    ---------------------------------------------------
-
-    local Keybind = {}
-
-    function Keybind:GetValue()
-        return Key
-    end
-
-    function Keybind:SetValue(Value)
-
-        Key = Value
-        self.Values[Id] = Value
-
-        BindButton.Text = Value.Name
-
-        if options.OnChanged then
-            options.OnChanged(Value)
-        end
-
-    end
-
-    function Keybind:GetKey()
-        return Key
-    end
+    Keybind:SetValue(Keybind:GetValue())
 
     return Keybind
 
