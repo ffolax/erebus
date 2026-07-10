@@ -776,9 +776,9 @@ function UI:LoadTab(Module)
     CurrentTab = Module
 
     if type(CurrentTab) == "function" then
-        CurrentTab(Context)
+        CurrentTab(self.Context)
     elseif CurrentTab.Build then
-        CurrentTab:Build(Context)
+        CurrentTab:Build(self.Context)
     end
 
 end
@@ -814,9 +814,9 @@ end
 
 function UI:RegisterTab(Name, Module)
 
-    self:CreateTab(Name, function()
+    self.TabCallbacks[Name] = function(Context)
         self:LoadTab(Module)
-    end)
+    end
 
 end
 
