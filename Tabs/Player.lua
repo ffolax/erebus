@@ -1,8 +1,5 @@
 local Player = {}
 
-Player.Speed = Context.Values.PlayerSpeed or 20
-Player.TargetPart = Context.Values.TargetPart or "HumanoidRootPart"
-
 Player.RenderSteppedConn = nil
 Player.FOVCircle = nil
 
@@ -13,6 +10,8 @@ local RunService = game:GetService("RunService")
 function Player:Build(Context)
 
     local Controls = Context.Services.Controls
+    self.Speed = Context.Values.PlayerSpeed or 20
+    self.TargetPart = Context.Values.TargetPart or "HumanoidRootPart"
 
     Context:AddTitle({
         Text = "Player Settings"
