@@ -62,7 +62,8 @@ local Vehicle = loadstring(game:HttpGet(BASE .. "Tabs/Vehicle.lua"))()
 local Visuals = loadstring(game:HttpGet(BASE .. "Tabs/Visuals.lua"))()
 local Misc = loadstring(game:HttpGet(BASE .. "Tabs/Misc.lua"))()
 
-local VehicleTeleport loadstring(game:HttpGet(BASE .. "Modules/VehicleTeleport.lua"))()
+local VehicleTeleport = loadstring(game:HttpGet(BASE .. "Modules/VehicleTeleport.lua"))()
+VehicleTeleport:SetupMapToMove()
 
 Context.Modules = {
 

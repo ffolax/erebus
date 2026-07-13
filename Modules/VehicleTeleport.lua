@@ -134,7 +134,7 @@ function VehicleTeleport:MoveVehicle(endPosition,givenSpeed,sitPlayer)
 
 end
 
-function SetupMapToMove()
+function VehicleTeleport:SetupMapToMove()
 
 	local NavigationMap
 
@@ -151,7 +151,7 @@ function SetupMapToMove()
 
 	NavigationMap.Destroying:Once(function()
 		task.wait()
-		SetupMapToMove()
+		VehicleTeleport:SetupMapToMove()
 	end)
 
 	local conns = {}
@@ -182,7 +182,5 @@ function SetupMapToMove()
 	end
 
 end
-
-SetupMapToMove()
 
 return VehicleTeleport

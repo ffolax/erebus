@@ -50,13 +50,13 @@ function Vehicle:Build(Context)
             local Humanoid = Character and Character:FindFirstChild("Humanoid")
             local Root = Character and Character:FindFirstChild("HumanoidRootPart")
 
-            local Vehicle = FindVehicle()
+            local PlrVehicle = FindVehicle()
 
-            if not (Character and Humanoid and Root and Vehicle) then
+            if not (Character and Humanoid and Root and PlrVehicle) then
                 return
             end
 
-            local DriveSeat = Vehicle:FindFirstChildOfClass("Seat")
+            local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
 
             if not DriveSeat then
                 return
@@ -70,7 +70,7 @@ function Vehicle:Build(Context)
                 local Start = Root.Position
                 local Goal = DriveSeat.Position + Vector3.new(0, 5, 0)
 
-                local Steps = math.ceil(Distance / 75)
+                local Steps = math.ceil(Distance / 40)
 
                 for i = 1, Steps do
 
@@ -101,9 +101,9 @@ function Vehicle:Build(Context)
             local Humanoid = Character and Character:FindFirstChild("Humanoid")
             local Root = Character and Character:FindFirstChild("HumanoidRootPart")
 
-            local Vehicle = FindPlrVehicle()
+            local PlrVehicle = FindPlrVehicle()
 
-            if Vehicle and Root then
+            if PlrVehicle and Root then
 
                 local Position = Root.CFrame * CFrame.new(0,0,10)
 
