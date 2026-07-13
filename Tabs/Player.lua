@@ -1,6 +1,5 @@
 local Player = {}
 
-Player.RenderSteppedConn = nil
 Player.FOVCircle = nil
 
 Player.RenderStepName = "ErebusAimbot"
@@ -32,7 +31,7 @@ function Player:Build(Context)
                     return
                 end
 
-                self.RenderSteppedConn = Context:RegisterConnection(
+                Context:RegisterConnection(
                     RunService.RenderStepped:Connect(function()
 
                         local MoveDirection = Humanoid.MoveDirection
