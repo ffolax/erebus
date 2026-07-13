@@ -64,7 +64,6 @@ function Vehicle:Build(Context)
 
             local Distance = (Root.Position - DriveSeat.Position).Magnitude
 
-            -- Safe teleport if too far away
             if Distance > 100 then
 
                 local Start = Root.Position
@@ -78,7 +77,7 @@ function Vehicle:Build(Context)
 
                     Root.CFrame = CFrame.new(Start:Lerp(Goal, Alpha))
 
-                    task.wait(0.01)
+                    task.wait(0.03)
 
                 end
 
@@ -117,6 +116,54 @@ function Vehicle:Build(Context)
 
     Context:AddTitle({
         Text = "Vehicle Settings"
+    })
+
+    local SuspensionSlider = Context:AddSlider({
+
+        Text = "Suspension Height",
+        Id = "SuspensionHeight",
+
+        Min = 1,
+        Max = 15,
+
+        Default = 1,
+
+        Callback = function(Value)
+
+            local PlrVehicle = FindPlrVehicle()
+
+            if PlrVehicle then
+
+                local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
+
+                if DriveSeat then
+
+                    for _,v in pairs(DriveSeat:GetChildren()) do
+
+                        if v:IsA("RopeConstraint") then
+
+                            v.Length = 15
+
+                        end
+
+                        if v:IsA("SpringConstraint") then
+
+                            v.LimitsEnabled = true
+                            v.Damping = 0
+                            v.MaxLength = 15
+                            v.MinLength = Value
+                            v.FreeLength = Value
+
+                        end
+
+                    end
+
+                end
+
+            end
+
+        end
+
     })
 
     Context:AddButton({

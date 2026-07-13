@@ -80,7 +80,7 @@ function Misc:Build(Context)
 
                     NewBody:PivotTo(
                         MyVehicle.PrimaryPart.CFrame *
-                        CFrame.new(1, YOffset, 2)
+                        CFrame.new(1.5, YOffset, 2)
                     )
 
                 end

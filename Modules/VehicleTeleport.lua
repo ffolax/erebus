@@ -136,6 +136,8 @@ end
 
 function VehicleTeleport:SetupMapToMove()
 
+	print("[EREBUS] Map To Move setting up...")
+
 	local NavigationMap
 
 	for _, obj in pairs(PlrGui:GetDescendants()) do
@@ -177,6 +179,10 @@ function VehicleTeleport:SetupMapToMove()
 		end
 	end
 
+	print("[EREBUS] Map To Move successfully set up!")
+
 end
+
+self:SetupMapToMove()
 
 return VehicleTeleport

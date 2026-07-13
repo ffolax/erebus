@@ -291,8 +291,8 @@ function UI:Init(Context, Icons)
 			OldPosition = GoalPosition
 			OldSize = GoalSize
 
-			OldTopBarPosition = TopBar.Position
-			OldTopBarSize = TopBar.Size
+			OldTopBarPosition = topbar.Position
+			OldTopBarSize = topbar.Size
 
 			GoalPosition = UDim2.new(0.05,0,0.05,0)
 			GoalSize = UDim2.new(0.9,0,0.9,0)
