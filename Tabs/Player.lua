@@ -3,6 +3,7 @@ local Player = {}
 Player.FOVCircle = nil
 
 Player.RenderStepName = "ErebusAimbot"
+Player.SpeedConnection = nil
 
 local RunService = game:GetService("RunService")
 
@@ -31,7 +32,11 @@ function Player:Build(Context)
                     return
                 end
 
-                Context:RegisterConnection(
+                if self.SpeedConnection then
+                    self.SpeedConnection:Disconnect()
+                end
+
+                self.SpeedConnection = Context:RegisterConnection(
                     RunService.RenderStepped:Connect(function()
 
                         local MoveDirection = Humanoid.MoveDirection
@@ -53,6 +58,11 @@ function Player:Build(Context)
                 )
 
             else
+
+                if self.SpeedConnection then
+                    self.SpeedConnection:Disconnect()
+                    self.SpeedConnection = nil
+                end
 
             end
 
