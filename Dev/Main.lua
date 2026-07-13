@@ -1,6 +1,6 @@
 local BASE = "https://raw.githubusercontent.com/ffolax/erebus/main/"
 
-local function Load(Path)
+function Load(Path)
 
     local Source = game:HttpGet(BASE .. Path)
 
@@ -23,6 +23,21 @@ local function Load(Path)
     return Result
 
 end
+
+if getgenv().ErebusLoaded then
+    warn("[EREBUS] Script already loaded!")
+    return
+end
+
+pcall(function() getgenv().ErebusLoaded = true end)
+if not game:IsLoaded() then game.Loaded:Wait() end
+
+function missing(t, f, fallback)
+	if type(f) == t then return f end
+	return fallback
+end
+
+queueteleport = missing("function", queue_on_teleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport))
 
 local Context = Load("Context.lua")
 assert(Context, "[EREBUS] Context failed to load.")
@@ -90,3 +105,16 @@ end)
 
 
 UI:OpenTab("Home")
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+if queueteleport then
+
+    LocalPlayer.OnTeleport:Connect(function()
+
+        queueteleport()
+
+    end)
+
+end

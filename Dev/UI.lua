@@ -51,14 +51,6 @@ end
 
 function UI:Init(Context, Icons)
 
-	getgenv().Erebus = getgenv().Erebus or {}
-
-	if getgenv().Erebus.Instance then
-	    getgenv().Erebus.Instance:Destroy()
-	end
-	
-	getgenv().Erebus.Instance = self
-
 	self.Context = Context
 	self.Icons = Icons
 	self.Theme = Theme

@@ -104,37 +104,6 @@ function GetJewelerRobbed()
 
 end
 
-local function QueueErebus()
-
-    local Queue =
-        queue_on_teleport
-        or queueonteleport
-        or (syn and syn.queue_on_teleport)
-
-    if not Queue then
-        warn("[EREBUS] queue_on_teleport not supported.")
-        return false
-    end
-
-    local Success, Error = pcall(function()
-
-        Queue([[
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/ffolax/erebus/main/loader.lua"))()
-        ]])
-
-    end)
-
-    task.wait(0.15)
-
-    if not Success then
-        warn("[EREBUS] Failed to queue:", Error)
-        return false
-    end
-
-    return true
-
-end
-
 local Stats = game:GetService("Stats")
 
 local function GetPing()
@@ -228,8 +197,6 @@ function Home:Build(Context)
 
             local TeleportService = game:GetService("TeleportService")
             local LocalPlayer = game:GetService("Players").LocalPlayer
-
-            QueueErebus()
 
             TeleportService:TeleportToPlaceInstance(
                 game.PlaceId,
@@ -340,8 +307,6 @@ function Home:Build(Context)
             end
 
             local ServerId = ValidServers[math.random(#ValidServers)]
-
-            QueueErebus()
 
             TeleportService:TeleportToPlaceInstance(
                 PlaceId,
