@@ -122,74 +122,76 @@ function Player:Build(Context)
 
                 RunService:UnbindFromRenderStep(self.RenderStepName)
 
-                RunService:BindToRenderStep(
-                    self.RenderStepName,
-                    10000,
-                    function()
+                Context:RegisterPersistentConnection(
+                    RunService:BindToRenderStep(
+                        self.RenderStepName,
+                        10000,
+                        function()
 
-                        self.FOVCircle.Position =
-                            workspace.CurrentCamera.ViewportSize / 2
+                            self.FOVCircle.Position =
+                                workspace.CurrentCamera.ViewportSize / 2
 
-                        local closestPlayer
-                        local minDistance = math.huge
+                            local closestPlayer
+                            local minDistance = math.huge
 
-                        for _, player in ipairs(game.Players:GetPlayers()) do
+                            for _, player in ipairs(game.Players:GetPlayers()) do
 
-                            if player == game.Players.LocalPlayer then
-                                continue
-                            end
+                                if player == game.Players.LocalPlayer then
+                                    continue
+                                end
 
-                            local character = player.Character
-                            if not character then
-                                continue
-                            end
+                                local character = player.Character
+                                if not character then
+                                    continue
+                                end
 
-                            local humanoidRootPart =
-                                character:FindFirstChild("HumanoidRootPart")
+                                local humanoidRootPart =
+                                    character:FindFirstChild("HumanoidRootPart")
 
-                            if humanoidRootPart then
+                                if humanoidRootPart then
 
-                                local screenPos, onScreen =
-                                    workspace.CurrentCamera:WorldToViewportPoint(
-                                        humanoidRootPart.Position
-                                    )
+                                    local screenPos, onScreen =
+                                        workspace.CurrentCamera:WorldToViewportPoint(
+                                            humanoidRootPart.Position
+                                        )
 
-                                if onScreen then
+                                    if onScreen then
 
-                                    local distance =
-                                        (
-                                            Vector2.new(screenPos.X, screenPos.Y)
-                                            - self.FOVCircle.Position
-                                        ).Magnitude
+                                        local distance =
+                                            (
+                                                Vector2.new(screenPos.X, screenPos.Y)
+                                                - self.FOVCircle.Position
+                                            ).Magnitude
 
-                                    if distance < minDistance
-                                    and distance <= self.FOVCircle.Radius then
+                                        if distance < minDistance
+                                        and distance <= self.FOVCircle.Radius then
 
-                                        minDistance = distance
-                                        closestPlayer = character
+                                            minDistance = distance
+                                            closestPlayer = character
 
+                                        end
                                     end
                                 end
                             end
-                        end
 
-                        if closestPlayer then
+                            if closestPlayer then
 
-                            local target =
-                                closestPlayer:FindFirstChild(self.TargetPart)
-                                or closestPlayer:FindFirstChild("HumanoidRootPart")
+                                local target =
+                                    closestPlayer:FindFirstChild(self.TargetPart)
+                                    or closestPlayer:FindFirstChild("HumanoidRootPart")
 
-                            if target then
+                                if target then
 
-                                workspace.CurrentCamera.CFrame = CFrame.lookAt(
-                                    workspace.CurrentCamera.CFrame.Position,
-                                    target.Position
-                                )
+                                    workspace.CurrentCamera.CFrame = CFrame.lookAt(
+                                        workspace.CurrentCamera.CFrame.Position,
+                                        target.Position
+                                    )
 
+                                end
                             end
-                        end
 
-                    end
+                        end
+                    )
                 )
 
             else
