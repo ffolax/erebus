@@ -151,6 +151,8 @@ function VehicleTeleport:SetupMapToMove()
 		return
 	end
 
+	print("[EREBUS] Found navigation map!")
+
 	NavigationMap.Destroying:Once(function()
 		task.wait()
 		VehicleTeleport:SetupMapToMove()
@@ -162,6 +164,8 @@ function VehicleTeleport:SetupMapToMove()
 			conn = MapPoints:GetPropertyChangedSignal("BackgroundColor3"):Connect(function()
 
 				if MapPoints.BackgroundColor3 ~= Color3.fromRGB(0,0,0) then
+
+					print("[EREBUS] Picked a map point!")
 
 					local SelectedMapPoint = MapPoints:FindFirstChild("4")
 					local LettersOnly = SelectedMapPoint.Text:gsub("[^%a]", "")
