@@ -36,7 +36,7 @@ function Player:Build(Context)
                     self.SpeedConnection:Disconnect()
                 end
 
-                self.SpeedConnection = Context:RegisterConnection(
+                self.SpeedConnection = Context:RegisterPersistentConnection(
                     RunService.RenderStepped:Connect(function()
 
                         local MoveDirection = Humanoid.MoveDirection
@@ -75,9 +75,9 @@ function Player:Build(Context)
         Id = "PlayerSpeed",
 
         Min = 16,
-        Max = 32,
+        Max = 50,
 
-        Default = 20,
+        Default = 16,
 
         Callback = function(Value)
 

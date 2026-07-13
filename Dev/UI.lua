@@ -241,40 +241,44 @@ function UI:Init(Context, Icons)
 	
 	local Minimized = false
 	local SavedSize = GoalSize
+	local SavedTopBarSize = TopBar.Size
 	
-	self:Connect(Minimize.MouseButton1Click,function()
-	
+	self:Connect(Minimize.MouseButton1Click, function()
+
 		if not Minimized then
 			SavedSize = GoalSize
 		end
-	
+
 		Minimized = not Minimized
 
 		if ResizeHandle then
-
-			if Minimized then
-			    ResizeHandle.Visible = false
-			else
-			    ResizeHandle.Visible = true
-			end
-
+			ResizeHandle.Visible = not Minimized
 		end
-	
+
 		if Minimized then
-	
+
 			GoalSize = UDim2.new(
 				SavedSize.X.Scale,
 				SavedSize.X.Offset,
 				0,
 				36
 			)
-	
+
+			TopBar.Size = UDim2.new(
+				0,
+				250, -- Minimized width
+				SavedTopBarSize.Y.Scale,
+				SavedTopBarSize.Y.Offset
+			)
+
 		else
-	
+
 			GoalSize = SavedSize
-	
+
+			TopBar.Size = SavedTopBarSize
+
 		end
-	
+
 	end)
 
 	local Maximized = false
