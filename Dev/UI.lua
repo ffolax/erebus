@@ -241,7 +241,7 @@ function UI:Init(Context, Icons)
 	
 	local Minimized = false
 	local SavedSize = GoalSize
-	local SavedTopBarSize = TopBar.Size
+	local SavedTopBarSize = topbar.Size
 	
 	self:Connect(Minimize.MouseButton1Click, function()
 
