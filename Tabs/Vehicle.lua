@@ -1,4 +1,5 @@
 local Vehicle = {}
+Vehicle.VehicleTeleport = nil
 
 local function FindVehicle()
 
@@ -20,7 +21,7 @@ end
 
 function Vehicle:Build(Context)
 
-    local VehicleTeleport = Context.Modules.VehicleTeleport
+    self.VehicleTeleport = Context.Modules.VehicleTeleport
 
     Context:AddTitle({
         Text = "Teleport"
@@ -106,7 +107,7 @@ function Vehicle:Build(Context)
 
                 local Position = Root.CFrame * CFrame.new(0,0,10)
 
-                VehicleTeleport:MoveVehicle(Position,200,false)
+                self.VehicleTeleport:MoveVehicle(Position,200,false)
 
             end
 
