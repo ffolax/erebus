@@ -112,7 +112,7 @@ if queueteleport then
 
     LocalPlayer.OnTeleport:Connect(function()
 
-        queueteleport(loadstring(game:HttpGet("https://raw.githubusercontent.com/ffolax/erebus/main/loader.lua"))())
+        queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/ffolax/erebus/main/loader.lua'))()")
 
     end)
 
