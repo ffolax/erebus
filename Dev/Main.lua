@@ -64,6 +64,11 @@ local Misc = loadstring(game:HttpGet(BASE .. "Tabs/Misc.lua"))()
 
 local VehicleTeleport loadstring(game:HttpGet(BASE .. "Modules/VehicleTeleport.lua"))()
 
+Context.Modules = {
+
+    VehicleTeleport = VehicleTeleport
+    
+}
 
 UI:RegisterTab("Home", Home)
 UI:RegisterTab("Player", Player)

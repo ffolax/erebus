@@ -20,6 +20,8 @@ end
 
 function Vehicle:Build(Context)
 
+    local VehicleTeleport = Context.Modules.VehicleTeleport
+
     Context:AddTitle({
         Text = "Teleport"
     })
@@ -40,21 +42,48 @@ function Vehicle:Build(Context)
 
         Callback = function()
 
-            local LocalPlayer = game:GetService("Players").LocalPlayer
+            local Players = game:GetService("Players")
+
+            local LocalPlayer = Players.LocalPlayer
             local Character = LocalPlayer.Character
+            local Humanoid = Character and Character:FindFirstChild("Humanoid")
+            local Root = Character and Character:FindFirstChild("HumanoidRootPart")
+
             local Vehicle = FindVehicle()
 
-            if Vehicle then
+            if not (Character and Humanoid and Root and Vehicle) then
+                return
+            end
 
-                local DriveSeat = Vehicle:FindFirstChildOfClass("Seat")
+            local DriveSeat = Vehicle:FindFirstChildOfClass("Seat")
 
-                if DriveSeat then
+            if not DriveSeat then
+                return
+            end
 
-                    DriveSeat:Sit(Character.Humanoid)
+            local Distance = (Root.Position - DriveSeat.Position).Magnitude
+
+            -- Safe teleport if too far away
+            if Distance > 300 then
+
+                local Start = Root.Position
+                local Goal = DriveSeat.Position + Vector3.new(0, 5, 0)
+
+                local Steps = math.ceil(Distance / 75)
+
+                for i = 1, Steps do
+
+                    local Alpha = i / Steps
+
+                    Root.CFrame = CFrame.new(Start:Lerp(Goal, Alpha))
+
+                    task.wait(0.03)
 
                 end
 
             end
+
+            DriveSeat:Sit(Humanoid)
 
         end
     })
@@ -64,7 +93,22 @@ function Vehicle:Build(Context)
 
         Callback = function()
 
-            
+            local Players = game:GetService("Players")
+
+            local LocalPlayer = Players.LocalPlayer
+            local Character = LocalPlayer.Character
+            local Humanoid = Character and Character:FindFirstChild("Humanoid")
+            local Root = Character and Character:FindFirstChild("HumanoidRootPart")
+
+            local Vehicle = FindPlrVehicle()
+
+            if Vehicle and Root then
+
+                local Position = Root.CFrame * CFrame.new(0,0,10)
+
+                VehicleTeleport:MoveVehicle(Position,200,false)
+
+            end
 
         end
     })

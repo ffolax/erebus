@@ -55,7 +55,7 @@ function FindPlrVehicle()
 
 end
 
-function EnterVehicle()
+function VehicleTeleport:EnterVehicle()
 
 	local car = FindPlrVehicle()
 
@@ -77,9 +77,9 @@ function EnterVehicle()
 
 end
 
-function MoveVehicle(endPosition)
+function VehicleTeleport:MoveVehicle(endPosition,givenSpeed,sitPlayer)
 
-	local speed = VehicleTeleport.TeleportSpeed
+	local speed = givenSpeed or VehicleTeleport.TeleportSpeed
 
 	local vehicle = FindPlrVehicle()
 	if not vehicle then return end
@@ -91,8 +91,6 @@ function MoveVehicle(endPosition)
 	local duration = distance / speed
 
 	local startTime = tick()
-
-	EnterVehicle()
 
 	while true do
 		local alpha = math.clamp((tick() - startTime) / duration, 0, 1)
@@ -115,7 +113,11 @@ function MoveVehicle(endPosition)
 
 			if Humanoid.Sit == false then
 
-				EnterVehicle()
+				if sitPlayer then
+
+					EnterVehicle()
+
+				end
 
 			end
 
@@ -132,7 +134,7 @@ function MoveVehicle(endPosition)
 
 end
 
-local function SetupMapToMove()
+function SetupMapToMove()
 
 	local NavigationMap
 
@@ -168,7 +170,7 @@ local function SetupMapToMove()
 
 						if not CurrentlyTeleporting then
 							CurrentlyTeleporting = true
-							MoveVehicle(TeleportPoints[LettersOnly], TeleportSpeed)
+							MoveVehicle(TeleportPoints[LettersOnly], TeleportSpeed, true)
 						end
 					end
 
@@ -182,3 +184,5 @@ local function SetupMapToMove()
 end
 
 SetupMapToMove()
+
+return VehicleTeleport
