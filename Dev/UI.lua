@@ -264,7 +264,7 @@ function UI:Init(Context, Icons)
 				36
 			)
 
-			TopBar.Size = UDim2.new(
+			topbar.Size = UDim2.new(
 				0,
 				250, -- Minimized width
 				SavedTopBarSize.Y.Scale,
@@ -275,7 +275,7 @@ function UI:Init(Context, Icons)
 
 			GoalSize = SavedSize
 
-			TopBar.Size = SavedTopBarSize
+			topbar.Size = SavedTopBarSize
 
 		end
 
