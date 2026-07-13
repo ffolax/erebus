@@ -773,7 +773,7 @@ function UI:LoadTab(Module)
 		CurrentTab:Destroy()
 	end
 
-	Context:ClearTab()
+	self.Context:ClearTab()
 
 	CurrentTab = Module
 
