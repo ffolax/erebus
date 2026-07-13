@@ -70,7 +70,7 @@ function Vehicle:Build(Context)
                 local Start = Root.Position
                 local Goal = DriveSeat.Position + Vector3.new(0, 5, 0)
 
-                local Steps = math.ceil(Distance / 40)
+                local Steps = math.ceil(Distance / 75)
 
                 for i = 1, Steps do
 
@@ -105,10 +105,10 @@ function Vehicle:Build(Context)
 
             if PlrVehicle and Root then
 
-                local TeleportPos = Root.CFrame * CFrame.new(0,0,10)
+                local TeleportPos = Root.CFrame * CFrame.new(0,0,-2)
                 local Position = TeleportPos.Position
 
-                self.VehicleTeleport:MoveVehicle(Position,200,false)
+                self.VehicleTeleport:MoveVehicle(Position,500,false)
 
             end
 
