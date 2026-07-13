@@ -105,7 +105,8 @@ function Vehicle:Build(Context)
 
             if PlrVehicle and Root then
 
-                local Position = Root.CFrame * CFrame.new(0,0,10)
+                local TeleportPos = Root.CFrame * CFrame.new(0,0,10)
+                local Position = TeleportPos.Position
 
                 self.VehicleTeleport:MoveVehicle(Position,200,false)
 
