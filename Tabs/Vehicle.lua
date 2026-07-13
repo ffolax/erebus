@@ -65,12 +65,12 @@ function Vehicle:Build(Context)
             local Distance = (Root.Position - DriveSeat.Position).Magnitude
 
             -- Safe teleport if too far away
-            if Distance > 300 then
+            if Distance > 100 then
 
                 local Start = Root.Position
                 local Goal = DriveSeat.Position + Vector3.new(0, 5, 0)
 
-                local Steps = math.ceil(Distance / 75)
+                local Steps = math.ceil(Distance / 15)
 
                 for i = 1, Steps do
 
@@ -78,7 +78,7 @@ function Vehicle:Build(Context)
 
                     Root.CFrame = CFrame.new(Start:Lerp(Goal, Alpha))
 
-                    task.wait(0.03)
+                    task.wait(0.01)
 
                 end
 
