@@ -5,6 +5,10 @@ Context.NextLayoutOrder = 1
 Context.Values = {}
 Context.ActiveControls = {}
 Context.ActiveConnections = {}
+Context.Connections = {}
+Context.PersistentConnections = {}
+Context.TabConnections = {}
+Context.TabObjects = {}
 
 Context.State = {
     Tabs = {},
@@ -30,8 +34,88 @@ function Context:RegisterControl(Control)
 end
 
 function Context:RegisterConnection(Connection)
+    table.insert(self.TabConnections, Connection)
+    return Connection
+end
+
+function Context:RegisterActiveConnection(Connection)
     table.insert(self.ActiveConnections, Connection)
     return Connection
+end
+
+function Context:RegisterPersistentConnection(Connection)
+    table.insert(self.PersistentConnections, Connection)
+    return Connection
+end
+
+function Context:RegisterObject(Object)
+    table.insert(self.TabObjects, Object)
+    return Object
+end
+
+function Context:Cleanup()
+
+    for _, Connection in ipairs(self.ActiveConnections) do
+        pcall(function()
+            Connection:Disconnect()
+        end)
+    end
+
+    table.clear(self.ActiveConnections)
+
+    for _, Control in ipairs(self.ActiveControls) do
+        if Control.Destroy then
+            pcall(function()
+                Control:Destroy()
+            end)
+        end
+    end
+
+    table.clear(self.ActiveControls)
+
+end
+
+function Context:ClearTab()
+
+    -- Disconnect temporary connections
+    for _,Connection in ipairs(self.TabConnections) do
+        pcall(function()
+            Connection:Disconnect()
+        end)
+    end
+
+    table.clear(self.TabConnections)
+
+    -- Destroy temporary objects
+    for _,Object in ipairs(self.TabObjects) do
+
+        pcall(function()
+
+            if typeof(Object) == "Instance" then
+                Object:Destroy()
+
+            elseif type(Object.Remove) == "function" then
+                Object:Remove()
+
+            elseif type(Object.Destroy) == "function" then
+                Object:Destroy()
+            end
+
+        end)
+
+    end
+
+    table.clear(self.TabObjects)
+
+    -- Destroy every control in the current tab
+    for _,Child in ipairs(self.Parent:GetChildren()) do
+
+        if Child:IsA("Frame") then
+            Child:Destroy()
+        end
+
+    end
+
 end
 
 function Context:SetActiveTab(name)
@@ -44,19 +128,11 @@ function Context:SetActiveTab(name)
             Previous:Destroy()
         end
 
-        for _,Connection in ipairs(self.ActiveConnections) do
-            Connection:Disconnect()
+        if Previous and Previous.Destroy then
+            Previous:Destroy()
         end
 
-        table.clear(self.ActiveConnections)
-
-        for _,Control in ipairs(self.ActiveControls) do
-            if Control.Destroy then
-                Control:Destroy()
-            end
-        end
-
-        table.clear(self.ActiveControls)
+        self:Cleanup()
 
     end
 
@@ -142,6 +218,8 @@ function Context:CreateControl(options)
         self.Container:Destroy()
 
     end
+
+    Context:RegisterControl(Control)
 
     return Control
 

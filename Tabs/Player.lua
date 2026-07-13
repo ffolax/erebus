@@ -1,14 +1,12 @@
 local Player = {}
 
-Player.Speed = 20
-Player.TargetPart = "HumanoidRootPart"
+Player.Speed = Context.Values.PlayerSpeed or 20
+Player.TargetPart = Context.Values.TargetPart or "HumanoidRootPart"
 
 Player.RenderSteppedConn = nil
 Player.FOVCircle = nil
 
 Player.RenderStepName = "ErebusAimbot"
-
-Player.Connections = {}
 
 local RunService = game:GetService("RunService")
 
@@ -22,6 +20,7 @@ function Player:Build(Context)
     
     local SpeedHackToggle = Context:AddToggle({
         Text = "Speed Hack",
+        Id = "SpeedHack",
         Callback = function(Enabled)
 
             if Enabled then
@@ -34,31 +33,28 @@ function Player:Build(Context)
                     return
                 end
 
-                renderSteppedConn = RunService.RenderStepped:Connect(function()
+                self.RenderSteppedConn = Context:RegisterConnection(
+                    RunService.RenderStepped:Connect(function()
 
-                    local MoveDirection = Humanoid.MoveDirection
+                        local MoveDirection = Humanoid.MoveDirection
 
-                    if MoveDirection.Magnitude > 0 then
+                        if MoveDirection.Magnitude > 0 then
 
-                        local Y = Root.AssemblyLinearVelocity.Y
+                            local Y = Root.AssemblyLinearVelocity.Y
 
-                        Root.AssemblyLinearVelocity =
-                            Vector3.new(
-                                MoveDirection.X * self.Speed,
-                                Y,
-                                MoveDirection.Z * self.Speed
-                            )
+                            Root.AssemblyLinearVelocity =
+                                Vector3.new(
+                                    MoveDirection.X * self.Speed,
+                                    Y,
+                                    MoveDirection.Z * self.Speed
+                                )
 
-                    end
+                        end
 
-                end)
+                    end)
+                )
 
             else
-
-                if renderSteppedConn then
-                    renderSteppedConn:Disconnect()
-                    renderSteppedConn = nil
-                end
 
             end
 
@@ -68,6 +64,7 @@ function Player:Build(Context)
     local SpeedSlider = Context:AddSlider({
 
         Text = "Speed",
+        Id = "PlayerSpeed",
 
         Min = 16,
         Max = 32,
@@ -87,18 +84,17 @@ function Player:Build(Context)
         Default = Enum.KeyCode.B
     })
 
-    Context:RegisterConnection(
-        Context.Services.Controls:Bind(SpeedHackKey,function(Down)
+    Context.Services.Controls:Bind(SpeedHackKey,function(Down)
 
-            if Down then
-                SpeedHackToggle:Toggle()
-            end
+        if Down then
+            SpeedHackToggle:Toggle()
+        end
 
-        end)
-    )
+    end)
 
     local AimbotToggle = Context:AddToggle({
         Text = "Aimbot",
+        Id = "Aimbot",
 
         Callback = function(Enabled)
 
@@ -106,6 +102,7 @@ function Player:Build(Context)
 
                 if not self.FOVCircle then
                     self.FOVCircle = Drawing.new("Circle")
+                    Context:RegisterObject(self.FOVCircle)
                 end
 
                 self.FOVCircle.Visible = true
@@ -115,10 +112,10 @@ function Player:Build(Context)
                 self.FOVCircle.NumSides = 64
                 self.FOVCircle.Position = workspace.CurrentCamera.ViewportSize / 2
 
-                RunService:UnbindFromRenderStep(RenderStepName)
+                RunService:UnbindFromRenderStep(self.RenderStepName)
 
                 RunService:BindToRenderStep(
-                    RenderStepName,
+                    self.RenderStepName,
                     10000,
                     function()
 
@@ -194,7 +191,7 @@ function Player:Build(Context)
                     self.FOVCircle = nil
                 end
 
-                RunService:UnbindFromRenderStep(RenderStepName)
+                RunService:UnbindFromRenderStep(self.RenderStepName)
 
             end
 
@@ -210,19 +207,18 @@ function Player:Build(Context)
         Default = Enum.KeyCode.V
     })
 
-    Context:RegisterConnection(
-        Context.Services.Controls:Bind(AimbotKey,function(Down)
+    Context.Services.Controls:Bind(AimbotKey,function(Down)
 
-            if Down then
-                AimbotToggle:Toggle()
-            end
+        if Down then
+            AimbotToggle:Toggle()
+        end
 
-        end)
-    )
+    end)
 
     Context:AddDropdown({
 
         Text = "Target Part",
+        Id = "TargetPart",
         Items = {
             "Head",
             "HumanoidRootPart",
@@ -238,6 +234,7 @@ function Player:Build(Context)
     local FOVSlider = Context:AddSlider({
 
         Text = "FOV Circle",
+        Id = "FOVCircle",
 
         Min = 25,
         Max = 500,
@@ -260,6 +257,7 @@ function Player:Build(Context)
 
     Context:AddToggle({
         Text = "Ignore Civilians",
+        Id = "IgnoreCivilians",
 
         Callback = function(Enabled)
 
@@ -268,6 +266,7 @@ function Player:Build(Context)
 
     Context:AddToggle({
         Text = "Ignore Untouchable Teams",
+        Id = "IgnoreUntouchableTeams",
 
         Callback = function(Enabled)
 
@@ -276,6 +275,7 @@ function Player:Build(Context)
 
     Context:AddToggle({
         Text = "Wall Check",
+        Id = "Wall Check",
 
         Callback = function(Enabled)
 
@@ -286,23 +286,7 @@ end
 
 function Player:Destroy()
 
-    if self.RenderSteppedConn then
-        self.RenderSteppedConn:Disconnect()
-        self.RenderSteppedConn = nil
-    end
-
     RunService:UnbindFromRenderStep(self.RenderStepName)
-
-    if self.FOVCircle then
-        self.FOVCircle:Remove()
-        self.FOVCircle = nil
-    end
-
-    for _,Connection in ipairs(self.Connections) do
-        Connection:Disconnect()
-    end
-
-    table.clear(self.Connections)
 
 end
 

@@ -770,16 +770,14 @@ end
 function UI:LoadTab(Module)
 
     if CurrentTab and CurrentTab.Destroy then
-        CurrentTab:Destroy()
-    end
+		CurrentTab:Destroy()
+	end
 
-    CurrentTab = Module
+	Context:ClearTab()
 
-    if type(CurrentTab) == "function" then
-        CurrentTab(self.Context)
-    elseif CurrentTab.Build then
-        CurrentTab:Build(self.Context)
-    end
+	CurrentTab = Module
+
+	CurrentTab:Build(self.Context)
 
 end
 
