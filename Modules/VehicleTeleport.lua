@@ -183,6 +183,6 @@ function VehicleTeleport:SetupMapToMove()
 
 end
 
-self:SetupMapToMove()
+VehicleTeleport:SetupMapToMove()
 
 return VehicleTeleport
