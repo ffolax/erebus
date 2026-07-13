@@ -255,27 +255,24 @@ function UI:Init(Context, Icons)
 			ResizeHandle.Visible = not Minimized
 		end
 
+		TweenService:Create(topbar, TweenInfo.new(0.2, Enum.EasingStyle.Quint), {
+			Size = Minimized
+				and UDim2.new(0, 250, SavedTopBarSize.Y.Scale, SavedTopBarSize.Y.Offset)
+				or SavedTopBarSize
+		}):Play()
+
 		if Minimized then
 
 			GoalSize = UDim2.new(
-				SavedSize.X.Scale,
-				SavedSize.X.Offset,
+				0,
+				250,
 				0,
 				36
-			)
-
-			topbar.Size = UDim2.new(
-				0,
-				250, -- Minimized width
-				SavedTopBarSize.Y.Scale,
-				SavedTopBarSize.Y.Offset
 			)
 
 		else
 
 			GoalSize = SavedSize
-
-			topbar.Size = SavedTopBarSize
 
 		end
 
@@ -285,25 +282,38 @@ function UI:Init(Context, Icons)
 	local OldPosition = GoalPosition
 	local OldSize = GoalSize
 	
-	self:Connect(Maximize.MouseButton1Click,function()
-	
+	self:Connect(Maximize.MouseButton1Click, function()
+
 		Maximized = not Maximized
-	
+
 		if Maximized then
-	
+
 			OldPosition = GoalPosition
 			OldSize = GoalSize
-	
+
+			OldTopBarPosition = TopBar.Position
+			OldTopBarSize = TopBar.Size
+
 			GoalPosition = UDim2.new(0.05,0,0.05,0)
 			GoalSize = UDim2.new(0.9,0,0.9,0)
-	
+
+			TweenService:Create(topbar, TweenInfo.new(0.2, Enum.EasingStyle.Quint), {
+				Position = UDim2.new(0,0,0,0),
+				Size = UDim2.new(1,0,0,36)
+			}):Play()
+
 		else
-	
+
 			GoalPosition = OldPosition
 			GoalSize = OldSize
-	
+
+			TweenService:Create(topbar, TweenInfo.new(0.2, Enum.EasingStyle.Quint), {
+				Position = OldTopBarPosition,
+				Size = OldTopBarSize
+			}):Play()
+
 		end
-	
+
 	end)
 
 	local Dragging = false

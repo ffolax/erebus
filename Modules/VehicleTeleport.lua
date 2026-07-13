@@ -115,7 +115,7 @@ function VehicleTeleport:MoveVehicle(endPosition,givenSpeed,sitPlayer)
 
 				if sitPlayer then
 
-					EnterVehicle()
+					self:EnterVehicle()
 
 				end
 
@@ -154,8 +154,6 @@ function VehicleTeleport:SetupMapToMove()
 		VehicleTeleport:SetupMapToMove()
 	end)
 
-	local conns = {}
-
 	for _, MapPoints in pairs(NavigationMap:GetChildren()) do
 		if MapPoints:IsA("ImageButton") then
 			local conn
@@ -163,21 +161,19 @@ function VehicleTeleport:SetupMapToMove()
 
 				if MapPoints.BackgroundColor3 ~= Color3.fromRGB(0,0,0) then
 
-					local SelectedMapPoint = MapPoints:FindFirstChild("3")
+					local SelectedMapPoint = MapPoints:FindFirstChild("4")
 					local LettersOnly = SelectedMapPoint.Text:gsub("[^%a]", "")
 
 					if TeleportPoints[LettersOnly] then
 
 						if not CurrentlyTeleporting then
 							CurrentlyTeleporting = true
-							MoveVehicle(TeleportPoints[LettersOnly], TeleportSpeed, true)
+							self:MoveVehicle(TeleportPoints[LettersOnly], self.TeleportSpeed, true)
 						end
 					end
 
 				end
 			end)
-
-			table.insert(conns,conn)
 		end
 	end
 
