@@ -181,56 +181,63 @@ function Vehicle:SetSuspensionHeight(Value)
 
 end
 
-function Vehicle:CarFly(Enabled)
+function Vehicle:CarFly(Context, Enabled)
     if Enabled then
         self.Runtime.CarFlyConn = Context:RegisterPersistentConnection(
             RunService.RenderStepped:Connect(function()
-                local PlrVehicle = GetVehicle()
-                if not PlrVehicle then
-                    return
-                end
+                local PlrVehicle = self:GetVehicle()
+                if not PlrVehicle then return end
 
                 local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
+                if not DriveSeat then return end
 
-                if not DriveSeat then
-                    return
-                end
-                
+                local Camera = workspace.CurrentCamera
+
                 local BodyGyro = DriveSeat:FindFirstChild("BodyGyro")
-                local BodyPosition = DriveSeat:FindFirstChild("BodyPosition")
-
                 if not BodyGyro then
                     BodyGyro = Instance.new("BodyGyro")
                     BodyGyro.Name = "BodyGyro"
                     BodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-                    BodyGyro.CFrame = DriveSeat.CFrame
+                    BodyGyro.P = 10000
+                    BodyGyro.D = 100
                     BodyGyro.Parent = DriveSeat
                 end
-                
+
+                local BodyPosition = DriveSeat:FindFirstChild("BodyPosition")
                 if not BodyPosition then
                     BodyPosition = Instance.new("BodyPosition")
                     BodyPosition.Name = "BodyPosition"
                     BodyPosition.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-                    BodyPosition.D = 100
                     BodyPosition.P = 10000
-                    BodyPosition.Target = DriveSeat.Position + Vector3.new(0, 50, 0)
+                    BodyPosition.D = 100
                     BodyPosition.Parent = DriveSeat
                 end
 
-                BodyGyro.D = 100
-                BodyGyro.P = 10000
-                BodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-                
-                BodyPosition.Target = DriveSeat.Position + Vector3.new(0, 50, 0)
-                BodyPosition.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-                BodyPosition.D = 100
-                BodyPosition.P = 10000
+                BodyGyro.CFrame = Camera.CFrame
+                BodyPosition.Position = DriveSeat.Position + Camera.CFrame.LookVector * 4
             end)
         )
     else
         if self.Runtime.CarFlyConn then
             self.Runtime.CarFlyConn:Disconnect()
             self.Runtime.CarFlyConn = nil
+        end
+
+        local PlrVehicle = self:GetVehicle()
+        if PlrVehicle then
+            local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
+            if DriveSeat then
+                local BodyGyro = DriveSeat:FindFirstChild("BodyGyro")
+                local BodyPosition = DriveSeat:FindFirstChild("BodyPosition")
+
+                if BodyGyro then
+                    BodyGyro:Destroy()
+                end
+
+                if BodyPosition then
+                    BodyPosition:Destroy()
+                end
+            end
         end
     end
 end
@@ -321,7 +328,7 @@ function Vehicle:Build(Context)
         Id = "CarFly",
 
         Callback = function(Enabled)
-            self:CarFly(Enabled)
+            self:CarFly(Context,Enabled)
         end
     })
 
