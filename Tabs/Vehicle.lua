@@ -2,6 +2,11 @@ local Vehicle = {}
 
 Vehicle.State = {
     Acceleration = 1,
+    CarFlyToggle = false,
+}
+
+Vehicle.Runtime = {
+    CarFlyConn = nil,
 }
 
 Vehicle.Modules = {
@@ -176,6 +181,60 @@ function Vehicle:SetSuspensionHeight(Value)
 
 end
 
+function Vehicle:CarFly(Enabled)
+    if Enabled then
+        self.Runtime.CarFlyConn = Context:RegisterPersistentConnection(
+            RunService.RenderStepped:Connect(function()
+                local PlrVehicle = GetVehicle()
+                if not PlrVehicle then
+                    return
+                end
+
+                local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
+
+                if not DriveSeat then
+                    return
+                end
+                
+                local BodyGyro = DriveSeat:FindFirstChild("BodyGyro")
+                local BodyPosition = DriveSeat:FindFirstChild("BodyPosition")
+
+                if not BodyGyro then
+                    BodyGyro = Instance.new("BodyGyro")
+                    BodyGyro.Name = "BodyGyro"
+                    BodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+                    BodyGyro.CFrame = DriveSeat.CFrame
+                    BodyGyro.Parent = DriveSeat
+                end
+                
+                if not BodyPosition then
+                    BodyPosition = Instance.new("BodyPosition")
+                    BodyPosition.Name = "BodyPosition"
+                    BodyPosition.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                    BodyPosition.D = 100
+                    BodyPosition.P = 10000
+                    BodyPosition.Target = DriveSeat.Position + Vector3.new(0, 50, 0)
+                    BodyPosition.Parent = DriveSeat
+                end
+
+                BodyGyro.D = 100
+                BodyGyro.P = 10000
+                BodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+                
+                BodyPosition.Target = DriveSeat.Position + Vector3.new(0, 50, 0)
+                BodyPosition.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                BodyPosition.D = 100
+                BodyPosition.P = 10000
+            end)
+        )
+    else
+        if self.Runtime.CarFlyConn then
+            self.Runtime.CarFlyConn:Disconnect()
+            self.Runtime.CarFlyConn = nil
+        end
+    end
+end
+
 function Vehicle:Init(Context)
 
     self.Modules.VehicleTeleport = Context.Modules.VehicleTeleport
@@ -188,6 +247,26 @@ function Vehicle:Init(Context)
 
         end)
 
+    )
+
+    local CarFlyKey = Context:AddKeybind({
+        Text = "Car Fly Keybind",
+        Default = Enum.KeyCode.X
+    })
+
+    Context:RegisterPersistentConnection(
+        Context.Services.Controls:Bind(FlyKey,function(Down)
+
+            if Down then
+                Context.Values.CarFly = not Context.Values.CarFly
+                self:SetAimbot(Context, Context.Values.CarFly)
+
+                if self.State.CarFlyToggle then
+                    self.State.CarFlyToggle:SetValue(Context.Values.CarFly)
+                end
+            end
+
+        end)
     )
 
 end
@@ -230,6 +309,19 @@ function Vehicle:Build(Context)
 
             self:BringVehicle()
 
+        end
+    })
+
+    Context:AddTitle({
+        Text = "Fly"
+    })
+
+    self.State.CarFlyToggle = Context:AddToggle({
+        Text = "Car Fly",
+        Id = "CarFly",
+
+        Callback = function(Enabled)
+            self:CarFly(Enabled)
         end
     })
 
