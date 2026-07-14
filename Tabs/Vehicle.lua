@@ -193,28 +193,46 @@ function Vehicle:CarFly(Context, Enabled)
 
                 local Camera = workspace.CurrentCamera
 
-                local BodyGyro = DriveSeat:FindFirstChild("BodyGyro")
-                if not BodyGyro then
-                    BodyGyro = Instance.new("BodyGyro")
-                    BodyGyro.Name = "BodyGyro"
-                    BodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-                    BodyGyro.P = 10000
-                    BodyGyro.D = 100
-                    BodyGyro.Parent = DriveSeat
+                local Speed = 100
+
+                local Velocity = Vector3.zero
+
+                if Context.Services.UserInputService:IsKeyDown(Enum.KeyCode.W) then
+                    Velocity += Camera.CFrame.LookVector
                 end
 
-                local BodyPosition = DriveSeat:FindFirstChild("BodyPosition")
-                if not BodyPosition then
-                    BodyPosition = Instance.new("BodyPosition")
-                    BodyPosition.Name = "BodyPosition"
-                    BodyPosition.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-                    BodyPosition.P = 10000
-                    BodyPosition.D = 100
-                    BodyPosition.Parent = DriveSeat
+                if Context.Services.UserInputService:IsKeyDown(Enum.KeyCode.S) then
+                    Velocity -= Camera.CFrame.LookVector
                 end
 
-                BodyGyro.CFrame = Camera.CFrame
-                BodyPosition.Position = DriveSeat.Position + Camera.CFrame.LookVector * 4
+                if Context.Services.UserInputService:IsKeyDown(Enum.KeyCode.D) then
+                    Velocity += Camera.CFrame.RightVector
+                end
+
+                if Context.Services.UserInputService:IsKeyDown(Enum.KeyCode.A) then
+                    Velocity -= Camera.CFrame.RightVector
+                end
+
+                if Context.Services.UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+                    Velocity += Vector3.yAxis
+                end
+
+                if Context.Services.UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+                    Velocity -= Vector3.yAxis
+                end
+
+                if Velocity.Magnitude > 0 then
+                    Velocity = Velocity.Unit * Speed
+                end
+
+                PlrVehicle.PrimaryPart.AssemblyLinearVelocity = Velocity
+
+                PlrVehicle:PivotTo(
+                    CFrame.lookAt(
+                        PlrVehicle.PrimaryPart.Position,
+                        PlrVehicle.PrimaryPart.Position + Camera.CFrame.LookVector
+                    )
+                )
             end)
         )
     else
@@ -224,20 +242,8 @@ function Vehicle:CarFly(Context, Enabled)
         end
 
         local PlrVehicle = self:GetVehicle()
-        if PlrVehicle then
-            local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
-            if DriveSeat then
-                local BodyGyro = DriveSeat:FindFirstChild("BodyGyro")
-                local BodyPosition = DriveSeat:FindFirstChild("BodyPosition")
-
-                if BodyGyro then
-                    BodyGyro:Destroy()
-                end
-
-                if BodyPosition then
-                    BodyPosition:Destroy()
-                end
-            end
+        if PlrVehicle and PlrVehicle.PrimaryPart then
+            PlrVehicle.PrimaryPart.AssemblyLinearVelocity = Vector3.zero
         end
     end
 end
