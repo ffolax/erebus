@@ -22,41 +22,38 @@ function TeamTab:FlingVehicle()
 
     self.State.Flinging = true
 
-    ReplicatedStorage.Zp3["d86a1e0e-1163-44cf-8647-c2c5fecf62c9"]:FireServer(true)
-    ReplicatedStorage.Zp3["6b0e798f-3ca7-46dd-8dd6-b6037b63cf48"]:FireServer()
-    ReplicatedStorage.Zp3["d86a1e0e-1163-44cf-8647-c2c5fecf62c9"]:FireServer(false)
-
-    task.wait(0.15)
-
     local Vehicle = FindPlrVehicle()
     if not Vehicle then
         self.State.Flinging = false
         return
     end
 
-    local Plate = Vehicle:FindFirstChild("Plate", true)
     local Seat = Vehicle:FindFirstChildOfClass("Seat")
 
-    if not Plate or not Seat then
+    if not Seat then
         self.State.Flinging = false
         return
     end
 
     Seat.Anchored = true
 
+    ReplicatedStorage.Zp3["d86a1e0e-1163-44cf-8647-c2c5fecf62c9"]:FireServer(true)
+    ReplicatedStorage.Zp3["6b0e798f-3ca7-46dd-8dd6-b6037b63cf48"]:FireServer()
+    ReplicatedStorage.Zp3["d86a1e0e-1163-44cf-8647-c2c5fecf62c9"]:FireServer(false)
+
     local EndTime = tick() + 1
 
     while tick() < EndTime do
         RunService.Heartbeat:Wait()
 
-        Plate.Velocity = Vector3.new(
+        Seat.Velocity = Vector3.new(
             math.random(-10000,10000),
             100000,
             math.random(-10000,10000)
         )
     end
 
-    Plate.Velocity = Vector3.zero
+    Seat.Velocity = Vector3.zero
 
     task.wait(0.25)
 
