@@ -1,24 +1,191 @@
 local Vehicle = {}
-Vehicle.VehicleTeleport = nil
-Vehicle.Acceleration = 1
+
+Vehicle.State = {
+    Acceleration = 1,
+    VehicleTeleport = nil,
+}
 
 local RunService = game:GetService("RunService")
 
-local function FindVehicle()
+function Vehicle:GetVehicle()
 
-    local Player = game:GetService("Players").LocalPlayer
     local Vehicles = workspace:FindFirstChild("Vehicles")
+    if not Vehicles then
+        return
+    end
 
-    if Vehicles then
+    return Vehicles:FindFirstChild(game.Players.LocalPlayer.Name)
 
-        local PlrVehicle = Vehicles:FindFirstChild(Player.Name)
+end
 
-        if PlrVehicle then
+function Vehicle:GetCharacter()
 
-           return PlrVehicle
+    local Character = game.Players.LocalPlayer.Character
+    if not Character then
+        return
+    end
+
+    return Character,
+        Character:FindFirstChildOfClass("Humanoid"),
+        Character:FindFirstChild("HumanoidRootPart")
+
+end
+
+function Vehicle:EnterVehicle()
+
+    local Character, Humanoid, Root = GetCharacter()
+
+    local PlrVehicle = GetVehicle()
+
+    if not (Character and Humanoid and Root and PlrVehicle) then
+        return
+    end
+
+    local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
+
+    if not DriveSeat then
+        return
+    end
+
+    local Distance = (Root.Position - DriveSeat.Position).Magnitude
+
+    if Distance > 100 then
+
+        local Start = Root.Position
+        local Goal = DriveSeat.Position + Vector3.new(0, 5, 0)
+
+        local Steps = math.ceil(Distance / 5)
+
+        for i = 1, Steps do
+
+            local Alpha = i / Steps
+
+            Root.CFrame = CFrame.new(Start:Lerp(Goal, Alpha))
+
+            RunService.Heartbeat:Wait()
 
         end
+
     end
+
+    DriveSeat:Sit(Humanoid)
+
+end
+
+function Vehicle:BringVehicle()
+
+    local Character, Humanoid, Root = GetCharacter()
+
+    local PlrVehicle = GetVehicle()
+
+    if PlrVehicle and Root then
+
+        local TeleportPos = Root.CFrame * CFrame.new(0,0,-2)
+        local Position = TeleportPos.Position
+
+        self.VehicleTeleport:MoveVehicle(Position,500,false)
+
+    end
+
+end
+
+function Vehicle:UpdateAcceleration()
+
+    local PlrVehicle = self:GetVehicle()
+
+    if not PlrVehicle then
+        return
+    end
+
+    local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
+    if not DriveSeat then
+        return
+    end
+
+    local Attachment = DriveSeat:FindFirstChild("AccelerationAttachment")
+    if not Attachment then
+        Attachment = Instance.new("Attachment")
+        Attachment.Name = "AccelerationAttachment"
+        Attachment.Parent = DriveSeat
+    end
+
+    local Force = DriveSeat:FindFirstChild("AccelerationForce")
+    if not Force then
+        Force = Instance.new("VectorForce")
+        Force.Name = "AccelerationForce"
+        Force.Attachment0 = Attachment
+        Force.RelativeTo = Enum.ActuatorRelativeTo.World
+        Force.ApplyAtCenterOfMass = true
+        Force.Parent = DriveSeat
+    end
+
+    Force.Force = DriveSeat.CFrame.LookVector * (PlrVehicle:GetAttribute("Throttle") * Vehicle.Acceleration * 300)
+
+end
+
+function Vehicle:Godmode()
+
+    local car = FindPlrVehicle()
+
+    if car then
+
+        car:SetAttribute("currentHealth",500)
+        car:SetAttribute("IsOn",true)
+        car:SetAttribute("currentFuel",math.huge)
+
+    end
+
+end
+
+function Vehicle:SetSuspensionHeight(Value)
+
+    local PlrVehicle = FindPlrVehicle()
+
+    if PlrVehicle then
+
+        local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
+
+        if DriveSeat then
+
+            for _,v in pairs(DriveSeat:GetChildren()) do
+
+                if v:IsA("RopeConstraint") then
+
+                    v.Length = 15
+
+                end
+
+                if v:IsA("SpringConstraint") then
+
+                    v.LimitsEnabled = true
+                    v.Damping = 0
+                    v.MaxLength = 15
+                    v.MinLength = Value
+                    v.FreeLength = Value
+
+                end
+
+            end
+
+        end
+
+    end
+
+end
+
+function Vehicle:Init(Context)
+
+    self.State.VehicleTeleport = Context.Modules.VehicleTeleport
+
+    Context:RegisterPersistentConnection(
+
+        RunService.Heartbeat:Connect(function()
+
+            self:UpdateAcceleration()
+
+        end)
+
+    )
 
 end
 
@@ -34,7 +201,7 @@ function Vehicle:Build(Context)
 
     Context:AddViewport({
         Container = Container,
-        Model = FindVehicle
+        Model = GetVehicle
     })
 
     Context:AddTitle({
@@ -46,48 +213,6 @@ function Vehicle:Build(Context)
 
         Callback = function()
 
-            local Players = game:GetService("Players")
-
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character
-            local Humanoid = Character and Character:FindFirstChild("Humanoid")
-            local Root = Character and Character:FindFirstChild("HumanoidRootPart")
-
-            local PlrVehicle = FindVehicle()
-
-            if not (Character and Humanoid and Root and PlrVehicle) then
-                return
-            end
-
-            local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
-
-            if not DriveSeat then
-                return
-            end
-
-            local Distance = (Root.Position - DriveSeat.Position).Magnitude
-
-            if Distance > 100 then
-
-                local Start = Root.Position
-                local Goal = DriveSeat.Position + Vector3.new(0, 5, 0)
-
-                local Steps = math.ceil(Distance / 5)
-
-                for i = 1, Steps do
-
-                    local Alpha = i / Steps
-
-                    Root.CFrame = CFrame.new(Start:Lerp(Goal, Alpha))
-
-                    RunService.Heartbeat:Wait()
-
-                end
-
-            end
-
-            DriveSeat:Sit(Humanoid)
-
         end
     })
 
@@ -96,67 +221,12 @@ function Vehicle:Build(Context)
 
         Callback = function()
 
-            local Players = game:GetService("Players")
-
-            local LocalPlayer = Players.LocalPlayer
-            local Character = LocalPlayer.Character
-            local Humanoid = Character and Character:FindFirstChild("Humanoid")
-            local Root = Character and Character:FindFirstChild("HumanoidRootPart")
-
-            local PlrVehicle = FindPlrVehicle()
-
-            if PlrVehicle and Root then
-
-                local TeleportPos = Root.CFrame * CFrame.new(0,0,-2)
-                local Position = TeleportPos.Position
-
-                self.VehicleTeleport:MoveVehicle(Position,500,false)
-
-            end
-
         end
     })
 
     Context:AddTitle({
         Text = "Vehicle Settings"
     })
-
-    Context:RegisterPersistentConnection(
-
-        RunService.Heartbeat:Connect(function()
-
-            local PlrVehicle = FindPlrVehicle()
-            if not PlrVehicle then
-                return
-            end
-
-            local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
-            if not DriveSeat then
-                return
-            end
-
-            local Attachment = DriveSeat:FindFirstChild("AccelerationAttachment")
-            if not Attachment then
-                Attachment = Instance.new("Attachment")
-                Attachment.Name = "AccelerationAttachment"
-                Attachment.Parent = DriveSeat
-            end
-
-            local Force = DriveSeat:FindFirstChild("AccelerationForce")
-            if not Force then
-                Force = Instance.new("VectorForce")
-                Force.Name = "AccelerationForce"
-                Force.Attachment0 = Attachment
-                Force.RelativeTo = Enum.ActuatorRelativeTo.World
-                Force.ApplyAtCenterOfMass = true
-                Force.Parent = DriveSeat
-            end
-
-            Force.Force = DriveSeat.CFrame.LookVector * (PlrVehicle:GetAttribute("Throttle") * Vehicle.Acceleration * 300)
-
-        end)
-
-    )
 
     local AccelerationSlider = Context:AddSlider({
 
@@ -188,37 +258,7 @@ function Vehicle:Build(Context)
 
         Callback = function(Value)
 
-            local PlrVehicle = FindPlrVehicle()
-
-            if PlrVehicle then
-
-                local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
-
-                if DriveSeat then
-
-                    for _,v in pairs(DriveSeat:GetChildren()) do
-
-                        if v:IsA("RopeConstraint") then
-
-                            v.Length = 15
-
-                        end
-
-                        if v:IsA("SpringConstraint") then
-
-                            v.LimitsEnabled = true
-                            v.Damping = 0
-                            v.MaxLength = 15
-                            v.MinLength = Value
-                            v.FreeLength = Value
-
-                        end
-
-                    end
-
-                end
-
-            end
+            self:SetSuspensionHeight(Value)
 
         end
 
@@ -229,15 +269,7 @@ function Vehicle:Build(Context)
 
         Callback = function()
 
-            local car = FindPlrVehicle()
-
-            if car then
-
-                car:SetAttribute("currentHealth",500)
-                car:SetAttribute("IsOn",true)
-                car:SetAttribute("currentFuel",math.huge)
-
-            end
+            self:Godmode()
 
         end
     })

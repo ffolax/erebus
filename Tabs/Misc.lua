@@ -251,6 +251,8 @@ function Misc:AutoRevive(Enabled,Context)
 
                 Misc.State.Reviving = false
 
+                Humanoid.Jump = true
+
             end
 
         end)
