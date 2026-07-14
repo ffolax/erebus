@@ -1,5 +1,7 @@
 local TeamTab = {}
 
+local Plr = game:GetService("Players").LocalPlayer
+
 function TeamTab:Build(Context)
 
     Context:AddTitle({
