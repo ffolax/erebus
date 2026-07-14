@@ -106,11 +106,10 @@ end)
 UI:OpenTab("Home")
 
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
 
 if queueteleport then
 
-    LocalPlayer.OnTeleport:Connect(function()
+    Players.LocalPlayer.OnTeleport:Connect(function()
 
         queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/ffolax/erebus/main/loader.lua'))()")
 

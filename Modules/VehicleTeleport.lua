@@ -160,8 +160,11 @@ function VehicleTeleport:SetupMapToMove()
 
 	for _, MapPoints in pairs(NavigationMap:GetChildren()) do
 		if MapPoints:IsA("ImageButton") then
+			print("[EREBUS] This is an ImageButton!")
 			local conn
 			conn = MapPoints:GetPropertyChangedSignal("BackgroundColor3"):Connect(function()
+
+				print("[EREBUS] Color changed!")
 
 				if MapPoints.BackgroundColor3 ~= Color3.fromRGB(0,0,0) then
 

@@ -76,25 +76,17 @@ function GetJewelerRobbed()
 
     local Robberies = game.workspace:FindFirstChild("Robberies")
 
-    if Robberies and Robberies:FindFirstChild("Jeweler Safe Robbery") then
+    if Robberies and Robberies:FindFirstChild("JewelleryStore") then
 
-        local Jeweler = Robberies["Jeweler Safe Robbery"]:FindFirstChild("Jeweler")
-        if not Jeweler then return "???" end
-        local Door = Jeweler:FindFirstChild("Door")
+        local JewelerStore = Robberies:FindFirstChild("JewelleryStore")
 
-        if Door then
+        if JewelerStore:GetAttribute("RobberyDisabled") == true then
 
-            local DoorPivot = Door:GetPivot()
+            return "RED"
 
-            if DoorPivot.RightVector == Vector3.new(0,0,-1) then
+        else
 
-                return "GREEN"
-
-            else
-
-                return "RED"
-
-            end
+            return "GREEN"
 
         end
 

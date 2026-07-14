@@ -1,6 +1,7 @@
 local Misc = {}
 local Plr = game:GetService("Players").LocalPlayer
 local Vehicles = game.workspace:FindFirstChild("Vehicles")
+local RunService = game:GetService("RunService")
 
 function FindPlrVehicle()
 
@@ -221,6 +222,70 @@ function Misc:Build(Context)
 
         end
 
+    })
+
+    Context:AddTitle({
+        Text = "HARS"
+    })
+
+    Context:AddTitle({
+        Text = "HINT: Wait until the vehicle is on your bed then press 'Fling Vehicle' to fling them!"
+    })
+
+    Context:AddButton({
+        Text = "Fling Vehicle",
+
+        Callback = function()
+
+            if Plr.Team == "HARS" then
+
+                local Event = game:GetService("ReplicatedStorage").Zp3["d86a1e0e-1163-44cf-8647-c2c5fecf62c9"]
+                Event:FireServer(true)
+
+                local Event = game:GetService("ReplicatedStorage").Zp3["6b0e798f-3ca7-46dd-8dd6-b6037b63cf48"]
+                Event:FireServer()
+
+                local Event = game:GetService("ReplicatedStorage").Zp3["d86a1e0e-1163-44cf-8647-c2c5fecf62c9"]
+                Event:FireServer(false)
+
+                local PlrVehicle = FindPlrVehicle()
+
+                if PlrVehicle then
+
+                    local Plate = PlrVehicle:FindFirstChild("Plate",true)
+                    local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
+
+                    if Plate and DriveSeat then
+
+                        local stop = false
+
+                        task.delay(1,function()
+
+                            stop = true
+
+                        end)
+
+                        DriveSeat.Anchored = true
+
+                        repeat RunService.Heartbeat:Wait()
+
+                            Plate.Velocity = Vector3.new(0,10000,0)
+
+                        until stop == true
+
+                        DriveSeat.Anchored = false
+
+                    end
+
+                end
+
+            else
+
+                -- warn("[EREBUS] You aren't on the HARS team!")
+
+            end
+
+        end
     })
 
 end
