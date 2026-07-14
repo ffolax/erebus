@@ -72,7 +72,7 @@ function Vehicle:Build(Context)
                 local Start = Root.Position
                 local Goal = DriveSeat.Position + Vector3.new(0, 5, 0)
 
-                local Steps = math.ceil(Distance / 15)
+                local Steps = math.ceil(Distance / 5)
 
                 for i = 1, Steps do
 
@@ -80,7 +80,7 @@ function Vehicle:Build(Context)
 
                     Root.CFrame = CFrame.new(Start:Lerp(Goal, Alpha))
 
-                    task.wait(0.03)
+                    RunService.Heartbeat:Wait()
 
                 end
 
