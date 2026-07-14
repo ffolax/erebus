@@ -1,5 +1,8 @@
 local Vehicle = {}
 Vehicle.VehicleTeleport = nil
+Vehicle.Acceleration = 1
+
+local RunService = game:GetService("RunService")
 
 local function FindVehicle()
 
@@ -118,17 +121,9 @@ function Vehicle:Build(Context)
         Text = "Vehicle Settings"
     })
 
-    local AccelerationSlider = Context:AddSlider({
+    Context:RegisterPersistentConnection(
 
-        Text = "Acceleration",
-        Id = "Acceleration",
-
-        Min = 1,
-        Max = 10,
-
-        Default = 1,
-
-        Callback = function(Value)
+        RunService.Heartbeat:Connect(function()
 
             local PlrVehicle = FindPlrVehicle()
             if not PlrVehicle then
@@ -157,7 +152,25 @@ function Vehicle:Build(Context)
                 Force.Parent = DriveSeat
             end
 
-            Force.Force = DriveSeat.CFrame.LookVector * (PlrVehicle:GetAttribute("Throttle") * Value * 5000)
+            Force.Force = DriveSeat.CFrame.LookVector * (PlrVehicle:GetAttribute("Throttle") * Vehicle.Acceleration * 1000)
+
+        end)
+
+    )
+
+    local AccelerationSlider = Context:AddSlider({
+
+        Text = "Acceleration",
+        Id = "Acceleration",
+
+        Min = 1,
+        Max = 10,
+
+        Default = 1,
+
+        Callback = function(Value)
+
+            Vehicle.Acceleration = Value
 
         end
 
