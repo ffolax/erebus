@@ -269,10 +269,11 @@ function Misc:Build(Context)
 
                         repeat RunService.Heartbeat:Wait()
 
-                            Plate.Velocity = Vector3.new(0,10000,0)
+                            Plate.Velocity = Vector3.new(0,30000,0)
 
                         until stop == true
 
+                        Plate.Velocity = Vector3.new(0,0,0)
                         DriveSeat.Anchored = false
 
                     end
