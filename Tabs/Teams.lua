@@ -48,7 +48,7 @@ function TeamTab:FlingVehicle()
 
         Seat.Velocity = Vector3.new(
             math.random(-10000,10000),
-            100000,
+            10000,
             math.random(-10000,10000)
         )
     end
