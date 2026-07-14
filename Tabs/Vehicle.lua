@@ -2,7 +2,10 @@ local Vehicle = {}
 
 Vehicle.State = {
     Acceleration = 1,
-    VehicleTeleport = nil,
+}
+
+Vehicle.Modules = {
+    VehicleTeleport = nil
 }
 
 local RunService = game:GetService("RunService")
@@ -33,9 +36,9 @@ end
 
 function Vehicle:EnterVehicle()
 
-    local Character, Humanoid, Root = GetCharacter()
+    local Character, Humanoid, Root = self:GetCharacter()
 
-    local PlrVehicle = GetVehicle()
+    local PlrVehicle = self:GetVehicle()
 
     if not (Character and Humanoid and Root and PlrVehicle) then
         return
@@ -74,16 +77,16 @@ end
 
 function Vehicle:BringVehicle()
 
-    local Character, Humanoid, Root = GetCharacter()
+    local Character, Humanoid, Root = self:GetCharacter()
 
-    local PlrVehicle = GetVehicle()
+    local PlrVehicle = self:GetVehicle()
 
     if PlrVehicle and Root then
 
         local TeleportPos = Root.CFrame * CFrame.new(0,0,-2)
         local Position = TeleportPos.Position
 
-        self.VehicleTeleport:MoveVehicle(Position,500,false)
+        self.Modules.VehicleTeleport:MoveVehicle(Position,500,false)
 
     end
 
@@ -119,13 +122,13 @@ function Vehicle:UpdateAcceleration()
         Force.Parent = DriveSeat
     end
 
-    Force.Force = DriveSeat.CFrame.LookVector * (PlrVehicle:GetAttribute("Throttle") * Vehicle.Acceleration * 300)
+    Force.Force = DriveSeat.CFrame.LookVector * (PlrVehicle:GetAttribute("Throttle") * self.State.Acceleration * 300)
 
 end
 
 function Vehicle:Godmode()
 
-    local car = FindPlrVehicle()
+    local car = self:GetVehicle()
 
     if car then
 
@@ -139,7 +142,7 @@ end
 
 function Vehicle:SetSuspensionHeight(Value)
 
-    local PlrVehicle = FindPlrVehicle()
+    local PlrVehicle = self:GetVehicle()
 
     if PlrVehicle then
 
@@ -175,7 +178,7 @@ end
 
 function Vehicle:Init(Context)
 
-    self.State.VehicleTeleport = Context.Modules.VehicleTeleport
+    self.Modules.VehicleTeleport = Context.Modules.VehicleTeleport
 
     Context:RegisterPersistentConnection(
 
@@ -191,7 +194,7 @@ end
 
 function Vehicle:Build(Context)
 
-    self.VehicleTeleport = Context.Modules.VehicleTeleport
+    self.Modules.VehicleTeleport = Context.Modules.VehicleTeleport
 
     Context:AddTitle({
         Text = "Teleport"
@@ -201,7 +204,9 @@ function Vehicle:Build(Context)
 
     Context:AddViewport({
         Container = Container,
-        Model = GetVehicle
+        Model = function()
+            return self:GetVehicle()
+        end
     })
 
     Context:AddTitle({
@@ -213,6 +218,8 @@ function Vehicle:Build(Context)
 
         Callback = function()
 
+            self:EnterVehicle()
+
         end
     })
 
@@ -220,6 +227,8 @@ function Vehicle:Build(Context)
         Text = "Bring Vehicle",
 
         Callback = function()
+
+            self:BringVehicle()
 
         end
     })
@@ -240,7 +249,7 @@ function Vehicle:Build(Context)
 
         Callback = function(Value)
 
-            Vehicle.Acceleration = Value
+            self.State.Acceleration = Value
 
         end
 
