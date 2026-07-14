@@ -574,7 +574,7 @@ function UI:Init(Context, Icons)
 
 	self.Tabs = {}
 	self.ActiveTab = nil
-	self.TabOrder = { "Home", "Player", "Vehicle", "Visuals", "Misc" }
+	self.TabOrder = { "Home", "Player", "Vehicle", "Teams", "Visuals", "Misc" }
 
 	for _, tabName in ipairs(self.TabOrder) do
 		self:CreateTab(tabName, function(contentFrame)
