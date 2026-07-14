@@ -39,7 +39,7 @@ function Misc:RefreshVehicleList()
     end
 end
 
-function Player:GetCharacter()
+function Misc:GetCharacter()
 
     local Character = game.Players.LocalPlayer.Character
     if not Character then
