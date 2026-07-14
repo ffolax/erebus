@@ -76,7 +76,7 @@ function TeamTab:Build(Context)
     })
 
     Context:AddTitle({
-        Text = "INFO: Wait until the vehicle is on your bed then press 'Fling Vehicle'."
+        Text = "Info: Wait until the vehicle is on your bed then press 'Fling Vehicle'."
     })
 
     Context:AddButton({

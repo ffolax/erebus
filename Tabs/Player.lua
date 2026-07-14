@@ -127,7 +127,6 @@ function Player:SetAimbot(Context, Enabled)
 
         if not self.State.FOVCircle then
             self.State.FOVCircle = Drawing.new("Circle")
-            Context:RegisterObject(self.State.FOVCircle)
         end
 
         self.State.FOVCircle.Visible = true
@@ -228,7 +227,7 @@ function Player:Init(Context)
 end
 
 function Player:Build(Context)
-    
+
     self.State.Speed = Context.Values.PlayerSpeed or 20
     self.State.TargetPart = Context.Values.TargetPart or "HumanoidRootPart"
 

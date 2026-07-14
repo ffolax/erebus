@@ -33,6 +33,7 @@ local PlrGui = Plr:WaitForChild("PlayerGui")
 local StarterGui = game:GetService("StarterGui")
 
 local CurrentlyTeleporting = false
+VehicleTeleport.NavigationMap = nil
 VehicleTeleport.TeleportSpeed = 100
 
 function FindPlrVehicle()
@@ -138,27 +139,25 @@ function VehicleTeleport:SetupMapToMove()
 
 	print("[EREBUS] Map To Move setting up...")
 
-	local NavigationMap
-
 	for _, obj in pairs(PlrGui:GetDescendants()) do
 		if obj:IsA("ViewportFrame") and string.find(obj.Name, "Map") then
-			NavigationMap = obj
+			VehicleTeleport.NavigationMap = obj
 			break
 		end
 	end
 
-	if not NavigationMap then
+	if not VehicleTeleport.NavigationMap then
 		return
 	end
 
 	print("[EREBUS] Found navigation map!")
 
-	NavigationMap.Destroying:Once(function()
+	VehicleTeleport.NavigationMap.Destroying:Once(function()
 		task.wait()
 		VehicleTeleport:SetupMapToMove()
 	end)
 
-	for _, MapPoints in pairs(NavigationMap:GetChildren()) do
+	for _, MapPoints in pairs(VehicleTeleport.NavigationMap:GetChildren()) do
 		if MapPoints:IsA("ImageButton") then
 			print("[EREBUS] This is an ImageButton!")
 			local conn
