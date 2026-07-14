@@ -157,7 +157,7 @@ function Vehicle:Build(Context)
                 Force.Parent = DriveSeat
             end
 
-            Force.Force = DriveSeat.CFrame.LookVector * (DriveSeat.Throttle * Value * 5000)
+            Force.Force = DriveSeat.CFrame.LookVector * (PlrVehicle:GetAttribute("Throttle") * Value * 5000)
 
         end
 
