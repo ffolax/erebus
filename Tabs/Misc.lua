@@ -229,9 +229,27 @@ function Misc:AutoRevive(Enabled,Context)
                     return
                 end
 
-                VehicleTeleport:MoveVehicle(Vector3.new(-465, 5, 3014),200,true)
+                VehicleTeleport:MoveVehicle(Vector3.new(-465, 5, 3014),150,true)
 
-                print("A")
+                Humanoid.Sit = false
+
+                task.wait(0.5)
+
+                local Buildings = game.workspace:FindFirstChild("Buildings")
+                local Cells = Buildings:FindFirstChild("Cells",true)
+                local Seat = Cells:FindFirstChild("Seat",true)
+
+                if Seat then
+
+                    Seat:Sit(Humanoid)
+
+                end
+
+                repeat task.wait(0.5)
+
+                until Humanoid.Health >= 25
+
+                Misc.State.Reviving = false
 
             end
 
