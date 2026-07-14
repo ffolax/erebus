@@ -962,7 +962,7 @@ function Context:AddViewport(options)
 
     LoadVehicle(options.Model())
 
-    RunService.RenderStepped:Connect(function(dt)
+    RunService.Heartbeat:Connect(function(dt)
 
         local Vehicle = options.Model()
 

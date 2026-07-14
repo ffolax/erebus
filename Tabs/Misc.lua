@@ -269,7 +269,7 @@ function Misc:Build(Context)
 
                         repeat RunService.Heartbeat:Wait()
 
-                            Plate.Velocity = Vector3.new(math.random(-10000,10000),1000000,math.random(-10000,10000))
+                            Plate.Velocity = Vector3.new(math.random(-10000,10000),100000,math.random(-10000,10000))
 
                         until stop == true
 
