@@ -274,6 +274,7 @@ function Misc:Build(Context)
                         until stop == true
 
                         Plate.Velocity = Vector3.new(0,0,0)
+                        task.wait(0.25)
                         DriveSeat.Anchored = false
 
                     end
