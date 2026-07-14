@@ -118,6 +118,51 @@ function Vehicle:Build(Context)
         Text = "Vehicle Settings"
     })
 
+    local AccelerationSlider = Context:AddSlider({
+
+        Text = "Acceleration",
+        Id = "Acceleration",
+
+        Min = 1,
+        Max = 10,
+
+        Default = 1,
+
+        Callback = function(Value)
+
+            local PlrVehicle = FindPlrVehicle()
+            if not PlrVehicle then
+                return
+            end
+
+            local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
+            if not DriveSeat then
+                return
+            end
+
+            local Attachment = DriveSeat:FindFirstChild("AccelerationAttachment")
+            if not Attachment then
+                Attachment = Instance.new("Attachment")
+                Attachment.Name = "AccelerationAttachment"
+                Attachment.Parent = DriveSeat
+            end
+
+            local Force = DriveSeat:FindFirstChild("AccelerationForce")
+            if not Force then
+                Force = Instance.new("VectorForce")
+                Force.Name = "AccelerationForce"
+                Force.Attachment0 = Attachment
+                Force.RelativeTo = Enum.ActuatorRelativeTo.World
+                Force.ApplyAtCenterOfMass = true
+                Force.Parent = DriveSeat
+            end
+
+            Force.Force = DriveSeat.CFrame.LookVector * (DriveSeat.Throttle * Value * 5000)
+
+        end
+
+    })
+
     local SuspensionSlider = Context:AddSlider({
 
         Text = "Suspension Height",
@@ -126,7 +171,7 @@ function Vehicle:Build(Context)
         Min = 1,
         Max = 15,
 
-        Default = 1,
+        Default = 1.5,
 
         Callback = function(Value)
 
