@@ -237,7 +237,7 @@ function Misc:Build(Context)
 
         Callback = function()
 
-            if Plr.Team == "HARS" then
+            if Plr.Team.Name == "HARS" then
 
                 local Event = game:GetService("ReplicatedStorage").Zp3["d86a1e0e-1163-44cf-8647-c2c5fecf62c9"]
                 Event:FireServer(true)
