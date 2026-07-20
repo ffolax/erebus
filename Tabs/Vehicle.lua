@@ -192,55 +192,57 @@ function Vehicle:CarFly(Context, Enabled)
         end
 
         self.Runtime.CarFlyConn = Context:RegisterPersistentConnection(
-            RunService.RenderStepped:Connect(function()
-                
-                local Held = Context.Services.Controls.Held
+            RunService.RenderStepped:Connect(function(dt)
 
+                local Held = Context.Services.Controls.Held
                 local PlrVehicle = self:GetVehicle()
 
-                if not PlrVehicle then
-                    return
-                end
+                if not PlrVehicle then return end
 
                 local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
+                if not DriveSeat then return end
 
-                if not DriveSeat then
-                    return
-                end
-
-                local Velocity = DriveSeat.AssemblyLinearVelocity
+                local Direction = Vector3.zero
+                local CameraCF = Camera.CFrame
 
                 if Held[Enum.KeyCode.W] then
-                    Velocity += Camera.CFrame.LookVector
+                    Direction += CameraCF.LookVector
                 end
 
                 if Held[Enum.KeyCode.S] then
-                    Velocity -= Camera.CFrame.LookVector
+                    Direction -= CameraCF.LookVector
                 end
 
                 if Held[Enum.KeyCode.D] then
-                    Velocity += Camera.CFrame.RightVector
+                    Direction += CameraCF.RightVector
                 end
 
                 if Held[Enum.KeyCode.A] then
-                    Velocity -= Camera.CFrame.RightVector
+                    Direction -= CameraCF.RightVector
                 end
 
                 if Held[Enum.KeyCode.Space] then
-                    Velocity += Camera.CFrame.UpVector
+                    Direction += CameraCF.UpVector
                 end
 
                 if Held[Enum.KeyCode.LeftShift] then
-                    Velocity -= Camera.CFrame.UpVector
+                    Direction -= CameraCF.UpVector
                 end
 
-                if Velocity.Magnitude > 0 then
-                    Velocity = Velocity.Unit
+                if Direction.Magnitude > 0 then
+                    Direction = Direction.Unit
                 end
 
-                local DesiredVelocity = Velocity * self.State.CarFlySpeed
+                local Distance = self.State.CarFlySpeed * dt
+                local NewPosition = DriveSeat.Position + Direction * Distance
 
-                DriveSeat.AssemblyLinearVelocity = DesiredVelocity
+                PlrVehicle:PivotTo(
+                    CFrame.lookAt(
+                        NewPosition,
+                        NewPosition + CameraCF.LookVector,
+                        CameraCF.UpVector
+                    )
+                )
 
             end)
         )
