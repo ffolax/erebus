@@ -184,8 +184,6 @@ end
 
 function Vehicle:CarFly(Context, Enabled)
 
-    local Held = Context.Services.Controls.Held
-
     if Enabled then
         self:EnterVehicle()
         self.Runtime.CarFlyConn = Context:RegisterPersistentConnection(
@@ -197,7 +195,6 @@ function Vehicle:CarFly(Context, Enabled)
 
                 if Held[Enum.KeyCode.W] then
                     Velocity += Camera.CFrame.LookVector
-                    print(Velocity)
                 end
 
                 if Held[Enum.KeyCode.S] then
@@ -238,7 +235,7 @@ function Vehicle:CarFly(Context, Enabled)
 
                 local DesiredVelocity = Velocity * self.State.CarFlySpeed
 
-                DriveSeat.AssemblyLinearVelocity = DesiredVelocity * 1000
+                DriveSeat.AssemblyLinearVelocity = DesiredVelocity * 500
 
             end)
         )

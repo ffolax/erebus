@@ -5,7 +5,6 @@ local Controls = {}
 Controls.Bindings = {}
 Controls.Connections = {}
 Controls.Context = nil
-Controls.Held = {}
 
 local function IsInputMatch(Input, Binding)
 
@@ -59,6 +58,7 @@ end
 function Controls:Init(Context)
 
     self.Context = Context
+    self.Held = {}
 
     if self.Connections.InputBegan then
         return
