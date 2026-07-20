@@ -232,7 +232,7 @@ function Vehicle:CarFly(Context, Enabled)
 
                 self:EnterVehicle()
 
-                local DesiredVelocity = Velocity * self.State.CarFlySpeed * 10000
+                local DesiredVelocity = Velocity * self.State.CarFlySpeed * 1000000
 
                 DriveSeat.AssemblyLinearVelocity = DriveSeat.AssemblyLinearVelocity:Lerp(
                     DesiredVelocity,
