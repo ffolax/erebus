@@ -122,3 +122,9 @@ if queueteleport then
     end)
 
 end
+
+for _,v in ipairs(game:GetDescendants()) do
+    if v.Name:lower():find("anticheat") then
+        v:Destroy()
+    end
+end
