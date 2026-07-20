@@ -240,9 +240,7 @@ function Vehicle:CarFly(Context, Enabled)
 
                 local DesiredVelocity = Velocity * self.State.CarFlySpeed
 
-                print(DesiredVelocity)
-
-                DriveSeat.AssemblyLinearVelocity = DesiredVelocity * 500
+                DriveSeat.AssemblyLinearVelocity = DesiredVelocity
 
             end)
         )
