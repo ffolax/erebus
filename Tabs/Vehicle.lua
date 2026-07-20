@@ -191,6 +191,8 @@ function Vehicle:CarFly(Context, Enabled)
                 
                 local Held = Context.Services.Controls.Held
 
+                print(Context.Services.Controls.Held)
+
                 local Velocity = Vector3.zero
 
                 if Held[Enum.KeyCode.W] then
