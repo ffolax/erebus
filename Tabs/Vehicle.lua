@@ -191,6 +191,8 @@ function Vehicle:CarFly(Context, Enabled)
             self.Runtime.CarFlyConn:Disconnect()
         end
 
+        local Camera = game.workspace.CurrentCamera
+
         self.Runtime.CarFlyConn = Context:RegisterPersistentConnection(
             RunService.RenderStepped:Connect(function(dt)
 
