@@ -187,6 +187,7 @@ function Vehicle:CarFly(Context, Enabled)
     local Held = Context.Services.Controls.Held
 
     if Enabled then
+        self:EnterVehicle()
         self.Runtime.CarFlyConn = Context:RegisterPersistentConnection(
             RunService.RenderStepped:Connect(function()
                 
@@ -230,14 +231,13 @@ function Vehicle:CarFly(Context, Enabled)
                     return
                 end
 
-                self:EnterVehicle()
+                if Velocity.Magnitude > 0 then
+                    Velocity = Velocity.Unit
+                end
 
-                local DesiredVelocity = Velocity * self.State.CarFlySpeed * 1000000
+                local DesiredVelocity = Velocity * self.State.CarFlySpeed
 
-                DriveSeat.AssemblyLinearVelocity = DriveSeat.AssemblyLinearVelocity:Lerp(
-                    DesiredVelocity,
-                    0.35
-                )
+                DriveSeat.AssemblyLinearVelocity = DesiredVelocity
 
             end)
         )
