@@ -79,6 +79,7 @@ local Visuals = loadstring(game:HttpGet(BASE .. "Tabs/Visuals.lua"))()
 local Misc = loadstring(game:HttpGet(BASE .. "Tabs/Misc.lua"))()
 
 Player:Init(Context)
+Vehicle:Init(Context)
 Teams:Init(Context)
 
 local VehicleTeleport = loadstring(game:HttpGet(BASE .. "Modules/VehicleTeleport.lua"))()
