@@ -128,7 +128,7 @@ function Vehicle:UpdateAcceleration()
         Force.Parent = DriveSeat
     end
 
-    Force.Force = DriveSeat.CFrame.LookVector * (PlrVehicle:GetAttribute("Throttle") * self.State.Acceleration * 300)
+    Force.Force = DriveSeat.CFrame.LookVector * (PlrVehicle:GetAttribute("Throttle") * self.State.Acceleration * 500)
 
 end
 
@@ -232,7 +232,7 @@ function Vehicle:CarFly(Context, Enabled)
 
                 self:EnterVehicle()
 
-                local DesiredVelocity = Velocity * self.State.CarFlySpeed
+                local DesiredVelocity = Velocity * self.State.CarFlySpeed * 500
 
                 DriveSeat.AssemblyLinearVelocity = DriveSeat.AssemblyLinearVelocity:Lerp(
                     DesiredVelocity,
