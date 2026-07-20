@@ -3,6 +3,7 @@ local Vehicle = {}
 Vehicle.State = {
     Acceleration = 1,
     CarFlyToggle = false,
+    CarFlySpeed = 50,
 }
 
 Vehicle.Runtime = {
@@ -229,7 +230,14 @@ function Vehicle:CarFly(Context, Enabled)
                     return
                 end
 
-                DriveSeat.Velocity = Velocity
+                self:EnterVehicle()
+
+                local DesiredVelocity = Velocity * self.State.CarFlySpeed
+
+                DriveSeat.AssemblyLinearVelocity = DriveSeat.AssemblyLinearVelocity:Lerp(
+                    DesiredVelocity,
+                    0.35
+                )
 
             end)
         )
@@ -334,6 +342,24 @@ function Vehicle:Build(Context)
         Callback = function(Enabled)
             self:CarFly(Context,Enabled)
         end
+    })
+
+    local CarFlySlider = Context:AddSlider({
+
+        Text = "Fly Speed",
+        Id = "CarFlySpeed",
+
+        Min = 10,
+        Max = 200,
+
+        Default = 50,
+
+        Callback = function(Value)
+
+            self.State.CarFlySpeed = Value
+
+        end
+
     })
 
     Context:AddTitle({
