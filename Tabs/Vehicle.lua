@@ -128,7 +128,7 @@ function Vehicle:UpdateAcceleration()
         Force.Parent = DriveSeat
     end
 
-    Force.Force = DriveSeat.CFrame.LookVector * (PlrVehicle:GetAttribute("Throttle") * self.State.Acceleration * 500)
+    Force.Force = DriveSeat.CFrame.LookVector * (PlrVehicle:GetAttribute("Throttle") * self.State.Acceleration * 400)
 
 end
 
@@ -236,7 +236,7 @@ function Vehicle:CarFly(Context, Enabled)
                 end
 
                 local Distance = self.State.CarFlySpeed * dt
-                local NewPosition = DriveSeat.Position + Direction * Distance
+                local NewPosition = DriveSeat.Position + Direction * Distance * 1000
 
                 PlrVehicle:PivotTo(
                     CFrame.lookAt(
