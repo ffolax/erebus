@@ -5,6 +5,7 @@ local Controls = {}
 Controls.Bindings = {}
 Controls.Connections = {}
 Controls.Context = nil
+Controls.Held = {}
 
 local function IsInputMatch(Input, Binding)
 
@@ -70,6 +71,10 @@ function Controls:Init(Context)
                 return
             end
 
+            if Input.UserInputType == Enum.UserInputType.Keyboard then
+                Controls.Held[Input.KeyCode] = true
+            end
+
             for _, Binding in ipairs(self.Bindings) do
                 if IsInputMatch(Input, Binding) then
                     Binding.Callback(true)
@@ -80,6 +85,10 @@ function Controls:Init(Context)
 
     self.Connections.InputEnded =
         UserInputService.InputEnded:Connect(function(Input)
+
+            if Input.UserInputType == Enum.UserInputType.Keyboard then
+                Controls.Held[Input.KeyCode] = nil
+            end
 
             for _, Binding in ipairs(self.Bindings) do
                 if IsInputMatch(Input, Binding) then

@@ -182,57 +182,41 @@ function Vehicle:SetSuspensionHeight(Value)
 end
 
 function Vehicle:CarFly(Context, Enabled)
+
+    local Held = Context.Services.Controls.Held
+
     if Enabled then
         self.Runtime.CarFlyConn = Context:RegisterPersistentConnection(
             RunService.RenderStepped:Connect(function()
-                local PlrVehicle = self:GetVehicle()
-                if not PlrVehicle then return end
-
-                local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
-                if not DriveSeat then return end
-
-                local Camera = workspace.CurrentCamera
-
-                local Speed = 100
+                
+                local Held = Context.Services.Controls.Held
 
                 local Velocity = Vector3.zero
 
-                if Context.Services.UserInputService:IsKeyDown(Enum.KeyCode.W) then
+                if Held[Enum.KeyCode.W] then
                     Velocity += Camera.CFrame.LookVector
                 end
 
-                if Context.Services.UserInputService:IsKeyDown(Enum.KeyCode.S) then
+                if Held[Enum.KeyCode.S] then
                     Velocity -= Camera.CFrame.LookVector
                 end
 
-                if Context.Services.UserInputService:IsKeyDown(Enum.KeyCode.D) then
+                if Held[Enum.KeyCode.D] then
                     Velocity += Camera.CFrame.RightVector
                 end
 
-                if Context.Services.UserInputService:IsKeyDown(Enum.KeyCode.A) then
+                if Held[Enum.KeyCode.A] then
                     Velocity -= Camera.CFrame.RightVector
                 end
 
-                if Context.Services.UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                    Velocity += Vector3.yAxis
+                if Held[Enum.KeyCode.Space] then
+                    Velocity += Camera.CFrame.UpVector
                 end
 
-                if Context.Services.UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                    Velocity -= Vector3.yAxis
+                if Held[Enum.KeyCode.LeftShift] then
+                    Velocity -= Camera.CFrame.UpVector
                 end
 
-                if Velocity.Magnitude > 0 then
-                    Velocity = Velocity.Unit * Speed
-                end
-
-                PlrVehicle.PrimaryPart.AssemblyLinearVelocity = Velocity
-
-                PlrVehicle:PivotTo(
-                    CFrame.lookAt(
-                        PlrVehicle.PrimaryPart.Position,
-                        PlrVehicle.PrimaryPart.Position + Camera.CFrame.LookVector
-                    )
-                )
             end)
         )
     else
@@ -268,11 +252,11 @@ function Vehicle:Init(Context)
     })
 
     Context:RegisterPersistentConnection(
-        Context.Services.Controls:Bind(FlyKey,function(Down)
+        Context.Services.Controls:Bind(CarFlyKey,function(Down)
 
             if Down then
                 Context.Values.CarFly = not Context.Values.CarFly
-                self:SetAimbot(Context, Context.Values.CarFly)
+                self:CarFly(Context, Context.Values.CarFly)
 
                 if self.State.CarFlyToggle then
                     self.State.CarFlyToggle:SetValue(Context.Values.CarFly)
