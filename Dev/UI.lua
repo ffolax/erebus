@@ -62,6 +62,7 @@ function UI:Init(Context, Icons)
 	screen.Name = "erebusUi"
 	screen.ResetOnSpawn = false
 	screen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	screen.IgnoreGuiInset = true
 	screen.Parent = game.CoreGui
 
 	local intro = Instance.new("TextLabel")
