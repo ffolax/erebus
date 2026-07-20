@@ -193,6 +193,18 @@ function Vehicle:CarFly(Context, Enabled)
 
         local Camera = game.workspace.CurrentCamera
 
+        local PlrVehicle = self:GetVehicle()
+
+        if not PlrVehicle then
+            return
+        end
+
+        local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
+
+        if not DriveSeat then
+            return
+        end
+
         local Attachment = DriveSeat:FindFirstChild("CarFlyAttachment")
         if not Attachment then
             Attachment = Instance.new("Attachment")
