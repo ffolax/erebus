@@ -196,7 +196,19 @@ function Vehicle:CarFly(Context, Enabled)
                 
                 local Held = Context.Services.Controls.Held
 
-                local Velocity = Vector3.zero
+                local PlrVehicle = self:GetVehicle()
+
+                if not PlrVehicle then
+                    return
+                end
+
+                local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
+
+                if not DriveSeat then
+                    return
+                end
+
+                local Velocity = DriveSeat.AssemblyLinearVelocity
 
                 if Held[Enum.KeyCode.W] then
                     Velocity += Camera.CFrame.LookVector
@@ -220,18 +232,6 @@ function Vehicle:CarFly(Context, Enabled)
 
                 if Held[Enum.KeyCode.LeftShift] then
                     Velocity -= Camera.CFrame.UpVector
-                end
-
-                local PlrVehicle = self:GetVehicle()
-
-                if not PlrVehicle then
-                    return
-                end
-
-                local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
-
-                if not DriveSeat then
-                    return
                 end
 
                 if Velocity.Magnitude > 0 then
