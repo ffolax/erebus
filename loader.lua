@@ -8,7 +8,7 @@ repeat
 
 until p
 
-if p.UserId == 11284190585 then
+if p.UserId == 11319493592 then
 
     loadstring(game:HttpGet(
         "https://raw.githubusercontent.com/ffolax/erebus/main/Dev/Main.lua"
