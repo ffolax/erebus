@@ -217,6 +217,20 @@ function Vehicle:CarFly(Context, Enabled)
                     Velocity -= Camera.CFrame.UpVector
                 end
 
+                local PlrVehicle = self:GetVehicle()
+
+                if not PlrVehicle then
+                    return
+                end
+
+                local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
+
+                if not DriveSeat then
+                    return
+                end
+
+                DriveSeat.Velocity = Velocity
+
             end)
         )
     else
