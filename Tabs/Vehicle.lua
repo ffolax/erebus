@@ -205,37 +205,6 @@ function Vehicle:CarFly(Context, Enabled)
             return
         end
 
-        local Attachment = DriveSeat:FindFirstChild("CarFlyAttachment")
-        if not Attachment then
-            Attachment = Instance.new("Attachment")
-            Attachment.Name = "CarFlyAttachment"
-            Attachment.Parent = DriveSeat
-        end
-
-        local AlignPosition = DriveSeat:FindFirstChild("CarFlyAlignPosition")
-        if not AlignPosition then
-            AlignPosition = Instance.new("AlignPosition")
-            AlignPosition.Name = "CarFlyAlignPosition"
-            AlignPosition.Attachment0 = Attachment
-            AlignPosition.Mode = Enum.PositionAlignmentMode.OneAttachment
-            AlignPosition.MaxForce = math.huge
-            AlignPosition.Responsiveness = 200
-            AlignPosition.RigidityEnabled = true
-            AlignPosition.Parent = DriveSeat
-        end
-
-        local AlignOrientation = DriveSeat:FindFirstChild("CarFlyAlignOrientation")
-        if not AlignOrientation then
-            AlignOrientation = Instance.new("AlignOrientation")
-            AlignOrientation.Name = "CarFlyAlignOrientation"
-            AlignOrientation.Attachment0 = Attachment
-            AlignOrientation.Mode = Enum.OrientationAlignmentMode.OneAttachment
-            AlignOrientation.MaxTorque = math.huge
-            AlignOrientation.Responsiveness = 200
-            AlignOrientation.RigidityEnabled = true
-            AlignOrientation.Parent = DriveSeat
-        end
-
         self.Runtime.CarFlyConn = Context:RegisterPersistentConnection(
             RunService.RenderStepped:Connect(function(dt)
 
@@ -272,16 +241,22 @@ function Vehicle:CarFly(Context, Enabled)
                     Direction = Direction.Unit
                 end
 
+                local CurrentPosition = PlrVehicle:GetPivot().Position
+
                 local NewPosition =
-                    DriveSeat.Position +
+                    CurrentPosition +
                     Direction * self.State.CarFlySpeed * dt
 
-                AlignPosition.Position = NewPosition
-                AlignOrientation.CFrame = CFrame.lookAt(
-                    DriveSeat.Position,
-                    DriveSeat.Position + CameraCF.LookVector,
+                local NewCFrame = CFrame.lookAt(
+                    NewPosition,
+                    NewPosition + CameraCF.LookVector,
                     CameraCF.UpVector
                 )
+
+                PlrVehicle:PivotTo(NewCFrame)
+                
+                DriveSeat.AssemblyLinearVelocity = Vector3.zero
+                DriveSeat.AssemblyAngularVelocity = Vector3.zero
 
             end)
         )
@@ -292,8 +267,12 @@ function Vehicle:CarFly(Context, Enabled)
         end
 
         local PlrVehicle = self:GetVehicle()
-        if PlrVehicle and PlrVehicle.PrimaryPart then
-            PlrVehicle.PrimaryPart.AssemblyLinearVelocity = Vector3.zero
+        if PlrVehicle then
+            local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
+            if DriveSeat then
+                DriveSeat.AssemblyLinearVelocity = Vector3.zero
+                DriveSeat.AssemblyAngularVelocity = Vector3.zero
+            end
         end
     end
 end
