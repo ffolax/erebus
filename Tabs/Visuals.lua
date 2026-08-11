@@ -253,26 +253,4 @@ function Visuals:Build(Context)
     })
 end
 
-function Visuals:Destroy()
-    if self.Runtime.UpdateConnection then
-        self.Runtime.UpdateConnection:Disconnect()
-        self.Runtime.UpdateConnection = nil
-    end
-
-    for Player in pairs(self.Runtime.PlayerConnections) do
-        self:RemovePlayer(Player)
-    end
-
-    for Player, Billboard in pairs(self.Runtime.BillboardGuis) do
-        if Billboard then
-            Billboard:Destroy()
-        end
-
-        self.Runtime.BillboardGuis[Player] = nil
-    end
-
-    self.State.ShowNames = false
-    self.State.ShowTeam = false
-end
-
 return Visuals

@@ -180,9 +180,9 @@ function VehicleTeleport:SetupMapToMove()
 		if MapPoints:IsA("ImageButton") then
 			print("[EREBUS] This is an ImageButton!")
 			local conn
-			conn = MapPoints.Changed:Connect(function()
+			conn = MapPoints.Changed:Connect(function(property : string)
 
-				print("[EREBUS] Color changed!")
+				print(property)
 
 				if MapPoints.BackgroundColor3 ~= Color3.fromRGB(0,0,0) then
 
