@@ -184,13 +184,16 @@ end
 
 function Player:Init(Context)
 
-    local SpeedHackKey = Context:AddKeybind({
-        Text = "Speed Hack Keybind",
-        Default = Enum.KeyCode.B
-    })
+    if Context.Values.SpeedHackKey == nil then
+        Context.Values.SpeedHackKey = Enum.KeyCode.B
+    end
 
     Context:RegisterPersistentConnection(
-        Context.Services.Controls:Bind(SpeedHackKey,function(Down)
+        Context.Services.Controls:Bind({
+            GetValue = function()
+                return Context.Values.SpeedHackKey
+            end
+        }, function(Down)
 
             if Down then
                 Context.Values.SpeedHack = not Context.Values.SpeedHack
@@ -204,13 +207,16 @@ function Player:Init(Context)
         end)
     )
 
-    local AimbotKey = Context:AddKeybind({
-        Text = "Aimbot Keybind",
-        Default = Enum.KeyCode.V
-    })
+    if Context.Values.AimbotKey == nil then
+        Context.Values.AimbotKey = Enum.KeyCode.V
+    end
 
     Context:RegisterPersistentConnection(
-        Context.Services.Controls:Bind(AimbotKey,function(Down)
+        Context.Services.Controls:Bind({
+            GetValue = function()
+                return Context.Values.AimbotKey
+            end
+        }, function(Down)
 
             if Down then
                 Context.Values.Aimbot = not Context.Values.Aimbot
@@ -234,13 +240,19 @@ function Player:Build(Context)
     Context:AddTitle({
         Text = "Player Settings"
     })
-    
+
     self.State.SpeedToggle = Context:AddToggle({
         Text = "Speed Hack",
         Id = "SpeedHack",
         Callback = function(Enabled)
             self:SetSpeedHack(Context, Enabled)
         end
+    })
+
+    Context:AddKeybind({
+        Text = "Speed Hack Keybind",
+        Id = "SpeedHackKey",
+        Default = Enum.KeyCode.B
     })
 
     local SpeedSlider = Context:AddSlider({
@@ -268,6 +280,12 @@ function Player:Build(Context)
         Callback = function(Enabled)
             self:SetAimbot(Context, Enabled)
         end
+    })
+
+    Context:AddKeybind({
+        Text = "Aimbot Keybind",
+        Id = "AimbotKey",
+        Default = Enum.KeyCode.V
     })
 
     Context:AddTitle({
