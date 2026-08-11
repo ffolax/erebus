@@ -57,6 +57,19 @@ function FindPlrVehicle()
 
 end
 
+function VehicleTeleport:GetCharacter()
+
+    local Character = game.Players.LocalPlayer.Character
+    if not Character then
+        return
+    end
+
+    return Character,
+        Character:FindFirstChildOfClass("Humanoid"),
+        Character:FindFirstChild("HumanoidRootPart")
+
+end
+
 function VehicleTeleport:EnterVehicle()
 
     local Character, Humanoid, Root = self:GetCharacter()
@@ -157,12 +170,14 @@ end
 
 function VehicleTeleport:SetupMapToMove()
     print("[EREBUS] Map To Move setting up...")
+
     if self.MapConnections then
         for _, Connection in ipairs(self.MapConnections) do
             if Connection then
                 Connection:Disconnect()
             end
         end
+
         table.clear(self.MapConnections)
     else
         self.MapConnections = {}
@@ -183,50 +198,93 @@ function VehicleTeleport:SetupMapToMove()
 
     print("[EREBUS] Found navigation map!")
 
+    local Map = self.NavigationMap
+
     table.insert(
         self.MapConnections,
-        self.NavigationMap.Destroying:Connect(function()
+        Map.Destroying:Connect(function()
             task.defer(function()
                 self:SetupMapToMove()
             end)
         end)
     )
 
-    for _, MapPoint in pairs(self.NavigationMap:GetChildren()) do
-        if MapPoint:IsA("ImageButton") then
-            print("[EREBUS] This is an ImageButton!")
-
-            local Connection = MapPoint.Changed:Connect(function(Property)
-
-				if Property == "Position" then return end
-
-				if Property == "AbsolutePosition" then return end
-
-				print(Property)
-
-                if MapPoint.BackgroundColor3 ~= Color3.fromRGB(0, 0, 0) then
-                    print("[EREBUS] Picked a map point!")
-
-                    local SelectedMapPoint = MapPoint:FindFirstChild("4")
-                    if not SelectedMapPoint then
-                        return
-                    end
-
-                    local LettersOnly = SelectedMapPoint.Text:gsub("[^%a]", "")
-
-                    if TeleportPoints[LettersOnly] and not CurrentlyTeleporting then
-                        CurrentlyTeleporting = true
-                        self:MoveVehicle(
-                            TeleportPoints[LettersOnly],
-                            self.TeleportSpeed,
-                            true
-                        )
-                    end
-                end
-            end)
-
-            table.insert(self.MapConnections, Connection)
+    local function SetupMapPoint(MapPoint)
+        if not MapPoint:IsA("ImageButton") then
+            return
         end
+
+        if MapPoint:GetAttribute("ErebusConnected") then
+            return
+        end
+
+        MapPoint:SetAttribute("ErebusConnected", true)
+
+        print("[EREBUS] Connected map point:", MapPoint.Name)
+
+        local Connection = MapPoint.Changed:Connect(function(Property)
+            if Property == "Position" then
+                return
+            end
+
+            if Property == "AbsolutePosition" then
+                return
+            end
+
+            if MapPoint.BackgroundColor3 == Color3.fromRGB(0, 0, 0) then
+                return
+            end
+
+            print("[EREBUS] Picked a map point!")
+
+            local SelectedMapPoint = MapPoint:FindFirstChild("4")
+
+            if not SelectedMapPoint then
+                return
+            end
+
+            local LettersOnly =
+                SelectedMapPoint.Text:gsub("[^%a]", "")
+
+            if TeleportPoints[LettersOnly] and not CurrentlyTeleporting then
+                CurrentlyTeleporting = true
+
+                self:MoveVehicle(
+                    TeleportPoints[LettersOnly],
+                    self.TeleportSpeed,
+                    true
+                )
+            end
+        end)
+
+        table.insert(self.MapConnections, Connection)
+    end
+	
+    for _, MapPoint in ipairs(Map:GetChildren()) do
+        SetupMapPoint(MapPoint)
+    end
+
+    table.insert(
+        self.MapConnections,
+        Map.ChildAdded:Connect(function(MapPoint)
+            SetupMapPoint(MapPoint)
+        end)
+    )
+
+    print("[EREBUS] Waiting for map points...")
+
+    if not Map:FindFirstChildWhichIsA("ImageButton") then
+        local FirstPoint
+
+        repeat
+            FirstPoint = Map.ChildAdded:Wait()
+
+            if Map ~= self.NavigationMap then
+                return
+            end
+        until FirstPoint:IsA("ImageButton")
+
+        SetupMapPoint(FirstPoint)
     end
 
     print("[EREBUS] Map To Move successfully set up!")
