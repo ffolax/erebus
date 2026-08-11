@@ -47,9 +47,11 @@ function TeamTab:FlingVehicle()
 
     Seat.Anchored = true
 
-    ReplicatedStorage.2Wz["de90f020-3c93-46b4-a00c-d7270b5f706e"]:FireServer(true)
-    ReplicatedStorage.2Wz["25e6d86c-eaf5-4698-9e4d-20022e3d46c2"]:FireServer()
-    ReplicatedStorage.2Wz["de90f020-3c93-46b4-a00c-d7270b5f706e"]:FireServer(false)
+    local Zp = ReplicatedStorage:WaitForChild("2Wz")
+
+    Zp["de90f020-3c93-46b4-a00c-d7270b5f706e"]:FireServer(true)
+    Zp["25e6d86c-eaf5-4698-9e4d-20022e3d46c2"]:FireServer()
+    Zp["de90f020-3c93-46b4-a00c-d7270b5f706e"]:FireServer(false)
 
     local EndTime = tick() + 1
 
