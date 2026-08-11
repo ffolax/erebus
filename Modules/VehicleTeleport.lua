@@ -106,7 +106,7 @@ function VehicleTeleport:MoveVehicle(endPosition,givenSpeed,sitPlayer)
 
 	local speed = givenSpeed or VehicleTeleport.TeleportSpeed
 
-	local vehicle = FindPlrVehicle()
+	local vehicle = VehicleTeleport:GetVehicle()
 	if not vehicle then return end
 
 	local startPivot = vehicle:GetPivot()
