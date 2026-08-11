@@ -200,7 +200,7 @@ function VehicleTeleport:SetupMapToMove()
 
 				if Property == "Position" then return end
 
-				if Property == "SelectedPosition" then return end
+				if Property == "AbsolutePosition" then return end
 
 				print(Property)
 
