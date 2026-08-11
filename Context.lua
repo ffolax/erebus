@@ -977,7 +977,7 @@ function Context:AddViewport(options)
     task.spawn(function()
         while true do
             if CurrentModel then
-                CurrentRotation += 35 / 30
+                CurrentRotation += 35 / 15
 
                 CurrentModel:PivotTo(
                     CFrame.Angles(
@@ -987,7 +987,7 @@ function Context:AddViewport(options)
                     )
                 )
 
-                task.wait(1 / 30)
+                task.wait(1 / 15)
             else
                 task.wait()
             end

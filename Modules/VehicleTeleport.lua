@@ -37,7 +37,7 @@ VehicleTeleport.NavigationMap = nil
 VehicleTeleport.TeleportSpeed = 100
 VehicleTeleport.MapConnections = {}
 
-function Vehicle:GetVehicle()
+function VehicleTeleport:GetVehicle()
 
     local Vehicles = workspace:FindFirstChild("Vehicles")
     if not Vehicles then
