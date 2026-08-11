@@ -56,25 +56,44 @@ function FindPlrVehicle()
 
 end
 
-function VehicleTeleport:EnterVehicle()
+function Vehicle:EnterVehicle()
 
-	local car = FindPlrVehicle()
+    local Character, Humanoid, Root = self:GetCharacter()
 
-	if car then
+    local PlrVehicle = self:GetVehicle()
 
-		local DriveSeat = car:FindFirstChildOfClass("Seat")
+    if not (Character and Humanoid and Root and PlrVehicle) then
+        return
+    end
 
-		if DriveSeat then
+    local DriveSeat = PlrVehicle:FindFirstChildOfClass("Seat")
 
-			if Plr.Character and Plr.Character:FindFirstChild("Humanoid") then
+    if not DriveSeat then
+        return
+    end
 
-				DriveSeat:Sit(Plr.Character.Humanoid)
+    local Distance = (Root.Position - DriveSeat.Position).Magnitude
 
-			end
+    if Distance > 100 then
 
-		end
+        local Start = Root.Position
+        local Goal = DriveSeat.Position + Vector3.new(0, 5, 0)
 
-	end
+        local Steps = math.ceil(Distance / 5)
+
+        for i = 1, Steps do
+
+            local Alpha = i / Steps
+
+            Root.CFrame = CFrame.new(Start:Lerp(Goal, Alpha))
+
+            RunService.Heartbeat:Wait()
+
+        end
+
+    end
+
+    DriveSeat:Sit(Humanoid)
 
 end
 
@@ -161,7 +180,7 @@ function VehicleTeleport:SetupMapToMove()
 		if MapPoints:IsA("ImageButton") then
 			print("[EREBUS] This is an ImageButton!")
 			local conn
-			conn = MapPoints:GetPropertyChangedSignal("BackgroundColor3"):Connect(function()
+			conn = MapPoints.Changed:Connect(function()
 
 				print("[EREBUS] Color changed!")
 

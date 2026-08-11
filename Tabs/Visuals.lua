@@ -13,6 +13,7 @@ Visuals.Runtime = {
 }
 
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
 function Visuals:GetPlayerCharacter(Player)
     return Player.Character
@@ -89,6 +90,7 @@ function Visuals:UpdatePlayer(Player)
     local Billboard = self:GetBillboard(Player)
 
     if not Billboard then
+        self.Runtime.BillboardGuis[Player] = nil
         return
     end
 
@@ -212,6 +214,19 @@ function Visuals:Init(Context)
             self:RemovePlayer(Player)
         end)
     )
+
+    local Timer = 0
+
+    self.Runtime.UpdateConnection = Context:RegisterPersistentConnection(
+        RunService.Heartbeat:Connect(function(DeltaTime)
+            Timer += DeltaTime
+
+            if Timer >= 2 then
+                Timer = 0
+                self:UpdateAll()
+            end
+        end)
+    )
 end
 
 function Visuals:Build(Context)
@@ -239,6 +254,11 @@ function Visuals:Build(Context)
 end
 
 function Visuals:Destroy()
+    if self.Runtime.UpdateConnection then
+        self.Runtime.UpdateConnection:Disconnect()
+        self.Runtime.UpdateConnection = nil
+    end
+
     for Player in pairs(self.Runtime.PlayerConnections) do
         self:RemovePlayer(Player)
     end
