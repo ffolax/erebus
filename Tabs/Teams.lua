@@ -7,22 +7,32 @@ local RunService = game:GetService("RunService")
 local Plr = Players.LocalPlayer
 
 TeamTab.State = {
-    Flinging = false
+    Flinging = false,
 }
 
-function TeamTab:FlingVehicle()
+function TeamTab:GetVehicle()
+    local Vehicles = workspace:FindFirstChild("Vehicles")
 
+    if not Vehicles then
+        return
+    end
+
+    return Vehicles:FindFirstChild(Plr.Name)
+end
+
+function TeamTab:FlingVehicle()
     if self.State.Flinging then
         return
     end
 
-    if Plr.Team.Name ~= "HARS" then
+    if not Plr.Team or Plr.Team.Name ~= "HARS" then
         return
     end
 
     self.State.Flinging = true
 
-    local Vehicle = FindPlrVehicle()
+    local Vehicle = self:GetVehicle()
+
     if not Vehicle then
         self.State.Flinging = false
         return
@@ -47,9 +57,9 @@ function TeamTab:FlingVehicle()
         RunService.Heartbeat:Wait()
 
         Seat.Velocity = Vector3.new(
-            math.random(-10000,10000),
+            math.random(-10000, 10000),
             10000,
-            math.random(-10000,10000)
+            math.random(-10000, 10000)
         )
     end
 
@@ -58,19 +68,13 @@ function TeamTab:FlingVehicle()
     task.wait(0.25)
 
     Seat.Anchored = false
-
     self.State.Flinging = false
-
 end
 
 function TeamTab:Init(Context)
-
-    -- future keybinds / persistent connections
-
 end
 
 function TeamTab:Build(Context)
-
     Context:AddTitle({
         Text = "HARS"
     })
@@ -86,11 +90,9 @@ function TeamTab:Build(Context)
             self:FlingVehicle()
         end
     })
-
 end
 
 function TeamTab:Destroy()
-
 end
 
 return TeamTab
