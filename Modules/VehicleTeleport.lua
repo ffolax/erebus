@@ -56,7 +56,7 @@ function FindPlrVehicle()
 
 end
 
-function Vehicle:EnterVehicle()
+function VehicleTeleport:EnterVehicle()
 
     local Character, Humanoid, Root = self:GetCharacter()
 
