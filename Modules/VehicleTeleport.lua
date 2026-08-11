@@ -35,6 +35,7 @@ local StarterGui = game:GetService("StarterGui")
 local CurrentlyTeleporting = false
 VehicleTeleport.NavigationMap = nil
 VehicleTeleport.TeleportSpeed = 100
+VehicleTeleport.MapConnections = {}
 
 function FindPlrVehicle()
 
@@ -155,57 +156,80 @@ function VehicleTeleport:MoveVehicle(endPosition,givenSpeed,sitPlayer)
 end
 
 function VehicleTeleport:SetupMapToMove()
+    print("[EREBUS] Map To Move setting up...")
+    if self.MapConnections then
+        for _, Connection in ipairs(self.MapConnections) do
+            if Connection then
+                Connection:Disconnect()
+            end
+        end
+        table.clear(self.MapConnections)
+    else
+        self.MapConnections = {}
+    end
 
-	print("[EREBUS] Map To Move setting up...")
+    self.NavigationMap = nil
 
-	for _, obj in pairs(PlrGui:GetDescendants()) do
-		if obj:IsA("ViewportFrame") and string.find(obj.Name, "Map") then
-			VehicleTeleport.NavigationMap = obj
-			break
-		end
-	end
+    for _, Obj in pairs(PlrGui:GetDescendants()) do
+        if Obj:IsA("ViewportFrame") and string.find(Obj.Name, "Map") then
+            self.NavigationMap = Obj
+            break
+        end
+    end
 
-	if not VehicleTeleport.NavigationMap then
-		return
-	end
+    if not self.NavigationMap then
+        return
+    end
 
-	print("[EREBUS] Found navigation map!")
+    print("[EREBUS] Found navigation map!")
 
-	VehicleTeleport.NavigationMap.Destroying:Once(function()
-		task.wait()
-		VehicleTeleport:SetupMapToMove()
-	end)
+    table.insert(
+        self.MapConnections,
+        self.NavigationMap.Destroying:Connect(function()
+            task.defer(function()
+                self:SetupMapToMove()
+            end)
+        end)
+    )
 
-	for _, MapPoints in pairs(VehicleTeleport.NavigationMap:GetChildren()) do
-		if MapPoints:IsA("ImageButton") then
-			print("[EREBUS] This is an ImageButton!")
-			local conn
-			conn = MapPoints.Changed:Connect(function(property : string)
+    for _, MapPoint in pairs(self.NavigationMap:GetChildren()) do
+        if MapPoint:IsA("ImageButton") then
+            print("[EREBUS] This is an ImageButton!")
 
-				print(property)
+            local Connection = MapPoint.Changed:Connect(function(Property)
 
-				if MapPoints.BackgroundColor3 ~= Color3.fromRGB(0,0,0) then
+				if Property == "Position" then return end
 
-					print("[EREBUS] Picked a map point!")
+				if Property == "SelectedPosition" then return end
 
-					local SelectedMapPoint = MapPoints:FindFirstChild("4")
-					local LettersOnly = SelectedMapPoint.Text:gsub("[^%a]", "")
+				print(Property)
 
-					if TeleportPoints[LettersOnly] then
+                if MapPoint.BackgroundColor3 ~= Color3.fromRGB(0, 0, 0) then
+                    print("[EREBUS] Picked a map point!")
 
-						if not CurrentlyTeleporting then
-							CurrentlyTeleporting = true
-							self:MoveVehicle(TeleportPoints[LettersOnly], self.TeleportSpeed, true)
-						end
-					end
+                    local SelectedMapPoint = MapPoint:FindFirstChild("4")
+                    if not SelectedMapPoint then
+                        return
+                    end
 
-				end
-			end)
-		end
-	end
+                    local LettersOnly = SelectedMapPoint.Text:gsub("[^%a]", "")
 
-	print("[EREBUS] Map To Move successfully set up!")
+                    if TeleportPoints[LettersOnly] and not CurrentlyTeleporting then
+                        CurrentlyTeleporting = true
+                        self:MoveVehicle(
+                            TeleportPoints[LettersOnly],
+                            self.TeleportSpeed,
+                            true
+                        )
+                    end
+                end
+            end)
 
+            table.insert(self.MapConnections, Connection)
+        end
+    end
+
+    print("[EREBUS] Map To Move successfully set up!")
 end
 
 VehicleTeleport:SetupMapToMove()
