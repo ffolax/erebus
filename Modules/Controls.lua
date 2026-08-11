@@ -67,12 +67,12 @@ function Controls:Init(Context)
     self.Connections.InputBegan =
         UserInputService.InputBegan:Connect(function(Input, GameProcessed)
 
-            if GameProcessed then
-                return
-            end
-
             if Input.UserInputType == Enum.UserInputType.Keyboard then
                 Controls.Held[Input.KeyCode] = true
+            end
+
+            if GameProcessed then
+                return
             end
 
             for _, Binding in ipairs(self.Bindings) do
@@ -84,10 +84,14 @@ function Controls:Init(Context)
         end)
 
     self.Connections.InputEnded =
-        UserInputService.InputEnded:Connect(function(Input)
+        UserInputService.InputEnded:Connect(function(Input, GameProcessed)
 
             if Input.UserInputType == Enum.UserInputType.Keyboard then
                 Controls.Held[Input.KeyCode] = nil
+            end
+
+            if GameProcessed then
+                return
             end
 
             for _, Binding in ipairs(self.Bindings) do

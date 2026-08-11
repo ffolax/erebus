@@ -282,22 +282,21 @@ function Vehicle:Init(Context)
     self.Modules.VehicleTeleport = Context.Modules.VehicleTeleport
 
     Context:RegisterPersistentConnection(
-
         RunService.Heartbeat:Connect(function()
-
             self:UpdateAcceleration()
-
         end)
-
     )
 
-    local CarFlyKey = Context:AddKeybind({
-        Text = "Car Fly Keybind",
-        Default = Enum.KeyCode.X
-    })
+    if Context.Values.CarFlyKey == nil then
+        Context.Values.CarFlyKey = Enum.KeyCode.X
+    end
 
     Context:RegisterPersistentConnection(
-        Context.Services.Controls:Bind(CarFlyKey,function(Down)
+        Context.Services.Controls:Bind({
+            GetValue = function()
+                return Context.Values.CarFlyKey
+            end
+        }, function(Down)
 
             if Down then
                 Context.Values.CarFly = not Context.Values.CarFly
@@ -354,35 +353,20 @@ function Vehicle:Build(Context)
         end
     })
 
-    Context:AddTitle({
-        Text = "Fly"
+    Context:AddTitle({ Text = "Fly" })
+
+    Context:AddKeybind({
+        Text = "Car Fly Keybind",
+        Id = "CarFlyKey",
+        Default = Enum.KeyCode.X
     })
 
     self.State.CarFlyToggle = Context:AddToggle({
         Text = "Car Fly",
         Id = "CarFly",
-
         Callback = function(Enabled)
-            self:CarFly(Context,Enabled)
+            self:CarFly(Context, Enabled)
         end
-    })
-
-    local CarFlySlider = Context:AddSlider({
-
-        Text = "Fly Speed",
-        Id = "CarFlySpeed",
-
-        Min = 10,
-        Max = 200,
-
-        Default = 50,
-
-        Callback = function(Value)
-
-            self.State.CarFlySpeed = Value
-
-        end
-
     })
 
     Context:AddTitle({

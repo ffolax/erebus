@@ -386,7 +386,7 @@ function Context:AddToggle(options)
     end
 
     function Toggle:GetValue()
-        return Enabled
+        return self.Value
     end
 
     Toggle.Button.MouseButton1Click:Connect(function()
