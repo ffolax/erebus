@@ -37,23 +37,14 @@ VehicleTeleport.NavigationMap = nil
 VehicleTeleport.TeleportSpeed = 100
 VehicleTeleport.MapConnections = {}
 
-function FindPlrVehicle()
+function Vehicle:GetVehicle()
 
-    local car = Vehicles:FindFirstChild(tostring(Plr))
-
-    if car then
-
-        return car
-
+    local Vehicles = workspace:FindFirstChild("Vehicles")
+    if not Vehicles then
+        return
     end
 
-	StarterGui:SetCore("SendNotification", {
-			Title = "EREBUS";
-			Text = "Cannot find vehicle!";
-			Duration = 3; -- seconds
-	})
-
-	return nil
+    return Vehicles:FindFirstChild(game.Players.LocalPlayer.Name)
 
 end
 
@@ -259,7 +250,7 @@ function VehicleTeleport:SetupMapToMove()
 
         table.insert(self.MapConnections, Connection)
     end
-	
+
     for _, MapPoint in ipairs(Map:GetChildren()) do
         SetupMapPoint(MapPoint)
     end
