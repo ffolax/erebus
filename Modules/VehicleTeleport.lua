@@ -31,6 +31,7 @@ local Players = game:GetService("Players")
 local Plr = Players.LocalPlayer
 local PlrGui = Plr:WaitForChild("PlayerGui")
 local StarterGui = game:GetService("StarterGui")
+local RunService = game:GetService("RunService")
 
 local CurrentlyTeleporting = false
 VehicleTeleport.NavigationMap = nil
