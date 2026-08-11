@@ -27,52 +27,59 @@ function Player:GetCharacter()
 end
 
 function Player:GetClosestPlayer()
+    local Camera = workspace.CurrentCamera
+    local FOVCircle = self.State.FOVCircle
 
-    local closestPlayer
-    local minDistance = math.huge
+    if not Camera or not FOVCircle then
+        return nil
+    end
 
-    for _, player in ipairs(game.Players:GetPlayers()) do
+    local LocalPlayer = game.Players.LocalPlayer
+    local ClosestCharacter = nil
+    local ClosestDistance = FOVCircle.Radius
+    local Center = Camera.ViewportSize / 2
 
-        if player == game.Players.LocalPlayer then
+    for _, Player in ipairs(game.Players:GetPlayers()) do
+        if Player == LocalPlayer then
             continue
         end
 
-        local character = player.Character
-        if not character then
+        local Character = Player.Character
+        if not Character then
             continue
         end
 
-        local humanoidRootPart =
-            character:FindFirstChild("HumanoidRootPart")
+        local Humanoid = Character:FindFirstChildOfClass("Humanoid")
+        if not Humanoid or Humanoid.Health <= 0 then
+            continue
+        end
 
-        if humanoidRootPart then
+        local TargetPart =
+            Character:FindFirstChild(self.State.TargetPart)
+            or Character:FindFirstChild("HumanoidRootPart")
 
-            local screenPos, onScreen =
-                workspace.CurrentCamera:WorldToViewportPoint(
-                    humanoidRootPart.Position
-                )
+        if not TargetPart then
+            continue
+        end
 
-            if onScreen then
+        local ScreenPosition, OnScreen =
+            Camera:WorldToViewportPoint(TargetPart.Position)
 
-                local distance =
-                    (
-                        Vector2.new(screenPos.X, screenPos.Y)
-                        - self.State.FOVCircle.Position
-                    ).Magnitude
+        if not OnScreen or ScreenPosition.Z <= 0 then
+            continue
+        end
 
-                if distance < minDistance
-                and distance <= self.State.FOVCircle.Radius then
+        local ScreenDistance = (
+            Vector2.new(ScreenPosition.X, ScreenPosition.Y) - Center
+        ).Magnitude
 
-                    minDistance = distance
-                    closestPlayer = character
-
-                end
-            end
+        if ScreenDistance <= ClosestDistance then
+            ClosestDistance = ScreenDistance
+            ClosestCharacter = Character
         end
     end
 
-    return closestPlayer
-
+    return ClosestCharacter
 end
 
 function Player:SetSpeedHack(Context, Enabled)
@@ -122,64 +129,66 @@ function Player:SetSpeedHack(Context, Enabled)
 end
 
 function Player:SetAimbot(Context, Enabled)
-
     if Enabled then
-
         if not self.State.FOVCircle then
             self.State.FOVCircle = Drawing.new("Circle")
+            self.State.FOVCircle.Filled = false
+            self.State.FOVCircle.Thickness = 2
+            self.State.FOVCircle.NumSides = 64
         end
 
-        self.State.FOVCircle.Visible = true
-        self.State.FOVCircle.Filled = false
-        self.State.FOVCircle.Thickness = 2
-        self.State.FOVCircle.Radius = 150
-        self.State.FOVCircle.NumSides = 64
-        self.State.FOVCircle.Position = workspace.CurrentCamera.ViewportSize / 2
+        local FOVCircle = self.State.FOVCircle
+        FOVCircle.Visible = true
+        FOVCircle.Radius = self.State.FOVRadius or 150
 
         RunService:UnbindFromRenderStep(self.State.RenderStepName)
 
         Context:RegisterPersistentConnection(
             RunService:BindToRenderStep(
                 self.State.RenderStepName,
-                10000,
+                Enum.RenderPriority.Camera.Value + 1,
                 function()
-
-                    self.State.FOVCircle.Position =
-                        workspace.CurrentCamera.ViewportSize / 2
-
-                    local closestPlayer = self:GetClosestPlayer()
-
-                    if closestPlayer then
-
-                        local target =
-                            closestPlayer:FindFirstChild(self.State.TargetPart)
-                            or closestPlayer:FindFirstChild("HumanoidRootPart")
-
-                        if target then
-
-                            workspace.CurrentCamera.CFrame = CFrame.lookAt(
-                                workspace.CurrentCamera.CFrame.Position,
-                                target.Position
-                            )
-
-                        end
+                    local Camera = workspace.CurrentCamera
+                    if not Camera or not FOVCircle then
+                        return
                     end
 
+                    FOVCircle.Position = Camera.ViewportSize / 2
+                    FOVCircle.Radius = self.State.FOVRadius or 150
+
+                    local Target = self:GetClosestPlayer()
+
+                    if not Target then
+                        return
+                    end
+
+                    local TargetPart =
+                        Target:FindFirstChild(self.State.TargetPart)
+                        or Target:FindFirstChild("HumanoidRootPart")
+
+                    if not TargetPart then
+                        return
+                    end
+
+                    local CameraPosition = Camera.CFrame.Position
+                    local TargetPosition = TargetPart.Position
+
+                    Camera.CFrame = CFrame.lookAt(
+                        CameraPosition,
+                        TargetPosition
+                    )
                 end
             )
         )
-
     else
+        RunService:UnbindFromRenderStep(self.State.RenderStepName)
 
         if self.State.FOVCircle then
+            self.State.FOVCircle.Visible = false
             self.State.FOVCircle:Remove()
             self.State.FOVCircle = nil
         end
-
-        RunService:UnbindFromRenderStep(self.State.RenderStepName)
-
     end
-    
 end
 
 function Player:Init(Context)
@@ -319,6 +328,8 @@ function Player:Build(Context)
         Default = 150,
 
         Callback = function(Value)
+
+            self.State.FOVRadius = Value
 
             if self.State.FOVCircle then
                 self.State.FOVCircle.Radius = Value

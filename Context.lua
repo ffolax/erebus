@@ -962,28 +962,36 @@ function Context:AddViewport(options)
 
     LoadVehicle(options.Model())
 
-    RunService.Heartbeat:Connect(function(dt)
+    task.spawn(function()
+        while true do
+            local Vehicle = options.Model()
 
-        local Vehicle = options.Model()
+            if Vehicle ~= CurrentVehicle then
+                LoadVehicle(Vehicle)
+            end
 
-        if Vehicle ~= CurrentVehicle then
-            LoadVehicle(Vehicle)
+            task.wait(0.1)
         end
+    end)
 
-        if CurrentModel then
+    task.spawn(function()
+        while true do
+            if CurrentModel then
+                CurrentRotation += 35 / 30
 
-            CurrentRotation += dt * 35
-
-            CurrentModel:PivotTo(
-                CFrame.Angles(
-                    0,
-                    math.rad(CurrentRotation),
-                    0
+                CurrentModel:PivotTo(
+                    CFrame.Angles(
+                        0,
+                        math.rad(CurrentRotation),
+                        0
+                    )
                 )
-            )
 
+                task.wait(1 / 30)
+            else
+                task.wait()
+            end
         end
-
     end)
 
     return Viewport
