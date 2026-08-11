@@ -1,4 +1,3 @@
-```lua
 local Visuals = {}
 
 Visuals.State = {
@@ -257,4 +256,3 @@ function Visuals:Destroy()
 end
 
 return Visuals
-```
