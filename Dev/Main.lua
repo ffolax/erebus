@@ -1,58 +1,110 @@
 local BASE = "https://raw.githubusercontent.com/ffolax/erebus/main/"
 
-function Load(Path)
+local Players = game:GetService("Players")
 
-    local Source = game:HttpGet(BASE .. Path)
+local function Log(Level, Message, ...)
+    local Prefix = "[EREBUS][" .. Level .. "]"
+    warn(Prefix, Message, ...)
+end
 
-    local Chunk, Error = loadstring(Source)
+local function Load(Path)
+    local URL = BASE .. Path
+
+    local Success, Source = pcall(function()
+        return game:HttpGet(URL)
+    end)
+
+    if not Success then
+        Log("LOAD", "Failed to download module.")
+        Log("LOAD", "Path:", Path)
+        Log("LOAD", "URL:", URL)
+        Log("LOAD", "Error:", Source)
+        return nil
+    end
+
+    if type(Source) ~= "string" or Source == "" then
+        Log("LOAD", "Downloaded source was empty or invalid.")
+        Log("LOAD", "Path:", Path)
+        return nil
+    end
+
+    local Chunk, CompileError = loadstring(Source)
 
     if not Chunk then
-        warn("[EREBUS] Compile failed:", Path)
-        warn(Error)
+        Log("COMPILE", "Failed to compile module.")
+        Log("COMPILE", "Path:", Path)
+        Log("COMPILE", "Error:", CompileError)
         return nil
     end
 
     local Success, Result = pcall(Chunk)
 
     if not Success then
-        warn("[EREBUS] Runtime failed:", Path)
-        warn(Result)
+        Log("RUNTIME", "Module threw an error while loading.")
+        Log("RUNTIME", "Path:", Path)
+        Log("RUNTIME", "Error:", Result)
+        return nil
+    end
+
+    if Result == nil then
+        Log("RETURN", "Module loaded but returned nil.")
+        Log("RETURN", "Path:", Path)
         return nil
     end
 
     return Result
+end
 
+local function LoadRequired(Path, Name)
+    local Result = Load(Path)
+
+    if Result == nil then
+        error(
+            string.format(
+                "[EREBUS] Required module failed to load: %s (%s)",
+                Name,
+                Path
+            ),
+            2
+        )
+    end
+
+    return Result
+end
+
+local function Missing(Type, Value, Fallback)
+    if type(Value) == Type then
+        return Value
+    end
+
+    return Fallback
 end
 
 if getgenv().ErebusLoaded then
-    warn("[EREBUS] Script already loaded!")
+    Log("INIT", "Script is already loaded.")
     return
 end
 
-pcall(function() getgenv().ErebusLoaded = true end)
-if not game:IsLoaded() then game.Loaded:Wait() end
+pcall(function()
+    getgenv().ErebusLoaded = true
+end)
 
-function missing(t, f, fallback)
-	if type(f) == t then return f end
-	return fallback
+if not game:IsLoaded() then
+    game.Loaded:Wait()
 end
 
-queueteleport = missing("function", queue_on_teleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport))
+local queueTeleport = Missing(
+    "function",
+    queue_on_teleport
+        or (syn and syn.queue_on_teleport)
+        or (fluxus and fluxus.queue_on_teleport)
+)
 
-local Context = Load("Context.lua")
-assert(Context, "[EREBUS] Context failed to load.")
-
-local Icons = Load("Icons.lua")
-assert(Icons, "[EREBUS] Icons failed to load.")
-
-local UI = Load("Dev/UI.lua")
-assert(UI, "[EREBUS] UI failed to load.")
-
-local ErebusAPI = Load("ErebusAPI.lua")
-assert(ErebusAPI, "[EREBUS] API failed to load. IF YOU GET THIS WARNING, REPORT IT TO THE DISCORD IN #tickets")
-
-local Controls = Load("Modules/Controls.lua")
-assert(Controls, "[EREBUS] Controls failed to load.")
+local Context = LoadRequired("Context.lua", "Context")
+local Icons = LoadRequired("Icons.lua", "Icons")
+local UI = LoadRequired("Dev/UI.lua", "UI")
+local ErebusAPI = LoadRequired("ErebusAPI.lua", "ErebusAPI")
+local Controls = LoadRequired("Modules/Controls.lua", "Controls")
 
 Context.BASE = BASE
 
@@ -71,19 +123,20 @@ UI:Init(
     Icons
 )
 
-local Home = loadstring(game:HttpGet(BASE .. "Tabs/Home.lua"))()
-local Player = loadstring(game:HttpGet(BASE .. "Tabs/Player.lua"))()
-local Vehicle = loadstring(game:HttpGet(BASE .. "Tabs/Vehicle.lua"))()
-local Teams = loadstring(game:HttpGet(BASE .. "Tabs/Teams.lua"))()
-local Visuals = loadstring(game:HttpGet(BASE .. "Tabs/Visuals.lua"))()
-local Misc = loadstring(game:HttpGet(BASE .. "Tabs/Misc.lua"))()
+local Home = LoadRequired("Tabs/Home.lua", "Home")
+local Player = LoadRequired("Tabs/Player.lua", "Player")
+local Vehicle = LoadRequired("Tabs/Vehicle.lua", "Vehicle")
+local Teams = LoadRequired("Tabs/Teams.lua", "Teams")
+local Visuals = LoadRequired("Tabs/Visuals.lua", "Visuals")
+local Misc = LoadRequired("Tabs/Misc.lua", "Misc")
 
-local VehicleTeleport = loadstring(game:HttpGet(BASE .. "Modules/VehicleTeleport.lua"))()
+local VehicleTeleport = LoadRequired(
+    "Modules/VehicleTeleport.lua",
+    "VehicleTeleport"
+)
 
 Context.Modules = {
-
-    VehicleTeleport = VehicleTeleport
-    
+    VehicleTeleport = VehicleTeleport,
 }
 
 Player:Init(Context)
@@ -97,34 +150,36 @@ UI:RegisterTab("Teams", Teams)
 UI:RegisterTab("Visuals", Visuals)
 UI:RegisterTab("Misc", Misc)
 
-
 ErebusAPI:StartSession()
 ErebusAPI:StartStatsLoop()
 
 task.spawn(function()
-
     while task.wait(30) do
-        ErebusAPI:Heartbeat()
-    end
+        local Success, Error = pcall(function()
+            ErebusAPI:Heartbeat()
+        end)
 
+        if not Success then
+            Log("API", "Heartbeat failed.")
+            Log("API", "Error:", Error)
+        end
+    end
 end)
 
 UI:OpenTab("Home")
 
-local Players = game:GetService("Players")
-
-if queueteleport then
-
+if queueTeleport then
     Players.LocalPlayer.OnTeleport:Connect(function()
-
-        queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/ffolax/erebus/main/loader.lua'))()")
-
+        queueTeleport(
+            "loadstring(game:HttpGet('https://raw.githubusercontent.com/ffolax/erebus/main/loader.lua'))()"
+        )
     end)
-
 end
 
-for _,v in ipairs(game:GetDescendants()) do
-    if v.Name:lower():find("anticheat") then
-        v:Destroy()
+for _, Object in ipairs(game:GetDescendants()) do
+    if Object.Name:lower():find("anticheat") then
+        Object:Destroy()
     end
 end
+
+Log("INIT", "Erebus loaded successfully.")
